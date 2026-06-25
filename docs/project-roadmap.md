@@ -13,12 +13,12 @@
 
 ## Faza 2 - Analiza biznesowa
 
-- [ ] Rozmowa ze znajomym
-- [ ] Analiza produktów
-- [ ] Analiza procesu sprzedaży
-- [ ] Analiza Bitrix24
-- [ ] Analiza kalkulatora
-- [ ] Analiza konkurencji
+- [x] Rozmowa ze znajomym
+- [x] Analiza produktów
+- [x] Analiza procesu sprzedaży
+- [x] Analiza kalkulatora
+- [x] Analiza konkurencji
+- [ ] Analiza Bitrix24 API
 
 
 ## Faza 3 - Projekt funkcjonalny
