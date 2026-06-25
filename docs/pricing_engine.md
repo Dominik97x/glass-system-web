@@ -1,7 +1,7 @@
 # Pricing Engine
 
 Źródło:
-EG Cennik.pdf
+GS Cennik.pdf
 
 ## Produkty
 
