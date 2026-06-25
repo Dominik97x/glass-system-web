@@ -1,36 +1,66 @@
 # Data Model
 
-## Lead
-
-id
-name
-phone
-email
-message
-photos
-product
-createdAt
-
 ## Product
 
-id
-name
-slug
-category
+- id
+- name
+- category
 
-## Configuration
+Przykład:
 
-productId
-width
-depth
-roofType
-led
-blinds
-awning
+- winter-garden
+- carport
+- terrace-roof
 
-## Pricing
+## Dimensions
 
-configurationId
-basePrice
-optionsPrice
-totalPrice
+- width
+- depth
+
+Przykład:
+
+- 306 cm
+- 400 cm
+
+## Roof Type
+
+- glass-clear
+- glass-milky
+- glass-tinted
+- polycarbonate-clear
+- polycarbonate-milky
+- polycarbonate-smoke
+
+## Addons
+
+### Blinds
+
+- front blind
+- left blind
+- right blind
+
+### Lighting
+
+- LED strip
+- COB lighting
+
+### Extras
+
+- markiza
+- uchwyty
+- szczotki
+
+## Lead
+
+- firstName
+- phone
+- email
+- city
+- notes
+- photos
+
+## Calculation Result
+
+- basePrice
+- addonsPrice
+- totalPrice

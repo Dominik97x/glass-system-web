@@ -1,39 +1,41 @@
-# Decyzje projektowe
+# Decisions
 
-# Decyzje architektoniczne
+## 2025-06-25
 
-## 2025-06
+### Architektura
+
+Decyzja:
+Next.js + TypeScript
+
+Powód:
+Nowoczesny stack, łatwa rozbudowa.
+
+---
 
 ### Kalkulator
 
 Decyzja:
-Kalkulator opiera się na matrycy cenowej.
+Kalkulator oparty o matrycę cenową.
 
 Powód:
-Tak działa obecny system klienta.
-
-Konsekwencja:
-Nie budujemy silnika konstrukcyjnego.
+Tak działał stary system EcoGardens.
 
 ---
 
 ### CRM
 
 Decyzja:
-Bitrix24 jest głównym CRM.
+Integracja z Bitrix24.
 
 Powód:
-Firma już go używa.
-
-Konsekwencja:
-Leady muszą trafiać do Bitrix24.
+Obecny proces firmy opiera się o Bitrix.
 
 ---
 
 ### Produkty MVP
 
-1. Ogród zimowy
-2. Carport
-3. Zadaszenie
+- Ogród zimowy
+- Carport
+- Zadaszenie tarasu
 
-Pozostałe produkty później.
+Pergole pomijamy.

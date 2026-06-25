@@ -2,56 +2,46 @@
 
 ## Pozyskanie leada
 
-Źródła:
-
-- Facebook Ads
-- Instagram Ads
-- Formularze Meta
-- Strona WWW
-
-## Dane leada
-
-- Imię
-- Telefon
-- Email
-- Lokalizacja
-- Zdjęcia
-- Produkt
-
-## Proces
-
-Lead
-
+Facebook Ads
 ↓
-
-Kontakt telefoniczny
-
+Meta Lead Form
 ↓
+CRM
 
-Weryfikacja potrzeb
+## Kontakt
 
-↓
+Handlowiec kontaktuje się telefonicznie
 
-Pomiar
+## Wstępna kwalifikacja
 
-↓
+Zbierane informacje:
 
-Oferta
+- produkt
+- lokalizacja
+- zdjęcia
+- orientacyjne wymiary
 
-↓
+## Pomiar
 
-Umowa
+- wizyta u klienta
+- dokładne pomiary
 
-↓
+## Oferta
 
-Realizacja
+- przygotowanie wyceny
+- przesłanie oferty
 
-## Statusy CRM
+## Sprzedaż
 
-- Nowy lead
-- Kontakt
-- Pomiar
-- Oferta
-- Negocjacje
-- Wygrana
-- Przegrana
+- podpisanie umowy
+- zaliczka
+
+## Realizacja
+
+- produkcja
+- montaż
+- odbiór
+
+## Zakończenie
+
+- płatność końcowa

@@ -16,18 +16,22 @@
 - [x] Rozmowa ze znajomym
 - [x] Analiza produktów
 - [x] Analiza procesu sprzedaży
+- [x] Analiza Bitrix24
 - [x] Analiza kalkulatora
 - [x] Analiza konkurencji
-- [ ] Analiza Bitrix24 API
+- [x] Analiza EG Cennik PDF
+- [x] Opracowanie modelu danych
+- [x] Opracowanie pricing engine
 
 
 ## Faza 3 - Projekt funkcjonalny
 
-- [ ] Mapa strony
-- [ ] Lista produktów
-- [ ] Lejek sprzedażowy
+
+- [x] Mapa strony
+- [x] Lista produktów
+- [x] Lejek sprzedażowy
 - [ ] Formularze kontaktowe
-- [ ] Projekt kalkulatora
+- [x] Projekt kalkulatora
 - [ ] Projekt integracji CRM
 
 
