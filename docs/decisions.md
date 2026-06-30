@@ -1,41 +1,71 @@
-# Decisions
+# Decyzje projektowe
 
 ## 2025-06-25
 
-### Architektura
+### Kalkulator
 
-Decyzja:
-Next.js + TypeScript
+Zdecydowano:
+
+Kalkulator korzysta z gotowej matrycy cenowej.
 
 Powód:
-Nowoczesny stack, łatwa rozbudowa.
+
+Tak działa obecny system EcoGardens oraz CRM.
 
 ---
 
-### Kalkulator
+### Pricing Engine
 
-Decyzja:
-Kalkulator oparty o matrycę cenową.
+Źródłem danych będzie cennik EG.
 
-Powód:
-Tak działał stary system EcoGardens.
+Docelowo dane zostaną przeniesione do plików JSON.
 
 ---
 
 ### CRM
 
-Decyzja:
-Integracja z Bitrix24.
-
-Powód:
-Obecny proces firmy opiera się o Bitrix.
+Docelowym systemem CRM będzie Bitrix24.
 
 ---
 
-### Produkty MVP
+### Marża
 
-- Ogród zimowy
-- Carport
-- Zadaszenie tarasu
+Cennik producenta nie jest ceną końcową.
 
-Pergole pomijamy.
+System musi umożliwiać doliczenie marży.
+
+Zakres:
+
+20–30%
+
+---
+
+### Produkty
+
+Pierwsza wersja aplikacji:
+
+- Ogrody zimowe
+
+- Zadaszenia tarasów
+
+Kolejna wersja:
+
+- Carporty
+
+---
+
+### Architektura
+
+Projekt zostanie podzielony na niezależne moduły:
+
+- Pricing Engine
+
+- Kalkulator
+
+- Formularze
+
+- CRM
+
+- Oferta PDF
+
+Każdy moduł powinien być możliwy do rozwijania niezależnie.

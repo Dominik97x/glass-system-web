@@ -1,66 +1,143 @@
-# Data Model
+# Model danych
 
 ## Product
 
-- id
-- name
-- category
+Opisuje produkt oferowany przez firmę.
+
+Przykłady:
+
+- Ogród zimowy
+- Zadaszenie tarasu
+- Carport
+
+---
+
+## Variant
+
+Konkretna konfiguracja produktu.
 
 Przykład:
 
-- winter-garden
-- carport
-- terrace-roof
+Ogród zimowy
 
-## Dimensions
+300 x 400
 
-- width
-- depth
+---
 
-Przykład:
+## Dimension
 
-- 306 cm
-- 400 cm
+Opisuje wymiary.
 
-## Roof Type
+- szerokość
 
-- glass-clear
-- glass-milky
-- glass-tinted
-- polycarbonate-clear
-- polycarbonate-milky
-- polycarbonate-smoke
+- głębokość
 
-## Addons
+---
 
-### Blinds
+## RoofType
 
-- front blind
-- left blind
-- right blind
+Rodzaj pokrycia.
 
-### Lighting
+Przykłady:
 
-- LED strip
-- COB lighting
+- szkło bezbarwne
 
-### Extras
+- szkło mleczne
 
-- markiza
-- uchwyty
-- szczotki
+- szkło przyciemniane
+
+- poliwęglan bezbarwny
+
+- poliwęglan mleczny
+
+- poliwęglan dymiony
+
+---
+
+## Accessory
+
+Element opcjonalny.
+
+Przykłady:
+
+- LED
+
+- COB
+
+- Markiza
+
+- Rolety
+
+- Fundament
+
+- Montaż
+
+---
+
+## PriceItem
+
+Pojedyncza pozycja cennika.
+
+Przechowuje:
+
+- produkt
+
+- wymiary
+
+- cenę
+
+---
+
+## Quote
+
+Kompletna wycena.
+
+Zawiera:
+
+- produkt
+
+- konfigurację
+
+- dodatki
+
+- cenę producenta
+
+- marżę
+
+- cenę końcową
+
+---
 
 ## Lead
 
-- firstName
-- phone
-- email
-- city
-- notes
-- photos
+Zapytanie klienta.
 
-## Calculation Result
+Przechowuje:
 
-- basePrice
-- addonsPrice
-- totalPrice
+- dane kontaktowe
+
+- konfigurację
+
+- wycenę
+
+- zdjęcia
+
+Status:
+
+Nowy
+
+↓
+
+Kontakt
+
+↓
+
+Oferta
+
+↓
+
+Realizacja
+
+↓
+
+Zakończony

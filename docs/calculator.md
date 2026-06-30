@@ -1,46 +1,156 @@
 # Kalkulator wyceny
 
-# Struktura kalkulatora
-## Odkrycia dotyczące kalkulatora
+## Cel
 
-Kalkulator nie opiera się na wzorach konstrukcyjnych.
+Kalkulator umożliwia klientowi uzyskanie orientacyjnej wyceny produktu
+oraz przesłanie zapytania ofertowego do CRM.
 
-Kalkulator korzysta z gotowej matrycy cenowej.
+Kalkulator nie wykonuje obliczeń konstrukcyjnych.
 
-Cena bazowa zależy od:
+Cena obliczana jest na podstawie gotowej matrycy cenowej.
 
-- typu produktu
-- szerokości
-- głębokości
+---
 
-Dodatkowo doliczane są:
+# Przepływ kalkulatora
 
-- rodzaj pokrycia
-- rolety boczne
-- rolety przednie
-- markizy
-- oświetlenie LED
-- inne dodatki
+Etap 1
 
-Finalna cena jest sumą ceny bazowej i wybranych opcji.
-## Produkt
+↓
+
+Wybór produktu
+
 - Ogród zimowy
-- Carport
-- Zadaszenie
+- Zadaszenie tarasu
+- Carport (w przyszłości)
 
-## Konstrukcja
+↓
 
-## Pokrycie dachu
+Wybór wymiarów
 
-### Szkło
-### Poliwęglan
+- szerokość
+- głębokość
 
-## Ściany boczne
+↓
 
-## Rolety
+Wyznaczenie ceny bazowej
 
-## Oświetlenie
+---
 
-## Dodatki
+Etap 2
 
-## Montaż
+↓
+
+Pokrycie dachu
+
+- szkło bezbarwne
+- szkło mleczne
+- szkło przyciemniane
+- poliwęglan bezbarwny
+- poliwęglan mleczny
+- poliwęglan dymiony
+
+↓
+
+Doliczenie dopłaty
+
+---
+
+Etap 3
+
+↓
+
+Opcje dodatkowe
+
+- rolety ZIP
+- przeszklenia
+- markiza
+- LED
+- COB
+- uchwyty
+- szczotki
+- fundament
+- montaż
+
+↓
+
+Doliczenie dopłat
+
+---
+
+Etap 4
+
+↓
+
+Podsumowanie
+
+Wyświetlane są:
+
+- orientacyjna cena
+- wybrane opcje
+- dane konfiguracji
+
+↓
+
+Formularz kontaktowy
+
+Klient podaje:
+
+- imię
+- telefon
+- email
+- wiadomość
+- zdjęcia
+
+↓
+
+Lead trafia do CRM
+
+---
+
+# Logika działania
+
+Cena końcowa składa się z:
+
+Cena bazowa
+
++
+
+Cena pokrycia
+
++
+
+Cena dodatków
+
++
+
+Cena montażu
+
+=
+
+Cena końcowa
+
+---
+
+# Dane wejściowe
+
+Produkt
+
+Szerokość
+
+Głębokość
+
+Pokrycie
+
+Dodatki
+
+---
+
+# Dane wyjściowe
+
+Cena orientacyjna
+
+Konfiguracja produktu
+
+Lead
+
+CRM

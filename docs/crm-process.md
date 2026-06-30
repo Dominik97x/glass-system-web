@@ -1,47 +1,123 @@
-# CRM Process
+# Proces CRM
 
 ## Pozyskanie leada
 
 Facebook Ads
+
 ↓
-Meta Lead Form
+
+Instagram Ads
+
 ↓
-CRM
 
-## Kontakt
+Formularz Meta
 
-Handlowiec kontaktuje się telefonicznie
+↓
 
-## Wstępna kwalifikacja
+Strona WWW
 
-Zbierane informacje:
+↓
 
-- produkt
-- lokalizacja
-- zdjęcia
-- orientacyjne wymiary
+Lead
 
-## Pomiar
+---
 
-- wizyta u klienta
-- dokładne pomiary
+## Dane leada
 
-## Oferta
+Imię
 
-- przygotowanie wyceny
-- przesłanie oferty
+Telefon
 
-## Sprzedaż
+Email
 
-- podpisanie umowy
-- zaliczka
+Zdjęcia
 
-## Realizacja
+Wiadomość
 
-- produkcja
-- montaż
-- odbiór
+Konfiguracja produktu
 
-## Zakończenie
+Orientacyjna cena
 
-- płatność końcowa
+---
+
+## CRM
+
+Bitrix24
+
+---
+
+## Proces sprzedaży
+
+Nowy Lead
+
+↓
+
+Kontakt telefoniczny
+
+↓
+
+Zdjęcia
+
+↓
+
+Pomiar
+
+↓
+
+Oferta
+
+↓
+
+Negocjacje
+
+↓
+
+Umowa
+
+↓
+
+Zaliczka
+
+↓
+
+Produkcja
+
+↓
+
+Montaż
+
+↓
+
+Odbiór
+
+↓
+
+Płatność końcowa
+
+↓
+
+Zakończenie
+
+---
+
+## Dane przekazywane z kalkulatora
+
+Produkt
+
+Wymiary
+
+Pokrycie
+
+Dodatki
+
+Cena orientacyjna
+
+Imię
+
+Telefon
+
+Email
+
+Wiadomość
+
+Zdjęcia
