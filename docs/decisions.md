@@ -69,3 +69,14 @@ Projekt zostanie podzielony na niezależne moduły:
 - Oferta PDF
 
 Każdy moduł powinien być możliwy do rozwijania niezależnie.
+
+## Reguły dostępności opcji
+
+Konfigurator musi obsługiwać warunkową dostępność opcji.
+
+Przykład:
+- rolety boczne są dostępne tylko wtedy, gdy klient wybrał ściany szklane przesuwne,
+- jeżeli klient zmieni ściany na "brak", system powinien usunąć rolety boczne z konfiguracji.
+
+Powód:
+Tak działa kalkulator EcoGardens i zapobiega to tworzeniu niemożliwych konfiguracji.
