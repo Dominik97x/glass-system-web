@@ -98,6 +98,21 @@ LED                999
 ```
 
 ---
+### Decyzja MVP
+
+Do pierwszej wersji kalkulatora wykorzystujemy wyłącznie Macierz Cen sprzedażowych.
+
+Z tej tabeli budujemy następujące pliki danych:
+
+- construction.ts
+- roof.ts
+- walls.ts
+- zip.ts
+- awning.ts
+- led.ts
+- accessories.ts
+
+Nie wykorzystujemy jeszcze tabel kosztów, rentowności, BOM ani montażu.
 
 ### Przeznaczenie
 
@@ -344,6 +359,126 @@ Po zakończeniu modułu zadaszeń.
 
 Na podstawie analizy konfiguratora EcoGardens udało się potwierdzić następujące zależności.
 
+# Algorytm wyceny produktu
+
+Na podstawie analizy konfiguratora oraz cennika EG przyjmujemy następującą kolejność obliczeń.
+
+## Etap 1
+
+Wyznaczenie ceny konstrukcji.
+
+Źródło danych:
+
+construction.ts
+
+Realizacja:
+
+ConstructionCalculator
+
+---
+
+## Etap 2
+
+Dodanie ceny pokrycia dachu.
+
+Źródło danych:
+
+roof.ts
+
+Realizacja:
+
+RoofCalculator
+
+---
+
+## Etap 3
+
+Dodanie ceny ścian.
+
+Źródło danych:
+
+walls.ts
+
+Realizacja:
+
+WallCalculator
+
+---
+
+## Etap 4
+
+Dodanie rolet ZIP.
+
+Źródło danych:
+
+zip.ts
+
+Realizacja:
+
+ZipCalculator
+
+---
+
+## Etap 5
+
+Dodanie markizy.
+
+Źródło danych:
+
+awning.ts
+
+Realizacja:
+
+AwningCalculator
+
+---
+
+## Etap 6
+
+Dodanie oświetlenia.
+
+Źródło danych:
+
+led.ts
+
+Realizacja:
+
+LedCalculator
+
+---
+
+## Etap 7
+
+Dodanie akcesoriów.
+
+Źródło danych:
+
+accessories.ts
+
+Realizacja:
+
+AccessoriesCalculator
+
+---
+
+## Etap 8
+
+Dodanie montażu.
+
+Źródło danych:
+
+installation.ts
+
+Realizacja:
+
+InstallationCalculator
+
+---
+
+## Wynik
+
+PricingEngine zwraca gotową ofertę zawierającą wszystkie pozycje oraz cenę końcową.
+
 ## Reguła 1
 
 Cena początkowa jest pobierana z macierzy cen.
@@ -579,3 +714,85 @@ Dlatego od początku rozdzielamy:
 - proces realizacji.
 
 Takie podejście pozwoli stworzyć system łatwy do rozbudowy o kolejne produkty (np. carporty, pergole, ogrody zimowe) bez konieczności przebudowy istniejącej architektury.
+
+# Mapowanie dokumentacji na kod
+
+| Obszar biznesowy | Implementacja |
+|------------------|---------------|
+| Konstrukcja | ConstructionCalculator |
+| Dach | RoofCalculator |
+| Ściany | WallCalculator |
+| ZIP | ZipCalculator |
+| Markiza | AwningCalculator |
+| LED | LedCalculator |
+| Akcesoria | AccessoriesCalculator |
+| Montaż | InstallationCalculator |
+| Silnik wyceny | PricingEngine |
+| Dane cenowe | FilePriceRepository |
+
+# Status implementacji
+
+## Dokumentacja
+
+- [x] Analiza cennika
+- [x] Model domenowy
+- [x] Model produktu
+- [x] Model konfiguracji
+
+## Pricing Engine
+
+- [x] PricingEngine
+- [x] PriceRepository
+- [x] FilePriceRepository
+
+## Kalkulatory
+
+- [x] ConstructionCalculator
+- [x] RoofCalculator
+- [ ] WallCalculator
+- [ ] ZipCalculator
+- [ ] AwningCalculator
+- [ ] LedCalculator
+- [ ] AccessoriesCalculator
+- [ ] InstallationCalculator
+
+## Dane
+
+- [ ] construction.ts
+- [ ] roof.ts
+- [ ] walls.ts
+- [ ] zip.ts
+- [ ] awning.ts
+- [ ] led.ts
+- [ ] accessories.ts
+- [ ] installation.ts
+
+## Frontend
+
+- [ ] Konfigurator
+- [ ] Wizualizacja
+- [ ] Formularz kontaktowy
+
+## CRM
+
+- [ ] Lead
+- [ ] Oferta
+- [ ] Zamówienie
+- [ ] Produkcja
+- [ ] Montaż
+
+
+# Inwentaryzacja tabel EG Cennik
+
+| ID | Nazwa tabeli | Strona PDF | Wykorzystanie | MVP | Status |
+|----|--------------|------------|---------------|-----|--------|
+| T1 | Macierz cen konstrukcji | ? | Pricing Engine | ✅ | Do przepisania |
+| T2 | Pokrycia dachu | ? | Pricing Engine | ✅ | Do przepisania |
+| T3 | Ściany przesuwne | ? | Pricing Engine | ✅ | Do przepisania |
+| T4 | Rolety ZIP | ? | Pricing Engine | ✅ | Do przepisania |
+| T5 | Markizy | ? | Pricing Engine | ✅ | Do przepisania |
+| T6 | LED | ? | Pricing Engine | ✅ | Do przepisania |
+| T7 | Dodatki | ? | Pricing Engine | ✅ | Do przepisania |
+| T8 | Rentowność | ? | Analizy | ❌ | Później |
+| T9 | BOM | ? | Produkcja | ❌ | Później |
+| T10 | Montaż | ? | Realizacja | ❌ | Później |

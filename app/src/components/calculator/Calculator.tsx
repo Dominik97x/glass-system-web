@@ -32,17 +32,32 @@ export function Calculator() {
   );
 
   return (
-    <main>
-      <h1>Kalkulator</h1>
+    <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
+      <div className="mx-auto max-w-6xl">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold">Kalkulator EG</h1>
+          <p className="mt-2 text-neutral-400">
+            Konfigurator zasilany przez Pricing Engine.
+          </p>
+        </header>
 
-      <ConfigurationForm
-        configuration={configuration}
-        onChange={setConfiguration}
-      />
+        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+          <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <ConfigurationForm
+              configuration={configuration}
+              onChange={setConfiguration}
+            />
+          </section>
 
-      <PriceSummary quote={quote} />
+          <aside className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <PriceSummary quote={quote} />
 
-      <QuoteItems quote={quote} />
+            <div className="mt-6">
+              <QuoteItems quote={quote} />
+            </div>
+          </aside>
+        </div>
+      </div>
     </main>
   );
 }
