@@ -1,75 +1,125 @@
 import type { ProductConfiguration } from "@/domain/ProductConfiguration";
-import type { Quote } from "@/domain/Quote";
 import type { QuoteItem } from "@/domain/QuoteItem";
-import {EG_PRICE_MATRIX,type PriceMatrixRow,} from "@/data/pricing/eg/price-matrix";
+import type { Quote } from "@/domain/Quote";
+
+import { ConstructionCalculator } from "../calculators/ConstructionCalculator";
+import { FilePriceRepository } from "../services/FilePriceRepository";
+import { RoofCalculator } from "../calculators/RoofCalculator";
+import { ZipCalculator } from "../calculators/ZipCalculator";
+import { WallCalculator } from "../calculators/WallCalculator";
+import { AwningCalculator } from "../calculators/AwningCalculator";
+import { LedCalculator } from "../calculators/LedCalculator";
+import { AccessoriesCalculator } from "../calculators/AccessoriesCalculator";
 
 
+export class PricingEngine {
+  private repository = new FilePriceRepository();
 
+  calculate(configuration: ProductConfiguration): Quote {
+    const items: QuoteItem[] = [];
 
-function findPriceRow(configuration: ProductConfiguration): PriceMatrixRow {
-  const row = EG_PRICE_MATRIX.find(
-    (item) =>
-      item.width === configuration.width &&
-      item.length === configuration.length
-  );
+    const constructionCalculator = new ConstructionCalculator(this.repository);
 
-  if (!row) {
-    throw new Error("Price row not found for selected configuration");
-  }
+    const constructionPrice =
+      constructionCalculator.calculate(configuration);
 
-  return row;
+items.push({
+  id: "construction",
+  name: "Konstrukcja",
+  category: "construction",
+  quantity: 1,
+  unitPriceGross: constructionPrice,
+  totalPriceGross: constructionPrice,
+});
+const roofCalculator = new RoofCalculator(this.repository);
+const roofPrice = roofCalculator.calculate(configuration);
+
+if (roofPrice > 0) {
+  items.push({
+    id: "roof",
+    name: "Pokrycie dachu",
+    category: "roof",
+    quantity: 1,
+    unitPriceGross: roofPrice,
+    totalPriceGross: roofPrice,
+  });
 }
+const wallCalculator = new WallCalculator(this.repository);
+const wallPrice = wallCalculator.calculate(configuration);
 
-function getWallPrice(configuration: ProductConfiguration, row: PriceMatrixRow) {
-  switch (configuration.walls) {
-    case "none":
-      return 0;
-    case "glass_clear":
-      return row.wallsClear;
-    case "glass_milky":
-      return row.wallsMilky;
-    case "glass_tinted":
-      return row.wallsTinted;
-  }
+if (wallPrice > 0) {
+  items.push({
+    id: "walls",
+    name: "Ściany przesuwne",
+    category: "wall",
+    quantity: 1,
+    unitPriceGross: wallPrice,
+    totalPriceGross: wallPrice,
+  });
 }
+const zipCalculator = new ZipCalculator(this.repository);
+const zipPrice = zipCalculator.calculate(configuration);
 
-export function calculateQuote(configuration: ProductConfiguration): Quote {
-  const row = findPriceRow(configuration);
+if (zipPrice > 0) {
+  items.push({
+    id: "zip",
+    name: "Rolety ZIP",
+    category: "zip",
+    quantity: 1,
+    unitPriceGross: zipPrice,
+    totalPriceGross: zipPrice,
+  });
+}
+const awningCalculator = new AwningCalculator(this.repository);
+const awningPrice = awningCalculator.calculate(configuration);
 
-  const items: QuoteItem[] = [
-    {
-      id: "construction",
-      name: `Konstrukcja aluminiowa ${configuration.length} x ${configuration.width}`,
-      category: "construction",
-      quantity: 1,
-      unitPriceGross: row.construction,
-      totalPriceGross: row.construction,
-    },
-  ];
 
-  const wallPrice = getWallPrice(configuration, row);
+if (awningPrice > 0) {
+  items.push({
+    id: "awning",
+    name: "Markiza",
+    category: "awning",
+    quantity: 1,
+    unitPriceGross: awningPrice,
+    totalPriceGross: awningPrice,
+  });
+}
+const ledCalculator = new LedCalculator(this.repository);
+const ledPrice = ledCalculator.calculate(configuration);
 
-  if (wallPrice > 0) {
-    items.push({
-      id: "walls",
-      name: "Ściany szklane przesuwne",
-      category: "wall",
-      quantity: 1,
-      unitPriceGross: wallPrice,
-      totalPriceGross: wallPrice,
-    });
+if (ledPrice > 0) {
+  items.push({
+    id: "led",
+    name: "Oświetlenie LED",
+    category: "lighting",
+    quantity: 1,
+    unitPriceGross: ledPrice,
+    totalPriceGross: ledPrice,
+  });
+}
+const accessoriesCalculator = new AccessoriesCalculator(this.repository);
+const accessoriesPrice = accessoriesCalculator.calculate(configuration);
+
+if (accessoriesPrice > 0) {
+  items.push({
+    id: "accessories",
+    name: "Akcesoria",
+    category: "accessory",
+    quantity: 1,
+    unitPriceGross: accessoriesPrice,
+    totalPriceGross: accessoriesPrice,
+  });
+}
+    const totalGross = items.reduce(
+  (sum, item) => sum + item.totalPriceGross,
+  0
+);
+
+return {
+  configuration,
+  items,
+  totalGross,
+  currency: "PLN",
+};
   }
-
-  const totalGross = items.reduce(
-    (sum, item) => sum + item.totalPriceGross,
-    0
-  );
-
-  return {
-    id: "quote-preview",
-    configuration,
-    items,
-    totalGross,
-    currency: "PLN",
-  };
 }
