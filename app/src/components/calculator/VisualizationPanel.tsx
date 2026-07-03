@@ -2,26 +2,14 @@ import {
   getProductKind,
   type ProductConfiguration,
 } from "@/domain/ProductConfiguration";
+import {
+  ROOF_LABELS,
+  WALL_LABELS,
+} from "@/data/configuration-labels";
 
 interface Props {
   configuration: ProductConfiguration;
 }
-
-const roofLabels: Record<ProductConfiguration["roof"], string> = {
-  polycarbonate_clear: "Poliwęglan przezroczysty",
-  polycarbonate_milky: "Poliwęglan mleczny",
-  polycarbonate_grey: "Poliwęglan szary",
-  polycarbonate_smoke: "Poliwęglan dymiony",
-  glass_clear: "Szkło przezroczyste",
-  glass_milky: "Szkło mleczne",
-};
-
-const wallLabels: Record<ProductConfiguration["walls"], string> = {
-  none: "Brak ścian",
-  glass_clear: "Szyby przezroczyste",
-  glass_milky: "Szyby mleczne",
-  glass_tinted: "Szyby przyciemniane",
-};
 
 export function VisualizationPanel({ configuration }: Props) {
   const productKind = getProductKind(configuration);
@@ -52,12 +40,12 @@ export function VisualizationPanel({ configuration }: Props) {
 
         <p>
           <strong className="text-white">Dach:</strong>{" "}
-          {roofLabels[configuration.roof]}
+          {ROOF_LABELS[configuration.roof]}
         </p>
 
         <p>
           <strong className="text-white">Ściany:</strong>{" "}
-          {wallLabels[configuration.walls]}
+          {WALL_LABELS[configuration.walls]}
         </p>
       </div>
     </section>

@@ -2,18 +2,12 @@ import type {
   ProductConfiguration,
   WallOption,
 } from "@/domain/ProductConfiguration";
+import { WALL_OPTIONS } from "@/data/configuration-labels";
 
 interface Props {
   configuration: ProductConfiguration;
   onChange(configuration: ProductConfiguration): void;
 }
-
-const walls: { value: WallOption; label: string }[] = [
-  { value: "none", label: "Brak ścian" },
-  { value: "glass_clear", label: "Szyby przezroczyste" },
-  { value: "glass_milky", label: "Szyby mleczne" },
-  { value: "glass_tinted", label: "Szyby przyciemniane" },
-];
 
 export function WallsSection({ configuration, onChange }: Props) {
   return (
@@ -38,7 +32,7 @@ export function WallsSection({ configuration, onChange }: Props) {
             });
           }}
         >
-          {walls.map((wall) => (
+          {WALL_OPTIONS.map((wall) => (
             <option key={wall.value} value={wall.value}>
               {wall.label}
             </option>
