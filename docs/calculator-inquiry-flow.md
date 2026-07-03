@@ -4,7 +4,7 @@
 
 Ten dokument opisuje przepływ danych od konfiguracji produktu w kalkulatorze do przygotowania leada sprzedażowego.
 
-Na obecnym etapie formularz zapytania wysyła dane do lokalnego endpointu API w Next.js. Backend waliduje payload, przekazuje poprawny lead do handlera, a handler zapisuje lead przez tymczasowe repozytorium konsolowe.
+Na obecnym etapie formularz zapytania wysyła dane do lokalnego endpointu API w Next.js. Backend waliduje payload, przekazuje poprawny lead do handlera, handler tworzy zapisany lead z numerem zapytania, statusem i datą przyjęcia, a następnie zapisuje go przez tymczasowe repozytorium konsolowe.
 
 Dane nie są jeszcze zapisywane w bazie danych, CRM ani wysyłane e-mailem.
 
@@ -43,6 +43,8 @@ POST /api/inquiries
 validateCalculatorInquiryLead
 ↓
 CalculatorInquiryHandler
+↓
+StoredCalculatorInquiryLead
 ↓
 CalculatorInquiryRepository
 ↓
@@ -227,7 +229,7 @@ Formularz nie wysyła danych bezpośrednio do CRM ani bazy danych. Przekazuje da
 
 ## 6. CalculatorInquiryLead
 
-Model leada znajduje się w pliku:
+Model leada przychodzącego z formularza znajduje się w pliku:
 
 ```text
 src/domain/CalculatorInquiryLead.ts
@@ -249,11 +251,105 @@ Struktura:
 }
 ```
 
-Ten obiekt jest docelowym kandydatem do zapisania w CRM lub bazie danych.
+`CalculatorInquiryLead` reprezentuje dane utworzone po stronie frontendu na podstawie formularza kontaktowego oraz aktualnego `QuoteSnapshot`.
+
+Ten obiekt nie ma jeszcze numeru zapytania, statusu ani daty przyjęcia przez backend.
 
 ---
 
-## 7. CalculatorInquiryService
+## 7. StoredCalculatorInquiryLead
+
+Model zapisanego leada znajduje się w pliku:
+
+```text
+src/domain/StoredCalculatorInquiryLead.ts
+```
+
+`StoredCalculatorInquiryLead` reprezentuje lead po przyjęciu przez backend.
+
+To jest różnica między:
+
+```text
+CalculatorInquiryLead
+```
+
+a:
+
+```text
+StoredCalculatorInquiryLead
+```
+
+`CalculatorInquiryLead` to dane przychodzące z formularza.
+
+`StoredCalculatorInquiryLead` to lead zaakceptowany przez backend, gotowy do zapisu w CRM, bazie danych lub innym trwałym źródle.
+
+Struktura rozszerza `CalculatorInquiryLead` o pola:
+
+```ts
+{
+  id: string,
+  status: CalculatorInquiryStatus,
+  receivedAt: string
+}
+```
+
+Dostępne statusy:
+
+```ts
+type CalculatorInquiryStatus =
+  | "new"
+  | "contacted"
+  | "quoted"
+  | "won"
+  | "lost";
+```
+
+Znaczenie pól:
+
+- `id` — techniczny numer zapytania nadawany przez backend,
+- `status` — aktualny status leada w procesie sprzedaży,
+- `receivedAt` — data przyjęcia zapytania przez backend.
+
+Przykład:
+
+```ts
+{
+  id: "inq_70e0f335-0fee-4b5a-9217-94a8f50e356e",
+  status: "new",
+  receivedAt: "2026-07-03T11:13:25.440Z",
+  source: "calculator",
+  createdAt: "2026-07-03T11:13:25.399Z",
+  customer: {
+    name: "Mima",
+    email: "mima@mima.pl",
+    phone: "538320291",
+    message: "Treść wiadomości"
+  },
+  quote: {
+    configuration,
+    configurationSummary,
+    items,
+    totalGross,
+    currency: "PLN"
+  }
+}
+```
+
+Ten model będzie podstawą pod przyszły panel CRM, gdzie lead będzie mógł przechodzić przez statusy:
+
+```text
+new
+↓
+contacted
+↓
+quoted
+↓
+won / lost
+```
+
+---
+
+## 8. CalculatorInquiryService
 
 Serwis frontendowy znajduje się w pliku:
 
@@ -281,9 +377,11 @@ API route
 
 Serwis zwraca do UI informację o sukcesie albo błędzie.
 
+W przypadku sukcesu odpowiedź może zawierać `inquiryId`, czyli numer zapytania nadany po stronie backendu.
+
 ---
 
-## 8. API endpoint
+## 9. API endpoint
 
 Endpoint zapytań znajduje się w pliku:
 
@@ -317,7 +415,7 @@ Response.json(result)
 
 ---
 
-## 9. Validator
+## 10. Validator
 
 Walidator znajduje się w pliku:
 
@@ -359,7 +457,7 @@ oraz komunikat błędu.
 
 ---
 
-## 10. CalculatorInquiryHandler
+## 11. CalculatorInquiryHandler
 
 Handler znajduje się w pliku:
 
@@ -369,12 +467,28 @@ src/inquiries/server/CalculatorInquiryHandler.ts
 
 Handler odpowiada za obsługę poprawnie zwalidowanego leada.
 
-Obecnie handler przekazuje lead do repozytorium:
+Obecnie handler:
+
+- przyjmuje `CalculatorInquiryLead`,
+- tworzy `StoredCalculatorInquiryLead`,
+- nadaje `id`,
+- ustawia status `"new"`,
+- ustawia `receivedAt`,
+- przekazuje zapisany lead do repozytorium,
+- zwraca do API wynik z numerem zapytania.
+
+Obecny przepływ handlera:
 
 ```text
-CalculatorInquiryHandler
+CalculatorInquiryLead
 ↓
-CalculatorInquiryRepository
+createStoredLead()
+↓
+StoredCalculatorInquiryLead
+↓
+CalculatorInquiryRepository.save()
+↓
+HandleCalculatorInquiryResult
 ```
 
 Docelowo w tym miejscu może pojawić się dodatkowa logika, np.:
@@ -387,7 +501,7 @@ Docelowo w tym miejscu może pojawić się dodatkowa logika, np.:
 
 ---
 
-## 11. CalculatorInquiryRepository
+## 12. CalculatorInquiryRepository
 
 Interfejs repozytorium znajduje się w pliku:
 
@@ -399,11 +513,17 @@ Interfejs:
 
 ```ts
 export interface CalculatorInquiryRepository {
-  save(lead: CalculatorInquiryLead): Promise<void>;
+  save(lead: StoredCalculatorInquiryLead): Promise<void>;
 }
 ```
 
-Repozytorium jest warstwą odpowiedzialną za zapis leada.
+Repozytorium jest warstwą odpowiedzialną za zapis zapisanego leada.
+
+Repozytorium nie przyjmuje już surowego `CalculatorInquiryLead`, tylko `StoredCalculatorInquiryLead`, czyli lead z nadanym:
+
+- `id`,
+- `status`,
+- `receivedAt`.
 
 Dzięki temu handler nie musi wiedzieć, czy lead jest zapisywany do:
 
@@ -416,7 +536,7 @@ Dzięki temu handler nie musi wiedzieć, czy lead jest zapisywany do:
 
 ---
 
-## 12. ConsoleCalculatorInquiryRepository
+## 13. ConsoleCalculatorInquiryRepository
 
 Tymczasowa implementacja repozytorium znajduje się w pliku:
 
@@ -434,6 +554,17 @@ W terminalu, w którym działa `npm run dev`, powinien pojawić się wpis:
 
 ```text
 Calculator inquiry lead saved:
+```
+
+Log powinien zawierać m.in.:
+
+```text
+id
+status
+receivedAt
+source
+customer
+quote
 ```
 
 Docelowo ta implementacja zostanie zastąpiona lub rozszerzona przez repozytorium zapisujące lead do:
@@ -460,7 +591,12 @@ Na obecnym etapie działa:
 - walidacja payloadu po stronie API,
 - odrzucanie błędnych requestów statusem 400,
 - obsługa poprawnego leada przez CalculatorInquiryHandler,
+- tworzenie StoredCalculatorInquiryLead po stronie backendu,
+- nadawanie numeru zapytania `id`,
+- ustawianie statusu `"new"`,
+- ustawianie `receivedAt`,
 - zapis leada przez ConsoleCalculatorInquiryRepository,
+- zwracanie numeru zapytania do UI,
 - komunikat sukcesu w UI,
 - stan `Wysyłanie...`,
 - stan `Wysłano`,
@@ -494,9 +630,10 @@ Kroki:
 3. Kliknij "Wyślij".
 4. Przycisk powinien pokazać "Wysyłanie...".
 5. Następnie powinien pokazać "Wysłano".
-6. W UI powinien pojawić się komunikat sukcesu.
+6. W UI powinien pojawić się komunikat sukcesu z numerem zapytania.
 7. W terminalu powinien pojawić się log "Calculator inquiry lead saved:".
-8. Request powinien zakończyć się statusem 200.
+8. Log powinien zawierać id, status i receivedAt.
+9. Request powinien zakończyć się statusem 200.
 ```
 
 ---
@@ -554,13 +691,15 @@ Najbliższe techniczne kroki:
 - `ProductConfiguration` pozostaje technicznym opisem konfiguracji.
 - `Quote` pozostaje wynikiem Pricing Engine.
 - `QuoteSnapshot` jest formatem transportowym do CRM/PDF/API.
-- `CalculatorInquiryLead` łączy dane klienta z wyceną.
+- `CalculatorInquiryLead` łączy dane klienta z wyceną przed przyjęciem przez backend.
+- `StoredCalculatorInquiryLead` reprezentuje lead przyjęty przez backend.
+- `StoredCalculatorInquiryLead` posiada `id`, `status` i `receivedAt`.
 - `InquiryForm` zbiera dane klienta i tworzy lead.
 - `CalculatorInquiryService` wysyła lead do API.
 - `route.ts` obsługuje request HTTP i walidację.
 - `validateCalculatorInquiryLead` chroni endpoint przed błędnym payloadem.
-- `CalculatorInquiryHandler` obsługuje poprawnie zwalidowany lead.
-- `CalculatorInquiryRepository` abstrahuje zapis leada.
+- `CalculatorInquiryHandler` tworzy zapisany lead i obsługuje poprawnie zwalidowany lead.
+- `CalculatorInquiryRepository` abstrahuje zapis zapisanego leada.
 - `ConsoleCalculatorInquiryRepository` jest tymczasową implementacją developerską.
 - UI nie powinien samodzielnie wysyłać danych do CRM.
 - Endpoint API nie powinien zawierać logiki zapisu do bazy, CRM ani e-maila.
