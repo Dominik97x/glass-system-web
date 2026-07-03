@@ -7,9 +7,9 @@ import {
   type ProductConfiguration,
 } from "@/domain/ProductConfiguration";
 import { QuoteService } from "@/pricing/services/QuoteService";
-import { ConfigurationForm } from "./ConfigurationForm";
-import { PriceSummary } from "./PriceSummary";
-import { QuoteItems } from "./QuoteItems";
+import { ConfiguratorPanel } from "./ConfiguratorPanel";
+import { PriceSidebar } from "./PriceSidebar";
+import { VisualizationPanel } from "./VisualizationPanel";
 
 const quoteService = new QuoteService();
 
@@ -33,7 +33,7 @@ export function Calculator() {
 
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <header className="mb-8">
           <h1 className="text-3xl font-bold">Kalkulator EG</h1>
           <p className="mt-2 text-neutral-400">
@@ -41,21 +41,15 @@ export function Calculator() {
           </p>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-          <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <ConfigurationForm
-              configuration={configuration}
-              onChange={setConfiguration}
-            />
-          </section>
+        <div className="grid gap-6 xl:grid-cols-[360px_1fr_340px]">
+          <ConfiguratorPanel
+            configuration={configuration}
+            onChange={setConfiguration}
+          />
 
-          <aside className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <PriceSummary quote={quote} />
+          <VisualizationPanel configuration={configuration} />
 
-            <div className="mt-6">
-              <QuoteItems quote={quote} />
-            </div>
-          </aside>
+          <PriceSidebar quote={quote} />
         </div>
       </div>
     </main>
