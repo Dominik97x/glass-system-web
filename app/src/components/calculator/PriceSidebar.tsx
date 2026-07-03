@@ -2,6 +2,7 @@ import type { Quote } from "@/domain/Quote";
 
 import { ConfigurationSummary } from "./ConfigurationSummary";
 import { PriceSummary } from "./PriceSummary";
+import { QuoteActions } from "./QuoteActions";
 import { QuoteItems } from "./QuoteItems";
 
 interface Props {
@@ -19,6 +20,10 @@ export function PriceSidebar({ quote }: Props) {
 
       <div className="mt-6 border-t border-neutral-800 pt-6">
         <QuoteItems quote={quote} />
+      </div>
+
+      <div className="mt-6 border-t border-neutral-800 pt-6">
+        <QuoteActions quote={quote} />
       </div>
     </aside>
   );
