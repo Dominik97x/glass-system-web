@@ -835,3 +835,330 @@ Najważniejsze ryzyka:
 - Sekrety Bitrix24 przechowujemy tylko po stronie serwera.
 - W pierwszym MVP integracji skupiamy się na utworzeniu deala i przekazaniu danych konfiguracji.
 - Dokumenty, kalendarz i realizacja pozostają w Bitrix24.
+
+---
+
+# Aktualizacja decyzji: Excel jako źródło cennika
+
+## Kontekst
+
+Po dalszej analizie EG Cennik, rozmów o historycznym utrzymywaniu cennika oraz screenów z Bitrix24 doprecyzowujemy rolę Bitrix24 w systemie.
+
+Najważniejsza decyzja:
+
+```text
+Excel Online jest źródłem prawdy dla cennika.
+Bitrix24 nie jest źródłem prawdy dla cennika.
+Bitrix24 jest odbiorcą gotowej wyceny oraz centrum procesu sprzedaży i realizacji.
+```
+
+---
+
+# Rola Excela
+
+Excel Online jest docelowym masterem dla:
+
+- cen sprzedażowych,
+- macierzy wymiarów,
+- opcji produktu,
+- reguł cenowych,
+- stawek VAT,
+- mapowania pozycji kalkulatora na produkty Bitrix24.
+
+Aplikacja nie powinna docelowo wymagać zmiany kodu, aby zmienić ceny.
+
+Obecne pliki cenowe w aplikacji:
+
+```text
+src/data/pricing/eg/*.ts
+```
+
+są traktowane jako rozwiązanie MVP/developerskie.
+
+Docelowo zostaną zastąpione importem z Excela oraz opublikowanym snapshotem cennika.
+
+---
+
+# Rola aplikacji
+
+Aplikacja `glass-system-web` odpowiada za:
+
+1. pobranie / import danych z Excela,
+2. walidację cennika,
+3. publikację ostatniego poprawnego snapshotu,
+4. wyliczenie ceny przez Pricing Engine,
+5. zbudowanie `Quote`,
+6. utworzenie zapytania/deala,
+7. przekazanie danych do Bitrix24.
+
+Docelowy przepływ:
+
+```text
+Excel Online
+↓
+Pricing Importer
+↓
+Pricing Validator
+↓
+Published Pricing Snapshot
+↓
+Pricing Engine
+↓
+Quote
+↓
+Bitrix24 Deal
+↓
+Bitrix24 Product Rows
+```
+
+---
+
+# Rola Bitrix24
+
+Bitrix24 pozostaje docelowym CRM-em i systemem operacyjnym.
+
+Bitrix24 odpowiada za:
+
+- deale,
+- pipeline sprzedaży,
+- pipeline realizacji,
+- kontakty,
+- produkty na dealu,
+- dokumenty,
+- wyceny,
+- proformy,
+- umowy,
+- załączniki,
+- kalendarz,
+- montaż,
+- historię działań.
+
+Nie budujemy tych funkcji od zera w aplikacji.
+
+Lokalny panel:
+
+```text
+/admin/leady
+```
+
+pozostaje tylko panelem developerskim do testowania zapytań.
+
+---
+
+# Pipeline Bitrix24
+
+Na podstawie screenów z obecnego Bitrix24 najlepszym kandydatem dla nowych zapytań z kalkulatora jest pipeline:
+
+```text
+Etap sprzedaży z pomiarem
+```
+
+Domyślny etap startowy:
+
+```text
+Nowy lead
+```
+
+Techniczne wartości nadal muszą zostać pobrane z portalu Bitrix24:
+
+```text
+categoryId
+stageId
+assignedById
+```
+
+Nie wpisujemy tych wartości na podstawie zgadywania.
+
+Docelowo znajdą się w:
+
+```text
+docs/bitrix24-portal-mapping.md
+```
+
+oraz w lokalnym pliku:
+
+```text
+app/.env.local
+```
+
+---
+
+# Product Rows
+
+Screeny z Bitrix24 pokazują, że dokumenty są generowane na podstawie pozycji produktowych przypisanych do deala.
+
+Dlatego docelowa integracja nie powinna ograniczać się tylko do opisu konfiguracji w `comments`.
+
+Docelowo każdy `QuoteItem` powinien zostać zamieniony na `Bitrix24ProductRow`.
+
+Przykładowe kategorie pozycji:
+
+```text
+construction
+roof
+walls
+zip
+awning
+lighting
+accessory
+installation
+```
+
+Powiązanie między pozycją kalkulatora a produktem Bitrix24 powinno być trzymane w Excelu w zakładce:
+
+```text
+app_bitrix_product_mapping
+```
+
+---
+
+# Katalog produktów Bitrix24
+
+Na podstawie screenów wiemy, że katalog Bitrix24 ma strukturę zbliżoną do naszego modelu Pricing Engine.
+
+Widoczne były między innymi sekcje:
+
+```text
+ZADASZENIE TARASU
+OGRÓD ZIMOWY
+POKRYCIE DACHU
+ROLETY BOCZNE
+MARKIZA
+OŚWIETLENIE
+DODATKI
+FUNDAMENT
+SYSTEMY PRZESUWNE
+MONTAŻ
+```
+
+To potwierdza, że nasz podział domenowy jest właściwy.
+
+Docelowo mapowanie powinno wyglądać w uproszczeniu tak:
+
+| QuoteItem category | Sekcja Bitrix24 |
+|---|---|
+| `construction` | `ZADASZENIE TARASU` albo `OGRÓD ZIMOWY` |
+| `roof` | `POKRYCIE DACHU` |
+| `walls` | `SYSTEMY PRZESUWNE` / `SZYBY BOCZNE` |
+| `zip` | `ROLETY BOCZNE` |
+| `awning` | `MARKIZA` |
+| `lighting` | `OŚWIETLENIE` |
+| `accessory` | `DODATKI` / `FUNDAMENT` |
+| `installation` | `MONTAŻ` |
+
+Pełne `productId` muszą zostać pobrane z API Bitrix24 albo uzupełnione ręcznie po eksporcie katalogu.
+
+---
+
+# VAT
+
+Na stronie kalkulator pokazuje ceny brutto.
+
+Na screenach z Bitrix24 dokumenty wyglądają na oparte o układ:
+
+```text
+Cena netto
+VAT %
+Cena brutto
+```
+
+Dlatego integracja musi uważać na różnicę między ceną brutto w kalkulatorze a ceną, którą Bitrix24 traktuje jako netto lub brutto.
+
+Nie wolno bezrefleksyjnie wysyłać ceny brutto jako ceny netto produktu, bo może to spowodować podwójne naliczenie VAT.
+
+Robocze założenie:
+
+```text
+Strona: ceny brutto
+Bitrix24 product rows: netto + VAT
+```
+
+Ta decyzja wymaga testu na realnym albo testowym portalu Bitrix24.
+
+Excel powinien przechowywać jawne pola:
+
+```text
+vat_rate
+tax_included
+price_mode
+```
+
+---
+
+# Tryby integracji
+
+Aktualne tryby repozytorium zapytań pozostają poprawne:
+
+```env
+CALCULATOR_INQUIRY_REPOSITORY=local
+CALCULATOR_INQUIRY_REPOSITORY=bitrix24
+CALCULATOR_INQUIRY_REPOSITORY=hybrid
+```
+
+Znaczenie:
+
+| Tryb | Znaczenie |
+|---|---|
+| `local` | zapis tylko do lokalnego JSON, tryb developerski |
+| `bitrix24` | zapis tylko do Bitrix24 |
+| `hybrid` | zapis lokalny + wysyłka do Bitrix24 |
+
+Na czas testów najlepszy będzie tryb:
+
+```env
+CALCULATOR_INQUIRY_REPOSITORY=hybrid
+```
+
+Dzięki temu zachowujemy lokalny backup developerski i jednocześnie testujemy Bitrix24.
+
+---
+
+# Wymagane dane z portalu Bitrix24
+
+Przed aktywacją integracji potrzebujemy pobrać:
+
+```text
+categoryId pipeline'u sprzedażowego
+stageId etapu startowego
+assignedById domyślnego opiekuna
+field codes pól własnych
+productId produktów katalogowych
+reguły VAT
+sposób działania product rows
+```
+
+Te dane zostaną opisane w:
+
+```text
+docs/bitrix24-portal-mapping.md
+```
+
+---
+
+# Plan testów Bitrix24
+
+Przed uruchomieniem produkcyjnym należy wykonać testy:
+
+1. utworzenie deala bez product rows,
+2. utworzenie deala z product rows po nazwie,
+3. wygenerowanie dokumentu z product rows po nazwie,
+4. utworzenie deala z product rows z `productId`,
+5. sprawdzenie VAT dla produktów,
+6. sprawdzenie VAT dla montażu,
+7. sprawdzenie poprawności proformy/specyfikacji/wyceny,
+8. sprawdzenie, czy deal trafia do właściwego pipeline'u i etapu.
+
+---
+
+# Decyzje po aktualizacji
+
+1. Excel Online jest masterem cennika.
+2. Bitrix24 nie jest masterem cennika.
+3. Aplikacja liczy cenę na podstawie snapshotu z Excela.
+4. Bitrix24 dostaje gotową wycenę.
+5. Product rows są docelowo wymagane, ponieważ dokumenty Bitrix24 bazują na produktach.
+6. Mapowanie produktów Bitrix24 powinno być przechowywane w Excelu.
+7. VAT musi być obsłużony jawnie.
+8. Lokalny panel `/admin/leady` pozostaje tylko narzędziem developerskim.
+9. Nie rozwijamy własnego CRM.
+10. Realizacja i dokumenty pozostają w Bitrix24.
