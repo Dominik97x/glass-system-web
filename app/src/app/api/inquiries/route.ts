@@ -1,4 +1,4 @@
-import { ConsoleCalculatorInquiryRepository } from "@/inquiries/repositories/ConsoleCalculatorInquiryRepository";
+import { FileCalculatorInquiryRepository } from "@/inquiries/repositories/FileCalculatorInquiryRepository";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
 import { validateCalculatorInquiryLead } from "@/inquiries/validators/calculator-inquiry-validator";
 
@@ -8,8 +8,18 @@ interface SubmitCalculatorInquiryResponse {
   inquiryId?: string;
 }
 
-const inquiryRepository = new ConsoleCalculatorInquiryRepository();
+export const runtime = "nodejs";
+
+const inquiryRepository = new FileCalculatorInquiryRepository();
 const inquiryHandler = new CalculatorInquiryHandler(inquiryRepository);
+
+export async function GET(): Promise<Response> {
+  const inquiries = await inquiryRepository.findAll();
+
+  return Response.json({
+    inquiries,
+  });
+}
 
 export async function POST(request: Request): Promise<Response> {
   let payload: unknown;

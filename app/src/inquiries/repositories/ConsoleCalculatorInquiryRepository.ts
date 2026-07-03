@@ -7,4 +7,8 @@ export class ConsoleCalculatorInquiryRepository
   async save(lead: StoredCalculatorInquiryLead): Promise<void> {
     console.log("Calculator inquiry lead saved:", lead);
   }
+
+  async findAll(): Promise<StoredCalculatorInquiryLead[]> {
+    return [];
+  }
 }
