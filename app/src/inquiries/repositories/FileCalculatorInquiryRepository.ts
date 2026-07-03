@@ -26,6 +26,14 @@ export class FileCalculatorInquiryRepository
     return this.readLeads();
   }
 
+  async findById(
+    id: string
+  ): Promise<StoredCalculatorInquiryLead | null> {
+    const leads = await this.readLeads();
+
+    return leads.find((lead) => lead.id === id) ?? null;
+  }
+
   private async readLeads(): Promise<StoredCalculatorInquiryLead[]> {
     await this.ensureDirectoryExists();
 

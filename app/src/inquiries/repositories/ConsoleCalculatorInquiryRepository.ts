@@ -11,4 +11,8 @@ export class ConsoleCalculatorInquiryRepository
   async findAll(): Promise<StoredCalculatorInquiryLead[]> {
     return [];
   }
+
+  async findById(): Promise<StoredCalculatorInquiryLead | null> {
+    return null;
+  }
 }

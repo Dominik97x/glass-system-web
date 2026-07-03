@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
 import { formatPrice } from "@/lib/format-price";
 
@@ -35,9 +37,13 @@ export default async function AdminLeadyPage() {
                     <p className="text-sm text-neutral-400">
                       Numer zapytania
                     </p>
-                    <h2 className="mt-1 text-xl font-semibold">
+
+                    <Link
+                      href={`/admin/leady/${inquiry.id}`}
+                      className="mt-1 block text-xl font-semibold underline-offset-4 hover:underline"
+                    >
                       {inquiry.id}
-                    </h2>
+                    </Link>
                   </div>
 
                   <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">

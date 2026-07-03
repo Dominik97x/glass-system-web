@@ -13,4 +13,10 @@ export class CalculatorInquiryAdminService {
         new Date(firstInquiry.receivedAt).getTime()
     );
   }
+
+  async getInquiryById(
+    id: string
+  ): Promise<StoredCalculatorInquiryLead | null> {
+    return this.repository.findById(id);
+  }
 }
