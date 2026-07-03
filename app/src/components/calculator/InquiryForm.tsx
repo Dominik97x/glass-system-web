@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
 import type { Quote } from "@/domain/Quote";
@@ -31,6 +31,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
 
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function updateField(field: keyof InquiryFormState, value: string) {
     setForm((currentForm) => ({
@@ -42,8 +43,11 @@ export function InquiryForm({ quote, onCancel }: Props) {
     setIsSubmitted(false);
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    setIsSubmitting(true);
+    setSubmitMessage(null);
 
     const inquiryLead: CalculatorInquiryLead = {
       source: "calculator",
@@ -57,10 +61,19 @@ export function InquiryForm({ quote, onCancel }: Props) {
       quote: createQuoteSnapshot(quote),
     };
 
-    const result = inquiryService.submit(inquiryLead);
+    try {
+      const result = await inquiryService.submit(inquiryLead);
 
-    setSubmitMessage(result.message);
-    setIsSubmitted(result.success);
+      setSubmitMessage(result.message);
+      setIsSubmitted(result.success);
+    } catch {
+      setSubmitMessage(
+        "Nie udało się przygotować zapytania. Spróbuj ponownie później."
+      );
+      setIsSubmitted(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -122,10 +135,14 @@ export function InquiryForm({ quote, onCancel }: Props) {
       <div className="mt-5 flex gap-3">
         <button
           type="submit"
-          disabled={isSubmitted}
+          disabled={isSubmitting || isSubmitted}
           className="flex-1 rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-300"
         >
-          {isSubmitted ? "Wysłano" : "Wyślij"}
+          {isSubmitting
+            ? "Wysyłanie..."
+            : isSubmitted
+              ? "Wysłano"
+              : "Wyślij"}
         </button>
 
         <button
@@ -138,8 +155,8 @@ export function InquiryForm({ quote, onCancel }: Props) {
       </div>
 
       <p className="mt-3 text-xs text-neutral-400">
-        Na tym etapie formularz nie wysyła jeszcze danych do CRM ani na e-mail.
-        Dane są przygotowywane jako obiekt leada w konsoli przeglądarki.
+        Na tym etapie formularz wysyła dane do lokalnego endpointu API. Backend
+        zapisuje przygotowany obiekt leada w konsoli serwera.
       </p>
     </form>
   );

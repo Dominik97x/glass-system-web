@@ -6,13 +6,40 @@ export interface SubmitCalculatorInquiryResult {
 }
 
 export class CalculatorInquiryService {
-  submit(lead: CalculatorInquiryLead): SubmitCalculatorInquiryResult {
-    console.log("Calculator inquiry lead:", lead);
+  async submit(
+    lead: CalculatorInquiryLead
+  ): Promise<SubmitCalculatorInquiryResult> {
+    const response = await fetch("/api/inquiries", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(lead),
+    });
 
-    return {
-      success: true,
-      message:
-        "Zapytanie zostało przygotowane. Na tym etapie dane leada zapisaliśmy w konsoli przeglądarki.",
-    };
+    let result: SubmitCalculatorInquiryResult | null = null;
+
+    try {
+      result = (await response.json()) as SubmitCalculatorInquiryResult;
+    } catch {
+      result = null;
+    }
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message:
+          result?.message ??
+          "Nie udało się przygotować zapytania. Spróbuj ponownie później.",
+      };
+    }
+
+    return (
+      result ?? {
+        success: false,
+        message:
+          "Nie udało się odczytać odpowiedzi serwera. Spróbuj ponownie później.",
+      }
+    );
   }
 }

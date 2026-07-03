@@ -121,3 +121,7 @@ Email
 Wiadomość
 
 Zdjęcia
+
+## Powiązane dokumenty
+
+- [Calculator Inquiry Flow](./calculator-inquiry-flow.md) — opis przepływu od konfiguracji produktu do przygotowania leada z kalkulatora.
