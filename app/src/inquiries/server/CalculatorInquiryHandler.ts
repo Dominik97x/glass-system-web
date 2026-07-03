@@ -1,4 +1,5 @@
 import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
+import type { CalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepository";
 
 export interface HandleCalculatorInquiryResult {
   success: boolean;
@@ -6,8 +7,12 @@ export interface HandleCalculatorInquiryResult {
 }
 
 export class CalculatorInquiryHandler {
-  handle(lead: CalculatorInquiryLead): HandleCalculatorInquiryResult {
-    console.log("Calculator inquiry lead received by API:", lead);
+  constructor(private repository: CalculatorInquiryRepository) {}
+
+  async handle(
+    lead: CalculatorInquiryLead
+  ): Promise<HandleCalculatorInquiryResult> {
+    await this.repository.save(lead);
 
     return {
       success: true,

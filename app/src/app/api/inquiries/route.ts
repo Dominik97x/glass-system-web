@@ -1,3 +1,4 @@
+import { ConsoleCalculatorInquiryRepository } from "@/inquiries/repositories/ConsoleCalculatorInquiryRepository";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
 import { validateCalculatorInquiryLead } from "@/inquiries/validators/calculator-inquiry-validator";
 
@@ -6,7 +7,8 @@ interface SubmitCalculatorInquiryResponse {
   message: string;
 }
 
-const inquiryHandler = new CalculatorInquiryHandler();
+const inquiryRepository = new ConsoleCalculatorInquiryRepository();
+const inquiryHandler = new CalculatorInquiryHandler(inquiryRepository);
 
 export async function POST(request: Request): Promise<Response> {
   let payload: unknown;
@@ -33,7 +35,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(response, { status: 400 });
   }
 
-  const result = inquiryHandler.handle(validation.lead);
+  const result = await inquiryHandler.handle(validation.lead);
 
   return Response.json(result);
 }
