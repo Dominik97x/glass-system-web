@@ -1,4 +1,4 @@
-import { FileCalculatorInquiryRepository } from "@/inquiries/repositories/FileCalculatorInquiryRepository";
+import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
 import { validateCalculatorInquiryLead } from "@/inquiries/validators/calculator-inquiry-validator";
 
@@ -10,7 +10,7 @@ interface SubmitCalculatorInquiryResponse {
 
 export const runtime = "nodejs";
 
-const inquiryRepository = new FileCalculatorInquiryRepository();
+const inquiryRepository = createCalculatorInquiryRepository();
 const inquiryHandler = new CalculatorInquiryHandler(inquiryRepository);
 
 export async function GET(): Promise<Response> {

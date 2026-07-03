@@ -2,10 +2,10 @@ import type {
   CalculatorInquiryStatus,
   StoredCalculatorInquiryLead,
 } from "@/domain/StoredCalculatorInquiryLead";
-import { FileCalculatorInquiryRepository } from "@/inquiries/repositories/FileCalculatorInquiryRepository";
+import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
 
 export class CalculatorInquiryAdminService {
-  private repository = new FileCalculatorInquiryRepository();
+  private repository = createCalculatorInquiryRepository();
 
   async getAllInquiries(): Promise<StoredCalculatorInquiryLead[]> {
     const inquiries = await this.repository.findAll();

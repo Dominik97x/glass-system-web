@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+
+# env examples can be committed
+!.env.example
+!.env.local.example
 
 # vercel
 .vercel
@@ -42,3 +46,6 @@ next-env.d.ts
 
 # Local inquiry data
 data/inquiries/calculator-inquiries.json
+
+# Local inquiry data
+data/
