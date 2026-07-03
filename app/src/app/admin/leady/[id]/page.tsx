@@ -1,14 +1,27 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
 import { formatPrice } from "@/lib/format-price";
+import { updateInquiryStatusAction } from "./actions";
 
 interface Props {
   params: Promise<{
     id: string;
   }>;
 }
+
+const statusOptions: {
+  value: CalculatorInquiryStatus;
+  label: string;
+}[] = [
+  { value: "new", label: "Nowy" },
+  { value: "contacted", label: "Kontakt podjęty" },
+  { value: "quoted", label: "Oferta wysłana" },
+  { value: "won", label: "Wygrany" },
+  { value: "lost", label: "Przegrany" },
+];
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -56,6 +69,39 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
 
         <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
           <aside className="space-y-6">
+            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+              <h2 className="text-xl font-semibold">Status leada</h2>
+
+              <form action={updateInquiryStatusAction} className="mt-4">
+                <input type="hidden" name="id" value={inquiry.id} />
+
+                <label className="block text-sm text-neutral-300">
+                  Zmień status
+                  <select
+                    name="status"
+                    defaultValue={inquiry.status}
+                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  >
+                    {statusOptions.map((statusOption) => (
+                      <option
+                        key={statusOption.value}
+                        value={statusOption.value}
+                      >
+                        {statusOption.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <button
+                  type="submit"
+                  className="mt-4 w-full rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 transition hover:bg-neutral-200"
+                >
+                  Zapisz status
+                </button>
+              </form>
+            </section>
+
             <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
               <h2 className="text-xl font-semibold">Klient</h2>
 

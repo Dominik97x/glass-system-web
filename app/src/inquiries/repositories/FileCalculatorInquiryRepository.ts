@@ -1,7 +1,10 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import type {
+  CalculatorInquiryStatus,
+  StoredCalculatorInquiryLead,
+} from "@/domain/StoredCalculatorInquiryLead";
 import type { CalculatorInquiryRepository } from "./CalculatorInquiryRepository";
 
 export class FileCalculatorInquiryRepository
@@ -32,6 +35,30 @@ export class FileCalculatorInquiryRepository
     const leads = await this.readLeads();
 
     return leads.find((lead) => lead.id === id) ?? null;
+  }
+
+  async updateStatus(
+    id: string,
+    status: CalculatorInquiryStatus
+  ): Promise<StoredCalculatorInquiryLead | null> {
+    const leads = await this.readLeads();
+
+    const leadIndex = leads.findIndex((lead) => lead.id === id);
+
+    if (leadIndex === -1) {
+      return null;
+    }
+
+    const updatedLead: StoredCalculatorInquiryLead = {
+      ...leads[leadIndex],
+      status,
+    };
+
+    leads[leadIndex] = updatedLead;
+
+    await this.writeLeads(leads);
+
+    return updatedLead;
   }
 
   private async readLeads(): Promise<StoredCalculatorInquiryLead[]> {

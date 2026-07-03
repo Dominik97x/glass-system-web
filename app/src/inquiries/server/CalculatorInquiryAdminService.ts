@@ -1,4 +1,7 @@
-import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import type {
+  CalculatorInquiryStatus,
+  StoredCalculatorInquiryLead,
+} from "@/domain/StoredCalculatorInquiryLead";
 import { FileCalculatorInquiryRepository } from "@/inquiries/repositories/FileCalculatorInquiryRepository";
 
 export class CalculatorInquiryAdminService {
@@ -18,5 +21,12 @@ export class CalculatorInquiryAdminService {
     id: string
   ): Promise<StoredCalculatorInquiryLead | null> {
     return this.repository.findById(id);
+  }
+
+  async updateInquiryStatus(
+    id: string,
+    status: CalculatorInquiryStatus
+  ): Promise<StoredCalculatorInquiryLead | null> {
+    return this.repository.updateStatus(id, status);
   }
 }

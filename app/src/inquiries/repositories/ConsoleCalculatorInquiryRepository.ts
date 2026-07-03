@@ -1,4 +1,7 @@
-import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import type {
+  CalculatorInquiryStatus,
+  StoredCalculatorInquiryLead,
+} from "@/domain/StoredCalculatorInquiryLead";
 import type { CalculatorInquiryRepository } from "./CalculatorInquiryRepository";
 
 export class ConsoleCalculatorInquiryRepository
@@ -13,6 +16,15 @@ export class ConsoleCalculatorInquiryRepository
   }
 
   async findById(): Promise<StoredCalculatorInquiryLead | null> {
+    return null;
+  }
+
+  async updateStatus(
+    id: string,
+    status: CalculatorInquiryStatus
+  ): Promise<StoredCalculatorInquiryLead | null> {
+    console.log("Calculator inquiry status update:", { id, status });
+
     return null;
   }
 }
