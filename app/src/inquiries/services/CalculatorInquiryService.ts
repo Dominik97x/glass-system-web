@@ -3,6 +3,7 @@ import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
 export interface SubmitCalculatorInquiryResult {
   success: boolean;
   message: string;
+  inquiryId?: string;
 }
 
 export class CalculatorInquiryService {

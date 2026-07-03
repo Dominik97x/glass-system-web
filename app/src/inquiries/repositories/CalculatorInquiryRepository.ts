@@ -1,5 +1,5 @@
-import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
+import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 
 export interface CalculatorInquiryRepository {
-  save(lead: CalculatorInquiryLead): Promise<void>;
+  save(lead: StoredCalculatorInquiryLead): Promise<void>;
 }

@@ -5,6 +5,7 @@ import { validateCalculatorInquiryLead } from "@/inquiries/validators/calculator
 interface SubmitCalculatorInquiryResponse {
   success: boolean;
   message: string;
+  inquiryId?: string;
 }
 
 const inquiryRepository = new ConsoleCalculatorInquiryRepository();
