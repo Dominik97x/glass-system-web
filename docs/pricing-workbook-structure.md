@@ -666,3 +666,142 @@ Pozostałe zakładki mogą być dodane później.
 6. VAT musi być jawnie zapisany w Excelu.
 7. Importer nie publikuje błędnych danych.
 8. Publiczny kalkulator korzysta tylko z ostatniego poprawnego snapshotu.
+
+---
+
+# Rozszerzalność: nowe wymiary i nowe produkty
+
+System nie powinien być projektowany wyłącznie pod aktualne produkty i aktualną macierz cen.
+
+Na ten moment MVP obejmuje:
+
+- zadaszenie tarasu,
+- ogród zimowy.
+
+Przyszłościowo w ofercie mogą pojawić się:
+
+- nowe wymiary,
+- nowe serie konstrukcji,
+- nowe warianty istniejących produktów,
+- nowe typy pokryć dachowych,
+- nowe dodatki,
+- nowe produkty, np. carporty.
+
+Dlatego struktura Excela i aplikacji musi pozwalać na rozwój bez przebudowy całej logiki.
+
+## Produkt jako wymiar danych
+
+Docelowo tabele techniczne powinny zawierać kolumnę:
+
+```text
+product_type
+```
+
+Przykładowe wartości:
+
+```text
+terrace_roof
+winter_garden
+carport
+```
+
+Dzięki temu ceny, wymiary, opcje i mapowania Bitrix24 mogą być przypisane do konkretnego produktu.
+
+## Zakładka `app_product_types`
+
+Przyszłościowo warto dodać zakładkę:
+
+```text
+app_product_types
+```
+
+Proponowane kolumny:
+
+| Kolumna | Typ | Wymagane | Opis |
+|---|---|---:|---|
+| `product_type` | text | tak | Kod produktu |
+| `product_name` | text | tak | Nazwa biznesowa |
+| `product_family` | text | nie | Rodzina produktu |
+| `active` | boolean | tak | Czy produkt jest aktywny |
+| `notes` | text | nie | Uwagi |
+
+Przykład:
+
+| product_type | product_name | product_family | active | notes |
+|---|---|---|---|---|
+| `terrace_roof` | Zadaszenie tarasu | `glass_system` | TRUE | MVP |
+| `winter_garden` | Ogród zimowy | `glass_system` | TRUE | MVP |
+| `carport` | Carport | `carport` | FALSE | Produkt przyszłościowy |
+
+## Wymiary zależne od produktu
+
+Zakładka `app_dimensions` powinna docelowo pozwalać na przypisanie wymiarów do produktu.
+
+Przykład:
+
+| product_type | width_cm | length_cm | label | active |
+|---|---:|---:|---|---|
+| `terrace_roof` | 306 | 300 | 300 x 306 cm | TRUE |
+| `winter_garden` | 306 | 300 | 300 x 306 cm | TRUE |
+| `carport` | 300 | 500 | 500 x 300 cm | FALSE |
+
+Dzięki temu dodanie nowego wymiaru nie wymaga zmiany całej logiki systemu, tylko dodania rekordu do Excela i przejścia walidacji importu.
+
+## Opcje zależne od produktu
+
+Nie każdy produkt musi obsługiwać te same opcje.
+
+Przykład:
+
+| product_type | option_group | enabled | notes |
+|---|---|---|---|
+| `terrace_roof` | `roof` | TRUE | Dach wymagany |
+| `terrace_roof` | `walls` | TRUE | Opcjonalne ściany |
+| `winter_garden` | `zip` | TRUE | ZIP dostępny przy ścianach |
+| `carport` | `walls` | FALSE | Brak ścian w MVP |
+| `carport` | `awning` | FALSE | Brak markizy |
+| `carport` | `lighting` | TRUE | Możliwe oświetlenie |
+
+Przyszłościowo można dodać zakładkę:
+
+```text
+app_product_option_rules
+```
+
+## Zasada projektowa
+
+Nowy wymiar powinien oznaczać głównie:
+
+```text
+dodanie rekordu w Excelu
+↓
+import
+↓
+walidacja
+↓
+publikacja snapshotu
+```
+
+Nowy produkt powinien oznaczać:
+
+```text
+dodanie product_type
+↓
+dodanie wymiarów
+↓
+dodanie cen
+↓
+dodanie reguł opcji
+↓
+dodanie mapowania Bitrix24
+↓
+ewentualnie dodanie specyficznego kalkulatora tylko wtedy, gdy produkt ma inną logikę
+```
+
+Nie powinno to wymagać przebudowy całego Pricing Engine ani całej integracji Bitrix24.
+
+## Decyzja na teraz
+
+Nie wdrażamy carportów w MVP.
+
+Projektujemy jednak Excel, Pricing Engine i mapowanie Bitrix24 tak, aby późniejsze dodanie carportów albo nowych wymiarów było rozszerzeniem systemu, a nie jego przebudową.
