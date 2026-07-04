@@ -1,11 +1,9 @@
 import type { ProductConfiguration } from "@/domain/ProductConfiguration";
-import { mapPreparedRowsToBitrix24ProductRows } from "@/integrations/bitrix24/Bitrix24PreparedProductRowMapper";
+import { createExampleBitrix24PricingSnapshotProductRowService } from "@/integrations/bitrix24/Bitrix24PricingSnapshotProductRowService";
 import {
   createExamplePublishedPricingSnapshotRepository,
   InvalidPublishedPricingSnapshotError,
 } from "@/pricing/snapshots/PublishedPricingSnapshotRepository";
-import { PricingSnapshotBitrixProductMapper } from "@/pricing/snapshots/PricingSnapshotBitrixProductMapper";
-import { PricingSnapshotConfigurationBitrixProductRowBuilder } from "@/pricing/snapshots/PricingSnapshotConfigurationBitrixProductRowBuilder";
 import { PricingSnapshotConfigurationPriceCalculator } from "@/pricing/snapshots/PricingSnapshotConfigurationPriceCalculator";
 import { PricingSnapshotPriceReader } from "@/pricing/snapshots/PricingSnapshotPriceReader";
 import { calculateTaxForPrice } from "@/pricing/snapshots/PricingSnapshotTaxCalculator";
@@ -14,6 +12,8 @@ import { validatePricingSnapshot } from "@/pricing/snapshots/PricingSnapshotVali
 export const runtime = "nodejs";
 
 const repository = createExamplePublishedPricingSnapshotRepository();
+const bitrixProductRowService =
+  createExampleBitrix24PricingSnapshotProductRowService();
 
 const winterGardenConfiguration: ProductConfiguration = {
   width: 306,
@@ -66,16 +66,6 @@ export async function GET(): Promise<Response> {
     const configurationCalculator =
       new PricingSnapshotConfigurationPriceCalculator(reader);
 
-    const bitrixProductMapper = new PricingSnapshotBitrixProductMapper(
-      snapshot
-    );
-
-    const bitrixProductRowBuilder =
-      new PricingSnapshotConfigurationBitrixProductRowBuilder(
-        reader,
-        bitrixProductMapper
-      );
-
     const winterGardenResult = configurationCalculator.calculate(
       winterGardenConfiguration
     );
@@ -96,13 +86,10 @@ export async function GET(): Promise<Response> {
       constructionVatRule
     );
 
-    const winterGardenPreparedBitrixRows = bitrixProductRowBuilder.build(
-      winterGardenConfiguration
-    );
-
-    const bitrix24ProductRows = mapPreparedRowsToBitrix24ProductRows(
-      winterGardenPreparedBitrixRows.rows
-    );
+    const winterGardenBitrixRows =
+      await bitrixProductRowService.buildProductRows(
+        winterGardenConfiguration
+      );
 
     return Response.json({
       success: validation.success,
@@ -141,7 +128,7 @@ export async function GET(): Promise<Response> {
         terraceRoof300x306WithOptions: terraceRoofTaxCalculation,
       },
       bitrixProductMappingChecks: {
-        preparedRows: winterGardenPreparedBitrixRows.rows.map((row) => ({
+        preparedRows: winterGardenBitrixRows.preparedRows.map((row) => ({
           productId: row.productId,
           productName: row.productName,
           priceNet: row.priceNet,
@@ -154,15 +141,15 @@ export async function GET(): Promise<Response> {
           sourcePrice: row.sourcePrice,
           sourceTaxIncluded: row.sourceTaxIncluded,
         })),
-        totalGross: winterGardenPreparedBitrixRows.totalGross,
-        totalNet: winterGardenPreparedBitrixRows.totalNet,
-        totalTax: winterGardenPreparedBitrixRows.totalTax,
+        totalGross: winterGardenBitrixRows.totalGross,
+        totalNet: winterGardenBitrixRows.totalNet,
+        totalTax: winterGardenBitrixRows.totalTax,
         expectedTotalGross: 35419,
-        passed: winterGardenPreparedBitrixRows.totalGross === 35419,
+        passed: winterGardenBitrixRows.totalGross === 35419,
       },
       bitrix24ProductRowChecks: {
-        rows: bitrix24ProductRows,
-        totalNet: bitrix24ProductRows.reduce(
+        rows: winterGardenBitrixRows.productRows,
+        totalNet: winterGardenBitrixRows.productRows.reduce(
           (sum, row) => sum + row.price * row.quantity,
           0
         ),
