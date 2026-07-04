@@ -5,7 +5,7 @@ import type {
 import { Bitrix24Client } from "@/integrations/bitrix24/Bitrix24Client";
 import { getBitrix24Config } from "@/integrations/bitrix24/Bitrix24Config";
 import { mapInquiryToBitrix24DealPayload } from "@/integrations/bitrix24/Bitrix24DealMapper";
-import { mapInquiryToBitrix24ProductRows } from "@/integrations/bitrix24/Bitrix24ProductRowMapper";
+import { createBitrix24InquiryProductRowProvider } from "@/integrations/bitrix24/Bitrix24InquiryProductRowProvider";
 import type { CalculatorInquiryRepository } from "./CalculatorInquiryRepository";
 
 export class Bitrix24CalculatorInquiryRepository
@@ -13,13 +13,10 @@ export class Bitrix24CalculatorInquiryRepository
 {
   private readonly config = getBitrix24Config();
   private readonly client = new Bitrix24Client(this.config);
+  private readonly productRowProvider = createBitrix24InquiryProductRowProvider();
 
   async save(lead: StoredCalculatorInquiryLead): Promise<void> {
-    const dealPayload = mapInquiryToBitrix24DealPayload(
-      lead,
-      this.config
-    );
-
+    const dealPayload = mapInquiryToBitrix24DealPayload(lead, this.config);
     const dealResponse = await this.client.addCrmItem(dealPayload);
     const dealId = dealResponse.result?.item?.id;
 
@@ -27,7 +24,7 @@ export class Bitrix24CalculatorInquiryRepository
       throw new Error("Bitrix24 did not return created deal id");
     }
 
-    const productRows = mapInquiryToBitrix24ProductRows(lead);
+    const productRows = await this.productRowProvider.buildProductRows(lead);
 
     if (productRows.length > 0) {
       await this.client.setProductRows({
