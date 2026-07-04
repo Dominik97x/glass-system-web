@@ -1,4 +1,5 @@
 import type { ProductConfiguration } from "@/domain/ProductConfiguration";
+import { mapPreparedRowsToBitrix24ProductRows } from "@/integrations/bitrix24/Bitrix24PreparedProductRowMapper";
 import {
   createExamplePublishedPricingSnapshotRepository,
   InvalidPublishedPricingSnapshotError,
@@ -99,6 +100,10 @@ export async function GET(): Promise<Response> {
       winterGardenConfiguration
     );
 
+    const bitrix24ProductRows = mapPreparedRowsToBitrix24ProductRows(
+      winterGardenPreparedBitrixRows.rows
+    );
+
     return Response.json({
       success: validation.success,
       summary: {
@@ -154,6 +159,14 @@ export async function GET(): Promise<Response> {
         totalTax: winterGardenPreparedBitrixRows.totalTax,
         expectedTotalGross: 35419,
         passed: winterGardenPreparedBitrixRows.totalGross === 35419,
+      },
+      bitrix24ProductRowChecks: {
+        rows: bitrix24ProductRows,
+        totalNet: bitrix24ProductRows.reduce(
+          (sum, row) => sum + row.price * row.quantity,
+          0
+        ),
+        expectedTaxIncluded: "N",
       },
       validation,
     });
