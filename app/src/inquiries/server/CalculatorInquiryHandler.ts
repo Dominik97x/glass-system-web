@@ -1,22 +1,29 @@
 import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
-import type { CalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepository";
+import type { CalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationService";
+import { createCalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationServiceFactory";
+import type { CalculatorInquiryRepository } from "../repositories/CalculatorInquiryRepository";
 
-export interface HandleCalculatorInquiryResult {
-  success: boolean;
-  message: string;
+export interface CalculatorInquiryHandlerResult {
+  success: true;
   inquiryId: string;
+  message: string;
 }
 
 export class CalculatorInquiryHandler {
-  constructor(private repository: CalculatorInquiryRepository) {}
+  constructor(
+    private readonly repository: CalculatorInquiryRepository,
+    private readonly notificationService: CalculatorInquiryNotificationService =
+      createCalculatorInquiryNotificationService()
+  ) {}
 
   async handle(
     lead: CalculatorInquiryLead
-  ): Promise<HandleCalculatorInquiryResult> {
-    const storedLead = this.createStoredLead(lead);
+  ): Promise<CalculatorInquiryHandlerResult> {
+    const storedLead = createStoredCalculatorInquiryLead(lead);
 
     await this.repository.save(storedLead);
+    await this.notifySafely(storedLead);
 
     return {
       success: true,
@@ -25,18 +32,29 @@ export class CalculatorInquiryHandler {
     };
   }
 
-  private createStoredLead(
-    lead: CalculatorInquiryLead
-  ): StoredCalculatorInquiryLead {
-    return {
-      ...lead,
-      id: createInquiryId(),
-      status: "new",
-      receivedAt: new Date().toISOString(),
-    };
+  private async notifySafely(
+    lead: StoredCalculatorInquiryLead
+  ): Promise<void> {
+    try {
+      await this.notificationService.notify(lead);
+    } catch (error) {
+      console.error("Calculator inquiry notification failed:", {
+        inquiryId: lead.id,
+        error,
+      });
+    }
   }
 }
 
-function createInquiryId(): string {
-  return `inq_${globalThis.crypto.randomUUID()}`;
+function createStoredCalculatorInquiryLead(
+  lead: CalculatorInquiryLead
+): StoredCalculatorInquiryLead {
+  const now = new Date().toISOString();
+
+  return {
+    ...lead,
+    id: `inq_${globalThis.crypto.randomUUID()}`,
+    status: "new",
+    receivedAt: now,
+  };
 }
