@@ -752,3 +752,187 @@ trzeba wykonać:
 - [ ] wykonać testowy dokument,
 - [ ] uzupełnić `.env.local`,
 - [ ] uzupełnić ten dokument realnymi wartościami.
+
+---
+
+# Developerski endpoint metadata
+
+W aplikacji został przygotowany developerski endpoint:
+
+```text
+GET /api/dev/bitrix24/metadata
+```
+
+Endpoint służy do pobrania podstawowych danych technicznych z portalu Bitrix24.
+
+## Cel endpointu
+
+Endpoint ma pomóc ustalić realne wartości potrzebne do integracji:
+
+- `categoryId` pipeline'u sprzedażowego,
+- `stageId` etapu startowego,
+- pola deala,
+- pola własne,
+- strukturę etapów,
+- sugerowane wartości `.env.local`.
+
+Nie zgadujemy tych wartości ręcznie.
+
+Pobieramy je z konkretnego portalu Bitrix24.
+
+---
+
+# Wymagana konfiguracja lokalna
+
+Aby endpoint działał z prawdziwym Bitrix24, w lokalnym pliku:
+
+```text
+app/.env.local
+```
+
+należy ustawić:
+
+```env
+BITRIX24_ENABLED=true
+BITRIX24_WEBHOOK_URL=https://twoj-portal.bitrix24.pl/rest/USER_ID/WEBHOOK_CODE
+BITRIX24_DEAL_ENTITY_TYPE_ID=2
+```
+
+Pliku `.env.local` nie commitujemy.
+
+---
+
+# Zachowanie bez konfiguracji Bitrix24
+
+Jeżeli Bitrix24 jest wyłączony, endpoint zwraca kontrolowany komunikat:
+
+```json
+{
+  "success": false,
+  "message": "Bitrix24 integration is disabled. Set BITRIX24_ENABLED=true and BITRIX24_WEBHOOK_URL in .env.local."
+}
+```
+
+To jest poprawne zachowanie w trybie lokalnym.
+
+---
+
+# Jak użyć endpointu
+
+Po ustawieniu webhooka należy uruchomić aplikację:
+
+```bash
+cd C:\Projects\glass-system-web\app
+npm run dev
+```
+
+Następnie wejść w przeglądarce:
+
+```text
+http://localhost:3000/api/dev/bitrix24/metadata
+```
+
+Oczekiwany wynik po poprawnej konfiguracji:
+
+```text
+success: true
+metadata.categories
+metadata.stageGroups
+metadata.fields
+metadata.suggestedEnv
+```
+
+---
+
+# Dane zwracane przez endpoint
+
+## `metadata.categories`
+
+Lista pipeline'ów / lejków CRM dla dealów.
+
+Na podstawie screenów szukamy pipeline'u:
+
+```text
+Etap sprzedaży z pomiarem
+```
+
+Z tej sekcji pobierzemy:
+
+```env
+BITRIX24_DEFAULT_CATEGORY_ID=...
+```
+
+---
+
+## `metadata.stageGroups`
+
+Lista etapów dla każdego pipeline'u.
+
+Na podstawie screenów szukamy etapu:
+
+```text
+Nowy lead
+```
+
+Z tej sekcji pobierzemy:
+
+```env
+BITRIX24_DEFAULT_STAGE_ID=...
+```
+
+---
+
+## `metadata.fields`
+
+Lista pól deala.
+
+Tutaj szukamy między innymi:
+
+- standardowych pól Bitrix24,
+- pól własnych,
+- kodów `UF_CRM_*` albo `ufCrm_*`,
+- pól wymaganych przez dokumenty.
+
+---
+
+## `metadata.suggestedEnv`
+
+Wstępna sugestia wartości `.env.local`.
+
+Uwaga: wartości z `suggestedEnv` trzeba sprawdzić ręcznie, bo endpoint może wybrać pierwszy pipeline i pierwszy stage, a niekoniecznie właściwy proces sprzedażowy.
+
+---
+
+# Aktualny status
+
+Endpoint został przetestowany lokalnie bez aktywnego Bitrix24.
+
+Wynik:
+
+```json
+{
+  "success": false,
+  "message": "Bitrix24 integration is disabled. Set BITRIX24_ENABLED=true and BITRIX24_WEBHOOK_URL in .env.local."
+}
+```
+
+Status testu:
+
+```text
+OK — endpoint działa bezpiecznie i nie wysypuje aplikacji, gdy Bitrix24 jest wyłączony.
+```
+
+---
+
+# Kolejne kroki po otrzymaniu webhooka
+
+1. Ustawić `BITRIX24_ENABLED=true`.
+2. Ustawić `BITRIX24_WEBHOOK_URL`.
+3. Uruchomić `/api/dev/bitrix24/metadata`.
+4. Odszukać pipeline `Etap sprzedaży z pomiarem`.
+5. Odszukać etap `Nowy lead`.
+6. Uzupełnić `.env.local`.
+7. Uzupełnić ten dokument realnymi wartościami.
+8. Wykonać test utworzenia deala.
+9. Wykonać test dodania product rows.
+10. Sprawdzić VAT i dokumenty.
