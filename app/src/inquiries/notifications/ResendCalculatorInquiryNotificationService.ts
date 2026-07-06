@@ -53,6 +53,7 @@ export class ResendCalculatorInquiryNotificationService
         to: this.config.to,
         subject: message.subject,
         text: message.text,
+        html: message.html,
         reply_to: lead.customer.email,
       }),
     });
