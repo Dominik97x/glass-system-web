@@ -1,37 +1,17 @@
-import {
-  getProductKind,
-  type ProductConfiguration,
-} from "@/domain/ProductConfiguration";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import { createCalculatorInquiryNotificationMessage } from "./CalculatorInquiryNotificationMessage";
 import type { CalculatorInquiryNotificationService } from "./CalculatorInquiryNotificationService";
-
-interface QuoteSnapshotWithConfiguration {
-  configuration?: ProductConfiguration;
-  totalGross: number;
-}
 
 export class ConsoleCalculatorInquiryNotificationService
   implements CalculatorInquiryNotificationService
 {
   async notify(lead: StoredCalculatorInquiryLead): Promise<void> {
-    const quote = lead.quote as QuoteSnapshotWithConfiguration;
-    const productKind = quote.configuration
-      ? getProductKind(quote.configuration)
-      : null;
+    const message = createCalculatorInquiryNotificationMessage(lead);
 
-    console.log("New calculator inquiry notification:", {
-      id: lead.id,
-      receivedAt: lead.receivedAt,
-      status: lead.status,
-      customer: {
-        name: lead.customer.name,
-        email: lead.customer.email,
-        phone: lead.customer.phone,
-      },
-      quote: {
-        productKind,
-        totalGross: lead.quote.totalGross,
-      },
-    });
+    console.log("New calculator inquiry notification");
+    console.log("Inquiry ID:", lead.id);
+    console.log("Subject:", message.subject);
+    console.log("");
+    console.log(message.text);
   }
 }
