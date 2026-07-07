@@ -1,11 +1,12 @@
 import type { ProductConfiguration } from "@/domain/ProductConfiguration";
 import type { Quote } from "@/domain/Quote";
-import { PricingEngine } from "../engine/PricingEngine";
+
+import { SnapshotQuoteService } from "./SnapshotQuoteService";
 
 export class QuoteService {
-  private pricingEngine = new PricingEngine();
+  private snapshotQuoteService = new SnapshotQuoteService();
 
   createQuote(configuration: ProductConfiguration): Quote {
-    return this.pricingEngine.calculate(configuration);
+    return this.snapshotQuoteService.createQuote(configuration);
   }
 }
