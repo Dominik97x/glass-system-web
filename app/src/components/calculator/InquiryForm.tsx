@@ -77,87 +77,135 @@ export function InquiryForm({ quote, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-lg font-semibold">Dane kontaktowe</h2>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
+              Formularz
+            </p>
+            <h5 className="mt-2 text-base font-semibold text-neutral-950">
+              Dane do kontaktu
+            </h5>
+          </div>
 
-      <div className="mt-4 space-y-4">
-        <label className="block text-sm">
-          Imię i nazwisko
-          <input
-            type="text"
-            value={form.name}
-            onChange={(event) => updateField("name", event.target.value)}
-            required
-            className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-          />
-        </label>
+          <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800">
+            {quote.totalGross.toLocaleString("pl-PL")} zł
+          </div>
+        </div>
 
-        <label className="block text-sm">
-          E-mail
-          <input
-            type="email"
-            value={form.email}
-            onChange={(event) => updateField("email", event.target.value)}
-            required
-            className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-          />
-        </label>
+        <div className="space-y-4">
+          <FormField label="Imię i nazwisko" required>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(event) => updateField("name", event.target.value)}
+              required
+              autoComplete="name"
+              placeholder="Jan Kowalski"
+              className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            />
+          </FormField>
 
-        <label className="block text-sm">
-          Telefon
-          <input
-            type="tel"
-            value={form.phone}
-            onChange={(event) => updateField("phone", event.target.value)}
-            required
-            className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-          />
-        </label>
+          <FormField label="E-mail" required>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(event) => updateField("email", event.target.value)}
+              required
+              autoComplete="email"
+              placeholder="jan@example.com"
+              className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            />
+          </FormField>
 
-        <label className="block text-sm">
-          Wiadomość
-          <textarea
-            value={form.message}
-            onChange={(event) => updateField("message", event.target.value)}
-            rows={4}
-            className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-            placeholder="Opcjonalna wiadomość do doradcy"
-          />
-        </label>
+          <FormField label="Telefon" required>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(event) => updateField("phone", event.target.value)}
+              required
+              autoComplete="tel"
+              placeholder="500 600 700"
+              className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            />
+          </FormField>
+
+          <FormField label="Wiadomość">
+            <textarea
+              value={form.message}
+              onChange={(event) => updateField("message", event.target.value)}
+              rows={4}
+              className="mt-2 w-full resize-none rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+              placeholder="Opcjonalna wiadomość do doradcy"
+            />
+          </FormField>
+        </div>
       </div>
 
-      {submitMessage && (
-        <div className="mt-4 rounded-lg border border-emerald-800 bg-emerald-950/40 px-3 py-3 text-sm text-emerald-200">
+      {submitMessage ? (
+        <div
+          className={[
+            "rounded-2xl border px-4 py-3 text-sm leading-6",
+            isSubmitted
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : "border-red-200 bg-red-50 text-red-900",
+          ].join(" ")}
+        >
           {submitMessage}
         </div>
-      )}
+      ) : null}
 
-      <div className="mt-5 flex gap-3">
+      <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <button
           type="submit"
           disabled={isSubmitting || isSubmitted}
-          className="flex-1 rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-300"
+          className="rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500 disabled:shadow-none"
         >
           {isSubmitting
             ? "Wysyłanie..."
             : isSubmitted
               ? "Wysłano"
-              : "Wyślij"}
+              : "Wyślij zapytanie"}
         </button>
 
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-xl border border-neutral-700 px-4 py-3 font-semibold text-white transition hover:bg-neutral-800"
+          disabled={isSubmitting}
+          className="rounded-2xl border border-neutral-300 bg-white px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-700 transition hover:border-neutral-950 hover:text-neutral-950 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Anuluj
         </button>
       </div>
 
-      <p className="mt-3 text-xs text-neutral-400">
-        Na tym etapie formularz wysyła dane do lokalnego endpointu API. Backend
-        zapisuje przygotowany obiekt leada w konsoli serwera.
-      </p>
+      <div className="rounded-2xl bg-white/70 p-4 text-xs leading-5 text-emerald-900/70 ring-1 ring-emerald-100">
+        Zapytanie zostanie zapisane w aktywnym repozytorium leadów. W zależności
+        od konfiguracji może to być lokalny plik, baza danych Postgres/Neon albo
+        integracja CRM.
+      </div>
     </form>
+  );
+}
+
+interface FormFieldProps {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}
+
+function FormField({ label, required = false, children }: FormFieldProps) {
+  return (
+    <label className="block text-sm">
+      <span className="flex items-center gap-2 font-bold text-neutral-950">
+        {label}
+        {required ? (
+          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
+            wymagane
+          </span>
+        ) : null}
+      </span>
+      {children}
+    </label>
   );
 }

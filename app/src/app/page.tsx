@@ -1,190 +1,279 @@
+import Image from "next/image";
 import Link from "next/link";
 
-const products = [
+const images = {
+  hero: "/images/glass-system/hero-winter-garden-evening.png",
+  winterGarden: "/images/glass-system/product-winter-garden-day.png",
+  terraceRoof: "/images/glass-system/product-terrace-roof-sunset.png",
+  evening: "/images/glass-system/parallax-evening-led.png",
+  gallery: "/images/glass-system/gallery-glass-enclosure-day.png",
+} as const;
+
+const productCards = [
   {
-    title: "Ogrody zimowe",
+    title: "Ogród zimowy",
+    eyebrow: "Całoroczna przestrzeń przy domu",
     description:
-      "Przestrzeń całoroczna przy domu — zadaszenie, ściany przesuwne, rolety ZIP i dodatki dopasowane do inwestycji.",
+      "Zabudowa tarasu ze szkłem, zadaszeniem i dodatkami, która pozwala korzystać z przestrzeni niezależnie od pogody.",
+    image: images.winterGarden,
+    href: "/kalkulator",
   },
   {
-    title: "Zadaszenia tarasów",
+    title: "Zadaszenie tarasu",
+    eyebrow: "Nowoczesna ochrona tarasu",
     description:
-      "Nowoczesne zadaszenia aluminiowe z poliwęglanem lub szkłem, projektowane pod konkretny wymiar tarasu.",
+      "Aluminiowa konstrukcja z dachem szklanym lub poliwęglanowym, projektowana pod wymiar i styl budynku.",
+    image: images.terraceRoof,
+    href: "/kalkulator",
+  },
+];
+
+const advantages = [
+  {
+    value: "01",
+    title: "Projekt na wymiar",
+    description:
+      "Dobieramy wymiary, dach, ściany i dodatki do konkretnego tarasu oraz sposobu użytkowania przestrzeni.",
   },
   {
-    title: "Systemy przesuwne",
+    value: "02",
+    title: "Wycena online",
     description:
-      "Szklane ściany przesuwne, które osłaniają taras przed wiatrem i pozwalają korzystać z przestrzeni dłużej w sezonie.",
+      "Klient może szybko sprawdzić orientacyjny koszt i wysłać zapytanie z pełną konfiguracją.",
+  },
+  {
+    value: "03",
+    title: "Dopracowana oferta",
+    description:
+      "Po kontakcie można potwierdzić zakres, pomiar, montaż i finalną cenę realizacji.",
   },
 ];
 
 const processSteps = [
-  "Konfigurujesz produkt online",
-  "Wysyłasz zapytanie z kalkulatora",
-  "Doradca weryfikuje zakres i pomiar",
-  "Otrzymujesz dopracowaną ofertę",
+  {
+    title: "Wybierz typ konstrukcji",
+    description:
+      "Określ, czy interesuje Cię ogród zimowy, zadaszenie tarasu czy zabudowa szklana.",
+  },
+  {
+    title: "Dobierz dach, ściany i dodatki",
+    description:
+      "Wybierz wariant dachu, przeszklenia, rolety ZIP, markizę, LED i akcesoria.",
+  },
+  {
+    title: "Sprawdź cenę orientacyjną",
+    description:
+      "Kalkulator pokaże wstępny koszt brutto na podstawie wybranej konfiguracji.",
+  },
+  {
+    title: "Wyślij zapytanie do doradcy",
+    description:
+      "Po wysłaniu formularza konfiguracja trafia do systemu obsługi zapytań.",
+  },
 ];
 
-const benefits = [
-  "Konstrukcje na wymiar",
-  "Wycena orientacyjna online",
-  "Możliwość rozbudowy o ZIP, LED, markizę i akcesoria",
-  "Proces gotowy pod CRM i obsługę sprzedaży",
+const galleryItems = [
+  {
+    title: "Ogród zimowy z oświetleniem",
+    image: images.hero,
+  },
+  {
+    title: "Zadaszenie tarasu przy domu",
+    image: images.terraceRoof,
+  },
+  {
+    title: "Zabudowa szklana w ogrodzie",
+    image: images.winterGarden,
+  },
+  {
+    title: "Wieczorna przestrzeń tarasowa",
+    image: images.evening,
+  },
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-neutral-950 text-white">
-      <section className="relative isolate overflow-hidden">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.26),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(135deg,_#020617_0%,_#111827_48%,_#0f172a_100%)]" />
-        <div className="absolute left-1/2 top-24 -z-10 h-96 w-96 -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
+    <main className="min-h-screen bg-[#f4efe6] text-neutral-950">
+      <section className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
+        <Image
+          src={images.hero}
+          alt="Nowoczesny ogród zimowy Glass System przy domu"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover animate-[glassHeroZoom_22s_ease-in-out_infinite_alternate]"
+        />
 
-        <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 py-8 sm:px-8 lg:px-12">
-          <header className="flex items-center justify-between gap-6">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/72 via-black/34 to-black/5" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/64 via-transparent to-black/34" />
+
+        <header className="absolute left-0 right-0 top-0 z-20">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-7 sm:px-8 lg:px-12">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400 text-sm font-black text-neutral-950">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-400 text-sm font-black text-neutral-950 shadow-xl shadow-emerald-500/25">
                 GS
               </div>
               <div>
-                <p className="text-sm font-semibold tracking-[0.26em] text-emerald-300">
-                  GLAS SYSTEM
+                <p className="text-sm font-semibold tracking-[0.32em] text-emerald-300">
+                  GLASS SYSTEM
                 </p>
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-white/65">
                   Ogrody zimowe i zadaszenia
                 </p>
               </div>
             </Link>
 
-            <nav className="hidden items-center gap-8 text-sm text-white/70 md:flex">
+            <nav className="hidden items-center gap-8 text-sm font-semibold text-white/80 lg:flex">
+              <Link href="/" className="text-emerald-300">
+                Start
+              </Link>
               <Link href="/oferta" className="transition hover:text-white">
-                Oferta
+                Produkty
               </Link>
               <Link href="/realizacje" className="transition hover:text-white">
-                Realizacje
+                Inspiracje
+              </Link>
+              <Link href="/kalkulator" className="transition hover:text-white">
+                Wycena
               </Link>
               <Link href="/kontakt" className="transition hover:text-white">
                 Kontakt
               </Link>
-              <Link
-                href="/kalkulator"
-                className="rounded-full bg-white px-5 py-2.5 font-semibold text-neutral-950 transition hover:bg-emerald-200"
-              >
-                Kalkulator
-              </Link>
             </nav>
-          </header>
 
-          <div className="grid items-center gap-12 py-12 lg:grid-cols-[1.04fr_0.96fr] lg:py-20">
-            <div>
-              <div className="mb-6 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-emerald-200 shadow-2xl shadow-emerald-950/30 backdrop-blur">
-                Wstępna wycena ogrodu zimowego online
-              </div>
+            <Link
+              href="/kalkulator"
+              className="hidden border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white backdrop-blur transition hover:bg-emerald-400 hover:text-neutral-950 md:inline-flex"
+            >
+              Wycena projektu
+            </Link>
+          </div>
+        </header>
 
-              <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
-                Nowoczesne ogrody zimowe i zadaszenia tarasów na wymiar.
+        <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-end px-6 pb-24 pt-32 sm:px-8 lg:px-12">
+          <div className="grid w-full gap-12 lg:grid-cols-[0.82fr_0.18fr] lg:items-end">
+            <div className="max-w-3xl">
+              <p className="mb-5 inline-flex border-l-4 border-emerald-400 bg-black/28 px-4 py-2 text-xs font-bold uppercase tracking-[0.32em] text-emerald-200 backdrop-blur">
+                Zabudowy tarasowe na wymiar
+              </p>
+
+              <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+                Ogród zimowy, który zmienia taras w przestrzeń do życia.
               </h1>
 
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
-                Skonfiguruj konstrukcję, wybierz ściany, dach, rolety ZIP,
-                markizę i oświetlenie. Otrzymaj orientacyjną wycenę i wyślij
+              <p className="mt-7 max-w-2xl text-lg leading-8 text-white/78">
+                Nowoczesne zadaszenia, zabudowy szklane i ogrody zimowe.
+                Skonfiguruj projekt online, sprawdź cenę orientacyjną i wyślij
                 zapytanie do doradcy.
               </p>
 
-              <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                 <Link
                   href="/kalkulator"
-                  className="rounded-full bg-emerald-400 px-7 py-4 text-center text-sm font-bold text-neutral-950 shadow-2xl shadow-emerald-500/25 transition hover:bg-emerald-300"
+                  className="bg-emerald-400 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.08em] text-neutral-950 shadow-2xl shadow-emerald-500/25 transition hover:bg-emerald-300"
                 >
-                  Skonfiguruj i sprawdź cenę
+                  Wyceń projekt
                 </Link>
                 <Link
-                  href="/oferta"
-                  className="rounded-full border border-white/15 bg-white/5 px-7 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+                  href="#produkty"
+                  className="border border-white/55 bg-black/20 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.08em] text-white backdrop-blur transition hover:bg-white hover:text-neutral-950"
                 >
-                  Zobacz ofertę
+                  Zobacz produkty
                 </Link>
-              </div>
-
-              <div className="mt-10 grid max-w-xl grid-cols-3 gap-4 border-t border-white/10 pt-8">
-                <div>
-                  <p className="text-2xl font-bold text-white">3</p>
-                  <p className="mt-1 text-sm text-white/50">
-                    główne typy produktów
-                  </p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">5</p>
-                  <p className="mt-1 text-sm text-white/50">
-                    długości w kalkulatorze
-                  </p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">online</p>
-                  <p className="mt-1 text-sm text-white/50">
-                    szybka wycena wstępna
-                  </p>
-                </div>
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-4 shadow-2xl shadow-black/30 backdrop-blur">
-              <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-neutral-950">
-                <div className="h-72 bg-[linear-gradient(135deg,_rgba(16,185,129,0.20),_transparent_44%),linear-gradient(90deg,_rgba(255,255,255,0.14)_1px,_transparent_1px),linear-gradient(rgba(255,255,255,0.12)_1px,_transparent_1px)] bg-[size:auto,44px_44px,44px_44px] p-6">
-                  <div className="flex h-full flex-col justify-end rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/[0.03] p-6">
-                    <p className="text-sm uppercase tracking-[0.22em] text-emerald-200">
-                      Przykładowa konfiguracja
-                    </p>
-                    <h2 className="mt-3 text-3xl font-semibold">
-                      Ogród zimowy 300 x 306 cm
-                    </h2>
-                    <p className="mt-3 max-w-md text-sm leading-6 text-white/60">
-                      Ściany przesuwne, dach z poliwęglanu, roleta ZIP, markiza
-                      i oświetlenie LED.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 p-6 sm:grid-cols-2">
-                  <div className="rounded-2xl bg-white/[0.06] p-4">
-                    <p className="text-sm text-white/50">Cena orientacyjna</p>
-                    <p className="mt-2 text-3xl font-bold text-emerald-300">
-                      35 419 zł
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-white/[0.06] p-4">
-                    <p className="text-sm text-white/50">Status</p>
-                    <p className="mt-2 text-lg font-semibold">
-                      Gotowe do zapytania
-                    </p>
-                  </div>
-                </div>
+            <div className="hidden justify-end lg:flex">
+              <div className="animate-[glassFloat_6s_ease-in-out_infinite] border border-white/20 bg-black/36 p-5 text-right backdrop-blur-md">
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-300">
+                  Wycena online
+                </p>
+                <p className="mt-2 text-3xl font-black">od kilku kliknięć</p>
+                <p className="mt-2 max-w-52 text-sm leading-6 text-white/68">
+                  Wymiary, dach, ściany, rolety ZIP, markiza i oświetlenie w
+                  jednym zapytaniu.
+                </p>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="absolute bottom-8 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-3 text-xs font-bold uppercase tracking-[0.26em] text-white/62 md:flex">
+          Przewiń
+          <div className="h-12 w-px origin-top bg-white/60 animate-[glassLinePulse_2.2s_ease-in-out_infinite]" />
+        </div>
       </section>
 
-      <section className="bg-white px-6 py-20 text-neutral-950 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-2xl">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-700">
-              Oferta
-            </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight">
-              Rozwiązania dla tarasu, ogrodu i całorocznej przestrzeni przy domu.
-            </h2>
-          </div>
-
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {products.map((product) => (
-              <article
-                key={product.title}
-                className="rounded-3xl border border-neutral-200 bg-neutral-50 p-7 transition hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="mb-8 h-40 rounded-2xl bg-gradient-to-br from-emerald-100 via-neutral-100 to-sky-100" />
-                <h3 className="text-2xl font-semibold">{product.title}</h3>
+      <section id="produkty" className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-[1500px] gap-6 lg:grid-cols-2">
+          {productCards.map((product) => (
+            <Link
+              key={product.title}
+              href={product.href}
+              className="group relative min-h-[430px] overflow-hidden"
+            >
+              <Image
+                src={product.image}
+                alt={product.title}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover transition duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/4 to-white/70" />
+              <div className="absolute bottom-10 right-8 max-w-md bg-white/86 p-8 text-right shadow-2xl backdrop-blur-md transition duration-500 group-hover:-translate-y-2 group-hover:bg-white">
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">
+                  {product.eyebrow}
+                </p>
+                <h2 className="mt-3 text-4xl font-semibold tracking-tight">
+                  {product.title}
+                </h2>
                 <p className="mt-4 leading-7 text-neutral-600">
                   {product.description}
+                </p>
+                <span className="mt-6 inline-flex bg-emerald-600 px-5 py-3 text-xs font-black uppercase tracking-[0.08em] text-white">
+                  Wyceń produkt →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="relative min-h-[720px] bg-cover bg-center bg-fixed px-6 py-24 text-white sm:px-8 lg:px-12"
+        style={{ backgroundImage: `url(${images.evening})` }}
+      >
+        <div className="absolute inset-0 bg-black/62" />
+
+        <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-sm font-black uppercase tracking-[0.28em] text-emerald-300">
+              Jakość, komfort i wygląd
+            </p>
+            <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">
+              Dlaczego zabudowa tarasu jest dobrym rozwiązaniem?
+            </h2>
+            <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-white/72">
+              Dobrze zaprojektowana konstrukcja osłania taras, zwiększa komfort
+              codziennego użytkowania i tworzy reprezentacyjną przestrzeń przy
+              domu.
+            </p>
+          </div>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
+            {advantages.map((advantage) => (
+              <article
+                key={advantage.title}
+                className="border border-white/16 bg-black/28 p-7 backdrop-blur-md"
+              >
+                <p className="text-5xl font-black text-white">
+                  {advantage.value}
+                </p>
+                <h3 className="mt-8 text-2xl font-semibold text-emerald-300">
+                  {advantage.title}
+                </h3>
+                <p className="mt-4 leading-7 text-white/72">
+                  {advantage.description}
                 </p>
               </article>
             ))}
@@ -192,85 +281,133 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-neutral-100 px-6 py-20 text-neutral-950 sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+      <section className="bg-[#f4efe6] px-6 py-24 sm:px-8 lg:px-12">
+        <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-700">
-              Jak to działa
+            <p className="text-sm font-black uppercase tracking-[0.28em] text-emerald-700">
+              Wycena w trzech prostych krokach
             </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight">
-              Od konfiguracji online do dopracowanej oferty.
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">
+              Kalkulator prowadzi klienta od pomysłu do zapytania.
             </h2>
-            <p className="mt-5 leading-8 text-neutral-600">
-              Kalkulator daje szybką wycenę orientacyjną. Finalna oferta może
-              zostać potwierdzona po kontakcie, analizie warunków technicznych i
-              ewentualnym pomiarze.
+            <p className="mt-6 max-w-xl text-lg leading-8 text-neutral-600">
+              Zamiast zwykłego formularza kontaktowego klient wysyła pełną
+              konfigurację: wymiary, dach, ściany, dodatki i cenę orientacyjną.
             </p>
+
+            <Link
+              href="/kalkulator"
+              className="mt-9 inline-flex bg-neutral-950 px-8 py-4 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-emerald-700"
+            >
+              Uruchom kalkulator
+            </Link>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             {processSteps.map((step, index) => (
-              <div
-                key={step}
-                className="rounded-3xl border border-neutral-200 bg-white p-6"
+              <article
+                key={step.title}
+                className="group bg-white p-7 shadow-xl shadow-neutral-950/5 ring-1 ring-neutral-200 transition hover:-translate-y-1 hover:shadow-2xl"
               >
-                <div className="mb-8 flex h-11 w-11 items-center justify-center rounded-full bg-neutral-950 text-sm font-bold text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-sm font-black text-emerald-800 transition group-hover:bg-emerald-500 group-hover:text-neutral-950">
                   {index + 1}
                 </div>
-                <p className="text-xl font-semibold">{step}</p>
-              </div>
+                <h3 className="mt-10 text-2xl font-semibold">{step.title}</h3>
+                <p className="mt-4 leading-7 text-neutral-600">
+                  {step.description}
+                </p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-white px-6 py-20 text-neutral-950 sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">
-          <div className="rounded-[2rem] bg-neutral-950 p-8 text-white">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">
-              Dlaczego warto
-            </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight">
-              Wycena i obsługa zapytania są przygotowane pod realną pracę firmy.
-            </h2>
-            <p className="mt-5 leading-8 text-white/65">
-              Formularz nie jest tylko prostym kontaktem. Zapytanie zawiera
-              konfigurację, pozycje oferty i cenę, dzięki czemu handlowiec może
-              szybciej przejść do rozmowy z klientem.
-            </p>
+      <section className="bg-neutral-950 px-4 py-20 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1500px]">
+          <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-emerald-300">
+                Inspiracje
+              </p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
+                Zobacz, jak może wyglądać gotowa przestrzeń przy domu.
+              </h2>
+            </div>
+
+            <Link
+              href="/kalkulator"
+              className="inline-flex border border-white/40 px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-white hover:text-neutral-950"
+            >
+              Wyceń podobny projekt
+            </Link>
           </div>
 
-          <div className="grid gap-4">
-            {benefits.map((benefit) => (
-              <div
-                key={benefit}
-                className="flex items-center gap-4 rounded-3xl border border-neutral-200 bg-neutral-50 p-5"
+          <div className="grid gap-4 lg:grid-cols-4">
+            {galleryItems.map((item, index) => (
+              <article
+                key={item.title}
+                className={`group relative min-h-[380px] overflow-hidden ${
+                  index === 0 ? "lg:col-span-2 lg:row-span-2 lg:min-h-[776px]" : ""
+                }`}
               >
-                <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                <p className="font-semibold">{benefit}</p>
-              </div>
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  sizes="(min-width: 1024px) 25vw, 100vw"
+                  className="object-cover transition duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/84 via-black/18 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-7">
+                  <p className="text-sm text-white/50">0{index + 1}</p>
+                  <h3 className="mt-2 text-2xl font-semibold">{item.title}</h3>
+                </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-neutral-950 px-6 py-20 text-white sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-[2rem] border border-white/10 bg-white/[0.06] p-8 md:flex-row md:items-center">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">
-              Kalkulator
-            </p>
-            <h2 className="mt-3 max-w-2xl text-4xl font-semibold tracking-tight">
-              Sprawdź orientacyjną cenę i wyślij zapytanie do doradcy.
-            </h2>
-          </div>
+      <section className="relative overflow-hidden bg-white px-6 py-24 sm:px-8 lg:px-12">
+        <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block">
+          <Image
+            src={images.gallery}
+            alt="Nowoczesna zabudowa szklana"
+            fill
+            sizes="50vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/30 to-transparent" />
+        </div>
 
-          <Link
-            href="/kalkulator"
-            className="rounded-full bg-emerald-400 px-7 py-4 text-sm font-bold text-neutral-950 transition hover:bg-emerald-300"
-          >
-            Przejdź do kalkulatora
-          </Link>
+        <div className="relative mx-auto max-w-7xl">
+          <div className="max-w-2xl">
+            <p className="text-sm font-black uppercase tracking-[0.28em] text-emerald-700">
+              Wycena online
+            </p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">
+              Masz taras do zabudowy? Sprawdź orientacyjny koszt.
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-neutral-600">
+              Kalkulator pomoże szybko określić zakres inwestycji. Po wysłaniu
+              zapytania doradca może wrócić z dopracowaną ofertą.
+            </p>
+
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <Link
+                href="/kalkulator"
+                className="bg-emerald-500 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.08em] text-neutral-950 transition hover:bg-emerald-400"
+              >
+                Wyceń projekt
+              </Link>
+              <Link
+                href="/kontakt"
+                className="border border-neutral-300 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.08em] transition hover:border-neutral-950"
+              >
+                Kontakt
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </main>
