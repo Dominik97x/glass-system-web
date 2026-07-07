@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import generatedPricingSnapshot from "@/data/pricing/glass-system/published-pricing.generated.json";
 import {
   DEFAULT_CONFIGURATION,
   getProductKind,
@@ -7,8 +8,9 @@ import {
   type ProductConfiguration,
   type Width,
 } from "@/domain/ProductConfiguration";
+import type { PricingSnapshot } from "@/pricing/snapshots/PricingSnapshot";
 import {
-  createExamplePublishedPricingSnapshotRepository,
+  StaticPublishedPricingSnapshotRepository,
 } from "@/pricing/snapshots/PublishedPricingSnapshotRepository";
 import { PricingSnapshotConfigurationPriceCalculator } from "@/pricing/snapshots/PricingSnapshotConfigurationPriceCalculator";
 import { PricingSnapshotPriceReader } from "@/pricing/snapshots/PricingSnapshotPriceReader";
@@ -146,7 +148,10 @@ export async function GET(request: NextRequest) {
 
   const mode = request.nextUrl.searchParams.get("mode") ?? "summary";
 
-  const repository = createExamplePublishedPricingSnapshotRepository();
+  const repository = new StaticPublishedPricingSnapshotRepository(
+    generatedPricingSnapshot as PricingSnapshot
+  );
+
   const snapshot = await repository.getPublishedSnapshot();
   const validation = validatePricingSnapshot(snapshot);
   const reader = new PricingSnapshotPriceReader(snapshot);
@@ -282,12 +287,12 @@ function createSnapshotCoverageResponse({
 
   return {
     success: problems.length === 0 && validation.success,
-    source: "published-pricing-snapshot-example",
+    source: "published-pricing-snapshot-generated-from-workbook",
     pricingFlow: [
       "StaticPublishedPricingSnapshotRepository",
       "PricingSnapshotPriceReader",
       "PricingSnapshotConfigurationPriceCalculator",
-      "published-pricing.example.json",
+      "published-pricing.generated.json",
     ],
     summary: {
       widths: WIDTH_OPTIONS.length,
@@ -311,16 +316,16 @@ function createSnapshotCoverageResponse({
     problemGroups: groupProblems(problems),
     successfulDimensions: getSuccessfulDimensions(records),
     recommendedNextSteps: [
-      "Uzupełnić Excel/snapshot o pełną aktywną matrycę wymiarów używanych w UI.",
-      "Dla każdego aktywnego wymiaru dodać priceMatrix row dla terrace_roof i winter_garden.",
-      "Po uzupełnieniu snapshotu uruchomić ponownie ten endpoint.",
-      "Dopiero po pełniejszym snapshot coverage przepinać QuoteService na snapshot pricing.",
+      "Snapshot wygenerowany z workbooka ma być teraz głównym kandydatem na docelowe źródło cen.",
+      "Jeżeli problems = 0 i successfulQuoteChecks = 200, można przygotować snapshot-based QuoteService.",
+      "Przed przepięciem kalkulatora warto porównać kilka cen z Excelem i obecnym UI.",
       "Przed integracją Bitrix uzupełnić bitrixProductId albo świadomie zostawić productName-only dla pierwszych testów.",
+      "Ujednolicić kategorię ścian: docelowo używać 'walls' zamiast starego 'wall'.",
     ],
     notes: [
-      "Ten endpoint sprawdza przykładowy published pricing snapshot.",
-      "Aktualny snapshot example prawdopodobnie zawiera tylko kilka wymiarów testowych.",
-      "Braki tutaj są oczekiwane, dopóki nie uzupełnimy pełnej matrycy cen.",
+      "Ten endpoint sprawdza published pricing snapshot wygenerowany z workbooka Glass System.",
+      "Braki w bitrixProductId mogą powodować validationWarnings, ale nie powinny blokować samego liczenia cen.",
+      "Najważniejsze pola dla tego etapu to successfulQuoteChecks, failedQuoteChecks, problems i activeSnapshotDimensionKeys.",
     ],
     validation: {
       success: validation.success,
@@ -352,7 +357,11 @@ function createConclusions(
 ): string[] {
   if (problems.length === 0) {
     return [
-      "Published pricing snapshot ma pełne pokrycie dla sprawdzanych scenariuszy.",
+      `Snapshot ma ${activeDimensionKeys.length} aktywnych kluczy wymiarów.`,
+      `Snapshot poprawnie policzył ${records.length} konfiguracji spośród ${
+        WIDTH_OPTIONS.length * LENGTH_OPTIONS.length * scenarios.length
+      } sprawdzonych przypadków.`,
+      "Published pricing snapshot wygenerowany z workbooka ma pełne pokrycie dla sprawdzanych scenariuszy.",
     ];
   }
 
@@ -362,8 +371,8 @@ function createConclusions(
       WIDTH_OPTIONS.length * LENGTH_OPTIONS.length * scenarios.length
     } sprawdzonych przypadków.`,
     `Liczba problemów: ${problems.length}.`,
-    "Najczęstszy problem powinien wynikać z brakujących active priceMatrix rows.",
-    "To jest oczekiwane na etapie przykładowego snapshotu i pokazuje zakres pracy przy uzupełnianiu Excela.",
+    "Najczęstszy problem powinien wynikać z brakujących active priceMatrix rows albo pustych cen.",
+    "Jeżeli problemów jest dużo, trzeba wrócić do workbooka i sprawdzić arkusz app_price_matrix.",
   ];
 }
 
@@ -416,6 +425,10 @@ function getSuccessfulDimensions(records: SnapshotCoverageRecord[]) {
     const existingDimension = dimensions.get(key);
 
     if (existingDimension) {
+      if (!existingDimension.productTypes.includes(record.productType)) {
+        existingDimension.productTypes.push(record.productType);
+      }
+
       existingDimension.scenarios.push(record.scenarioId);
       existingDimension.totals.push(record.totalGross);
     } else {
