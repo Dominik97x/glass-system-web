@@ -82,7 +82,7 @@ export function Calculator() {
         </div>
       </header>
 
-      <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)_380px]">
+      <div className="grid items-start gap-6 xl:grid-cols-[360px_minmax(520px,1fr)_360px] 2xl:grid-cols-[380px_minmax(620px,1fr)_380px]">
         <section className="rounded-[1.5rem] border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
           <ConfiguratorPanel
             configuration={configuration}
