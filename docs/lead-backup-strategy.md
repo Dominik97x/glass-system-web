@@ -407,3 +407,22 @@ Zaczynamy od Neon Free.
 Docelowo można przejść na płatny plan Neon bez dużych zmian w kodzie.
 Kod aplikacji używa standardowego DATABASE_URL.
 ```
+
+---
+
+# 18. Status testu Neon/Postgres
+
+Neon Free został przetestowany lokalnie jako backup leadów.
+
+Wykonane kroki:
+
+```text
+1. Utworzono projekt Neon w regionie Europe / Frankfurt.
+2. Dodano DATABASE_URL do app/.env.local.
+3. Uruchomiono migrację:
+   database/migrations/001_create_calculator_inquiries.sql
+4. Endpoint /api/dev/database/health potwierdził połączenie z bazą.
+5. Endpoint potwierdził istnienie tabeli calculator_inquiries.
+6. Po ustawieniu CALCULATOR_INQUIRY_REPOSITORY=database formularz kalkulatora zapisał lead w Postgres.
+7. Panel /admin/leady odczytał lead z aktywnego repozytorium.
+8. Zmiana statusu leadu na contacted zadziałała.

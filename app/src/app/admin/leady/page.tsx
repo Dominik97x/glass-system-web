@@ -17,7 +17,7 @@ export default async function AdminLeadyPage() {
         <header className="mb-8">
           <h1 className="text-3xl font-bold">Leady z kalkulatora</h1>
           <p className="mt-2 text-neutral-400">
-            Developerski podgląd zapytań zapisanych lokalnie w pliku JSON.
+            Developerski podgląd zapytań z aktywnego repozytorium. W zależności od konfiguracji mogą pochodzić z lokalnego JSON-a albo z Postgres/Neon.
           </p>
         </header>
 
