@@ -35,7 +35,7 @@ export function Calculator() {
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold">Kalkulator EG</h1>
+          <h1 className="text-3xl font-bold">Kalkulator GS</h1>
           <p className="mt-2 text-neutral-400">
             Konfigurator zasilany przez Pricing Engine.
           </p>

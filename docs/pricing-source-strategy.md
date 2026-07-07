@@ -1,12 +1,12 @@
-# Strategia źródła cennika
+﻿# Strategia źródła cennika
 
 ## Cel dokumentu
 
-Ten dokument opisuje docelowy sposób przechowywania, edycji, synchronizacji i wykorzystywania cennika w systemie EcoGardens.
+Ten dokument opisuje docelowy sposób przechowywania, edycji, synchronizacji i wykorzystywania cennika w systemie Glass System.
 
 Dokument powstał po analizie:
 
-- istniejącego pliku EG Cennik,
+- istniejącego pliku cennik źródłowy,
 - działania obecnego kalkulatora,
 - rozmów o historycznym utrzymywaniu cennika,
 - screenów z Bitrix24,
@@ -24,3 +24,5 @@ Docelowym źródłem prawdy dla cennika jest:
 
 ```text
 Excel Online
+
+

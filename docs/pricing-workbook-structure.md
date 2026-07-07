@@ -1,8 +1,8 @@
-# Struktura pliku Excel z cennikiem
+﻿# Struktura pliku Excel z cennikiem
 
 ## Cel dokumentu
 
-Ten dokument opisuje docelową strukturę pliku Excel, który ma być głównym źródłem prawdy dla cennika EcoGardens.
+Ten dokument opisuje docelową strukturę pliku Excel, który ma być głównym źródłem prawdy dla cennika Glass System.
 
 Dokument uzupełnia decyzję opisaną w `pricing-source-strategy.md`.
 
@@ -38,7 +38,7 @@ Mogą zawierać:
 - kolory,
 - komentarze,
 - grupowanie sekcji,
-- stare tabele z EG Cennik,
+- stare tabele z cennik źródłowy,
 - pomocnicze kalkulacje,
 - dane kosztowe,
 - tabele produkcyjne,
@@ -599,7 +599,7 @@ Przykładowa nazwa:
 | `published-pricing.json` | Ostatnia poprawna wersja cennika |
 | `pricing-import-log.json` | Historia importów |
 
-W MVP możemy nadal korzystać z plików TypeScript w `src/data/pricing/eg`.
+W MVP możemy nadal korzystać z plików TypeScript w `src/data/pricing/[pricing-source]`.
 
 Docelowo te pliki zostaną zastąpione przez dane z opublikowanego snapshotu.
 
@@ -805,3 +805,5 @@ Nie powinno to wymagać przebudowy całego Pricing Engine ani całej integracji 
 Nie wdrażamy carportów w MVP.
 
 Projektujemy jednak Excel, Pricing Engine i mapowanie Bitrix24 tak, aby późniejsze dodanie carportów albo nowych wymiarów było rozszerzeniem systemu, a nie jego przebudową.
+
+

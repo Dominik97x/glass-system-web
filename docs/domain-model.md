@@ -1,4 +1,4 @@
-# Model domenowy
+﻿# Model domenowy
 
 ## Cel dokumentu
 
@@ -387,3 +387,4 @@ Poza MVP:
 3. Czy montaż w MVP jest osobną pozycją, czy wliczony w cenę?
 4. Czy klient powinien widzieć pełną listę pozycji, czy tylko cenę końcową?
 5. Czy oferta PDF będzie generowana w MVP?
+

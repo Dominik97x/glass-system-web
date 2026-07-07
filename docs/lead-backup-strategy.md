@@ -1,7 +1,7 @@
-# Lead backup strategy
+﻿# Lead backup strategy
 
 Status dokumentu: draft roboczy  
-Projekt: EcoGardens / glass-system-web  
+Projekt: Glass System / glass-system-web  
 Decyzja: produkcyjny backup leadów będzie oparty o Postgres, docelowo Neon.
 
 ---
@@ -426,3 +426,5 @@ Wykonane kroki:
 6. Po ustawieniu CALCULATOR_INQUIRY_REPOSITORY=database formularz kalkulatora zapisał lead w Postgres.
 7. Panel /admin/leady odczytał lead z aktywnego repozytorium.
 8. Zmiana statusu leadu na contacted zadziałała.
+
+

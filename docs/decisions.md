@@ -1,4 +1,4 @@
-# Decyzje projektowe
+﻿# Decyzje projektowe
 
 ## 2025-06-25
 
@@ -10,13 +10,13 @@ Kalkulator korzysta z gotowej matrycy cenowej.
 
 Powód:
 
-Tak działa obecny system EcoGardens oraz CRM.
+Tak działa obecny system Glass System oraz CRM.
 
 ---
 
 ### Pricing Engine
 
-Źródłem danych będzie cennik EG.
+Źródłem danych będzie cennik Glass System.
 
 Docelowo dane zostaną przeniesione do plików JSON.
 
@@ -79,4 +79,6 @@ Przykład:
 - jeżeli klient zmieni ściany na "brak", system powinien usunąć rolety boczne z konfiguracji.
 
 Powód:
-Tak działa kalkulator EcoGardens i zapobiega to tworzeniu niemożliwych konfiguracji.
+Tak działa kalkulator Glass System i zapobiega to tworzeniu niemożliwych konfiguracji.
+
+

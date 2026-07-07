@@ -1,4 +1,4 @@
-# Model konfiguracji produktu
+﻿# Model konfiguracji produktu
 
 ## Cel dokumentu
 
@@ -256,3 +256,4 @@ Konsultant może później zmienić konfigurację w CRM.
 4. Czy rabaty pojawiają się tylko w CRM, czy również na stronie?
 5. Czy klient ma zawsze widzieć cenę końcową, czy tylko orientacyjną?
 6. Jak dokładnie będzie wyglądała konfiguracja carportów?
+

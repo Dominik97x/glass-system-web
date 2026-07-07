@@ -1,4 +1,4 @@
-# Mapowanie portalu Bitrix24
+﻿# Mapowanie portalu Bitrix24
 
 ## Cel dokumentu
 
@@ -936,3 +936,4 @@ OK — endpoint działa bezpiecznie i nie wysypuje aplikacji, gdy Bitrix24 jest 
 8. Wykonać test utworzenia deala.
 9. Wykonać test dodania product rows.
 10. Sprawdzić VAT i dokumenty.
+

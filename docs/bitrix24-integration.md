@@ -1,8 +1,8 @@
-# Bitrix24 Integration
+﻿# Bitrix24 Integration
 
 ## Cel dokumentu
 
-Ten dokument opisuje docelowy kierunek integracji konfiguratora EcoGardens z Bitrix24.
+Ten dokument opisuje docelowy kierunek integracji konfiguratora Glass System z Bitrix24.
 
 Bitrix24 jest docelowym CRM dla procesu sprzedaży, wycen, ofert, proform, umów, realizacji i montażu.
 
@@ -19,7 +19,7 @@ nie jest docelowym CRM. Służy tylko do testowania przepływu danych przed pod�
 
 ## Dlaczego Bitrix24
 
-Na podstawie obecnego procesu EcoGardens Bitrix24 pełni rolę systemu operacyjnego firmy, a nie tylko prostego CRM.
+Na podstawie obecnego procesu Glass System Bitrix24 pełni rolę systemu operacyjnego firmy, a nie tylko prostego CRM.
 
 W Bitrix24 obsługiwane są:
 
@@ -130,7 +130,7 @@ Bitrix24CalculatorInquiryRepository
 ↓
 Bitrix24 Deal
 ↓
-Pipeline sprzedażowy EcoGardens
+Pipeline sprzedażowy Glass System
 ```
 
 Lokalny zapis JSON może zostać jako:
@@ -146,7 +146,7 @@ Nie powinien być głównym CRM.
 
 ## Decyzja: Lead czy Deal?
 
-Na podstawie aktualnego procesu EcoGardens rekomendacja brzmi:
+Na podstawie aktualnego procesu Glass System rekomendacja brzmi:
 
 ```text
 Zapytanie z kalkulatora powinno trafiać do Bitrix24 jako Deal.
@@ -580,13 +580,13 @@ Czy Bitrix24 sam liczy VAT na podstawie ustawień produktu?
 Czy VAT zależy od typu klienta/usługi?
 ```
 
-Na razie integracja powinna zachować ostrożność i nie zakładać ostatecznej logiki VAT bez potwierdzenia z EcoGardens.
+Na razie integracja powinna zachować ostrożność i nie zakładać ostatecznej logiki VAT bez potwierdzenia z Glass System.
 
 ---
 
 ## Dokumenty
 
-Na podstawie załączników w procesie EcoGardens występują dokumenty:
+Na podstawie załączników w procesie Glass System występują dokumenty:
 
 - wycena,
 - specyfikacja i wycena szczegółowa,
@@ -689,7 +689,7 @@ Nie robimy w MVP:
 
 ---
 
-## Dane potrzebne od EcoGardens / Bitrix24
+## Dane potrzebne od Glass System / Bitrix24
 
 Przed implementacją prawdziwej integracji trzeba zebrać:
 
@@ -820,7 +820,7 @@ Najważniejsze ryzyka:
 - webhook może działać z uprawnieniami konkretnego użytkownika,
 - API Bitrix24 może odrzucić request przy braku uprawnień,
 - duplikaty kontaktów lub dealów,
-- różnice między leadem a dealem w konfiguracji konta EcoGardens.
+- różnice między leadem a dealem w konfiguracji konta Glass System.
 
 ---
 
@@ -842,7 +842,7 @@ Najważniejsze ryzyka:
 
 ## Kontekst
 
-Po dalszej analizie EG Cennik, rozmów o historycznym utrzymywaniu cennika oraz screenów z Bitrix24 doprecyzowujemy rolę Bitrix24 w systemie.
+Po dalszej analizie cennik źródłowy, rozmów o historycznym utrzymywaniu cennika oraz screenów z Bitrix24 doprecyzowujemy rolę Bitrix24 w systemie.
 
 Najważniejsza decyzja:
 
@@ -870,7 +870,7 @@ Aplikacja nie powinna docelowo wymagać zmiany kodu, aby zmienić ceny.
 Obecne pliki cenowe w aplikacji:
 
 ```text
-src/data/pricing/eg/*.ts
+src/data/pricing/[pricing-source]/*.ts
 ```
 
 są traktowane jako rozwiązanie MVP/developerskie.
@@ -1162,3 +1162,5 @@ Przed uruchomieniem produkcyjnym należy wykonać testy:
 8. Lokalny panel `/admin/leady` pozostaje tylko narzędziem developerskim.
 9. Nie rozwijamy własnego CRM.
 10. Realizacja i dokumenty pozostają w Bitrix24.
+
+

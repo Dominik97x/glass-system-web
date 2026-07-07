@@ -1,4 +1,4 @@
-# Pricing Engine
+﻿# Pricing Engine
 
 ## Cel
 
@@ -6,7 +6,7 @@ Pricing Engine odpowiada za obliczenie ceny konfiguracji wybranej przez klienta.
 
 Nie wykorzystuje wzorów matematycznych.
 
-Źródłem danych jest cennik EG.
+Źródłem danych jest cennik Glass System.
 
 ---
 
@@ -115,3 +115,4 @@ Lead
 ↓
 
 CRM
+

@@ -1,4 +1,4 @@
-# Kalkulator wyceny
+﻿# Kalkulator wyceny
 
 ## Cel
 
@@ -154,3 +154,4 @@ Konfiguracja produktu
 Lead
 
 CRM
+

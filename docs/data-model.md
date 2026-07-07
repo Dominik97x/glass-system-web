@@ -1,4 +1,4 @@
-# Model danych
+﻿# Model danych
 
 ## Product
 
@@ -141,3 +141,4 @@ Realizacja
 ↓
 
 Zakończony
+

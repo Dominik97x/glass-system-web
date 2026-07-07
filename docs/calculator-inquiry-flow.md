@@ -1,4 +1,4 @@
-# Calculator Inquiry Flow
+﻿# Calculator Inquiry Flow
 
 ## Cel
 
@@ -703,3 +703,4 @@ Najbliższe techniczne kroki:
 - `ConsoleCalculatorInquiryRepository` jest tymczasową implementacją developerską.
 - UI nie powinien samodzielnie wysyłać danych do CRM.
 - Endpoint API nie powinien zawierać logiki zapisu do bazy, CRM ani e-maila.
+

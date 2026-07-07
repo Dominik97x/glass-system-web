@@ -1,8 +1,8 @@
-# Analiza dokumentu EG Cennik
+﻿# Analiza dokumentu cennik źródłowy
 
 ## Cel dokumentu
 
-Celem tego dokumentu jest pełne zrozumienie wszystkich tabel zawartych w dokumencie **EG Cennik** przed rozpoczęciem projektowania modelu domenowego, bazy danych oraz Pricing Engine.
+Celem tego dokumentu jest pełne zrozumienie wszystkich tabel zawartych w dokumencie **cennik źródłowy** przed rozpoczęciem projektowania modelu domenowego, bazy danych oraz Pricing Engine.
 
 Na tym etapie **nie opisujemy implementacji**, lecz analizujemy znaczenie biznesowe poszczególnych danych.
 
@@ -26,10 +26,10 @@ Po zakończeniu analizy każda tabela będzie miała przypisaną jednoznaczną r
 
 # Podział logiczny dokumentu
 
-Po przeanalizowaniu całego pliku EG Cennik można wyróżnić cztery niezależne warstwy danych.
+Po przeanalizowaniu całego pliku cennik źródłowy można wyróżnić cztery niezależne warstwy danych.
 
 ```
-EG Cennik
+cennik źródłowy
 
 ├── Warstwa A
 │   Kalkulator sprzedaży
@@ -357,11 +357,11 @@ Po zakończeniu modułu zadaszeń.
 
 # Dotychczas odkryte reguły biznesowe
 
-Na podstawie analizy konfiguratora EcoGardens udało się potwierdzić następujące zależności.
+Na podstawie analizy konfiguratora Glass System udało się potwierdzić następujące zależności.
 
 # Algorytm wyceny produktu
 
-Na podstawie analizy konfiguratora oraz cennika EG przyjmujemy następującą kolejność obliczeń.
+Na podstawie analizy konfiguratora oraz cennika Glass System przyjmujemy następującą kolejność obliczeń.
 
 ## Etap 1
 
@@ -577,7 +577,7 @@ Każdy kolejny etap dodaje nowe pozycje do wcześniej wyliczonej ceny.
 
 ## 1
 
-EG Cennik opisuje nie jeden system, lecz kilka niezależnych systemów jednocześnie.
+cennik źródłowy opisuje nie jeden system, lecz kilka niezależnych systemów jednocześnie.
 
 ---
 
@@ -612,7 +612,7 @@ Pozostałe tabele służą głównie:
 Na podstawie obecnej wiedzy przyjmujemy następujący przepływ danych.
 
 ```
-EG Cennik
+cennik źródłowy
 
         │
 
@@ -782,7 +782,7 @@ Takie podejście pozwoli stworzyć system łatwy do rozbudowy o kolejne produkty
 - [ ] Montaż
 
 
-# Inwentaryzacja tabel EG Cennik
+# Inwentaryzacja tabel cennik źródłowy
 
 | ID | Nazwa tabeli | Strona PDF | Wykorzystanie | MVP | Status |
 |----|--------------|------------|---------------|-----|--------|
@@ -796,3 +796,5 @@ Takie podejście pozwoli stworzyć system łatwy do rozbudowy o kolejne produkty
 | T8 | Rentowność | ? | Analizy | ❌ | Później |
 | T9 | BOM | ? | Produkcja | ❌ | Później |
 | T10 | Montaż | ? | Realizacja | ❌ | Później |
+
+

@@ -1,4 +1,4 @@
-# Model produktu
+﻿# Model produktu
 
 ## Cel dokumentu
 
@@ -307,3 +307,4 @@ To konfiguracja jest wykorzystywana przez:
 - moduł montażu.
 
 Cała architektura systemu będzie budowana wokół konfiguracji produktu.
+

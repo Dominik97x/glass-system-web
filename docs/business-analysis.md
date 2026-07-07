@@ -1,4 +1,4 @@
-# Analiza biznesowa
+﻿# Analiza biznesowa
 # Źródła leadów
 
 - Facebook Ads
@@ -208,3 +208,5 @@ Dodatkowo doliczane są:
 - inne dodatki
 
 Finalna cena jest sumą ceny bazowej i wybranych opcji.
+
+

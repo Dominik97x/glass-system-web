@@ -1,7 +1,7 @@
-# Bitrix24 implementation blueprint
+﻿# Bitrix24 implementation blueprint
 
 Status dokumentu: draft roboczy  
-Projekt: EcoGardens / glass-system-web  
+Projekt: Glass System / glass-system-web  
 Cel: zaprojektowanie Bitrix24 jako centralnego systemu sprzedaży, realizacji i obsługi klienta.
 
 ---
@@ -1579,3 +1579,5 @@ Najbliższy priorytet:
 zaprojektować proces CRM
 i przygotować aplikację tak, żeby żaden lead nie ginął nawet bez Bitrix24
 ```
+
+

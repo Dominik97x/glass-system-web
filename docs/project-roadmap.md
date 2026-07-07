@@ -1,4 +1,4 @@
-# Roadmap projektu
+﻿# Roadmap projektu
 
 ## Faza 1 - Przygotowanie
 
@@ -19,7 +19,7 @@
 - [x] Analiza Bitrix24
 - [x] Analiza kalkulatora
 - [x] Analiza konkurencji
-- [x] Analiza EG Cennik PDF
+- [x] Analiza cennik źródłowy PDF
 - [x] Opracowanie modelu danych
 - [x] Opracowanie pricing engine
 
@@ -54,3 +54,5 @@
 - [ ] Hosting
 - [ ] Domena
 - [ ] Wdrożenie
+
+
