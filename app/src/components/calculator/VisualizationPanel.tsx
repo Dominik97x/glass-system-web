@@ -1,244 +1,579 @@
+import type { CSSProperties } from "react";
+
+import { ROOF_LABELS, WALL_LABELS } from "@/data/configuration-labels";
 import {
-  getProductKind,
   type ProductConfiguration,
+  type RoofOption,
 } from "@/domain/ProductConfiguration";
-import {
-  ROOF_LABELS,
-  WALL_LABELS,
-} from "@/data/configuration-labels";
 
 interface Props {
   configuration: ProductConfiguration;
 }
 
-function getRoofSurfaceClass(configuration: ProductConfiguration): string {
-  if (configuration.roof.startsWith("glass")) {
-    return "bg-sky-100/45";
-  }
-
-  if (configuration.roof === "polycarbonate_grey") {
-    return "bg-slate-300/55";
-  }
-
-  if (configuration.roof === "polycarbonate_smoke") {
-    return "bg-neutral-400/55";
-  }
-
-  if (configuration.roof === "polycarbonate_milky") {
-    return "bg-white/65";
-  }
-
-  return "bg-cyan-100/45";
-}
-
-function getWallSurfaceClass(configuration: ProductConfiguration): string {
-  if (configuration.walls === "glass_tinted") {
-    return "bg-neutral-900/30";
-  }
-
-  if (configuration.walls === "glass_milky") {
-    return "bg-white/55";
-  }
-
-  return "bg-cyan-100/28";
-}
-
-function getProductLabel(configuration: ProductConfiguration): string {
-  return getProductKind(configuration) === "terrace_roof"
-    ? "Zadaszenie tarasu"
-    : "Ogród zimowy";
-}
-
 export function VisualizationPanel({ configuration }: Props) {
-  const productKind = getProductKind(configuration);
   const hasWalls = configuration.walls !== "none";
 
-
-  const hasLighting = configuration.hasLed || configuration.hasCob;
-
-  const widthProgress = (configuration.width - 306) / (1206 - 306);
-  const lengthProgress = (configuration.length - 300) / (500 - 300);
-
-  const visualWidth = Math.round(64 + widthProgress * 24);
-  const visualHeight = Math.round(48 + lengthProgress * 18);
-
-  const activeFeatures = [
-    hasWalls ? "Ściany szklane" : "Otwarta konstrukcja",
-    configuration.hasFrontZip ? "ZIP przód" : null,
-    configuration.hasLeftZip ? "ZIP lewy" : null,
-    configuration.hasRightZip ? "ZIP prawy" : null,
-    configuration.hasAwning ? "Markiza" : null,
-    configuration.hasLed ? "LED punktowe" : null,
-    configuration.hasCob ? "LED taśma" : null,
-  ].filter(Boolean);
+  const selectedExtras = getSelectedExtras(configuration);
 
   return (
-    <div className="h-full">
-      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <section className="rounded-[2rem] border border-neutral-200 bg-neutral-50 p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-6">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">
-            Wizualizacja
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">
+            Wizualizacja 3D
           </p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-950">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-950">
             Podgląd konfiguracji
-          </h3>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-neutral-600">
-            Schemat pokazuje wybrany typ konstrukcji, ściany, dach, rolety ZIP,
-            markizę i oświetlenie.
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-600">
+            Model pokazuje orientacyjny wygląd konstrukcji: dach, ściany,
+            rolety ZIP, markizę i oświetlenie.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-neutral-950 px-4 py-3 text-white">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">
-            {getProductLabel(configuration)}
+        <div className="hidden rounded-2xl bg-neutral-950 px-5 py-4 text-white sm:block">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-300">
+            {hasWalls ? "Ogród zimowy" : "Zadaszenie tarasu"}
           </p>
-          <p className="mt-1 text-sm text-white/70">
+          <p className="mt-1 text-sm text-neutral-200">
             {configuration.length} x {configuration.width} cm
           </p>
         </div>
       </div>
 
-      <div className="relative min-h-[470px] overflow-hidden rounded-[1.75rem] border border-neutral-200 bg-[#e9e2d7] shadow-inner">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_12%,rgba(16,185,129,0.20),transparent_28%),linear-gradient(180deg,#f7f2e9_0%,#efe7db_50%,#d9d1c5_100%)]" />
+      <Product3DPreview configuration={configuration} />
 
-        <div className="absolute left-0 right-0 top-0 h-[42%] bg-[linear-gradient(90deg,rgba(255,255,255,0.94),rgba(255,255,255,0.68)),linear-gradient(90deg,rgba(15,23,42,0.08)_1px,transparent_1px)] bg-[size:auto,84px_84px]" />
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <InfoCard label="Dach" value={ROOF_LABELS[configuration.roof]} />
+        <InfoCard label="Ściany" value={WALL_LABELS[configuration.walls]} />
+        <InfoCard
+          label="Dodatki"
+          value={selectedExtras.length > 0 ? selectedExtras.join(", ") : "Brak"}
+        />
+      </div>
 
-        <div className="absolute left-[8%] top-[14%] h-20 w-28 rounded-full bg-emerald-900/10 blur-2xl" />
-        <div className="absolute right-[9%] top-[17%] h-16 w-16 rounded-full bg-amber-300/50 blur-xl" />
+      <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-950">
+        Wizualizacja jest poglądowa. Finalny wygląd zależy od pomiaru, koloru
+        profili, rodzaju szkła, montażu i warunków na miejscu.
+      </div>
+    </section>
+  );
+}
 
-        <div className="absolute bottom-0 left-0 right-0 h-[42%] bg-[linear-gradient(160deg,#b7aa98_0%,#d9d1c5_42%,#a89d90_100%)]" />
+function Product3DPreview({
+  configuration,
+}: {
+  configuration: ProductConfiguration;
+}) {
+  const hasWalls = configuration.walls !== "none";
+  const hasAnyZip =
+    hasWalls &&
+    (configuration.hasFrontZip ||
+      configuration.hasLeftZip ||
+      configuration.hasRightZip);
 
-        <div className="absolute bottom-[11%] left-[6%] right-[6%] h-[20%] rounded-[40%] bg-black/10 blur-2xl" />
+  const widthProgress = normalize(
+    configuration.width,
+    306,
+    1206
+  );
+  const lengthProgress = normalize(
+    configuration.length,
+    300,
+    500
+  );
 
-        <div className="absolute bottom-[17%] left-1/2 h-[14%] w-[82%] -translate-x-1/2 skew-x-[-12deg] rounded-sm bg-neutral-300 shadow-2xl ring-1 ring-black/10" />
+  const frontWidth = 360 + widthProgress * 135;
+  const frontHeight = 178 + lengthProgress * 26;
+  const frontX = 400 - frontWidth / 2;
+  const frontY = 216 - lengthProgress * 12;
+  const frontRight = frontX + frontWidth;
+  const frontBottom = frontY + frontHeight;
 
-        <div
-          className="absolute bottom-[24%] left-1/2 -translate-x-1/2"
-          style={{
-            width: `${visualWidth}%`,
-            height: `${visualHeight}%`,
-          }}
-        >
-          <div className="absolute -top-[20%] left-[4%] right-[4%] h-[24%] -skew-x-12 border border-neutral-800/70 bg-neutral-950/90 shadow-2xl">
-            <div
-              className={`absolute inset-[8px] border border-white/30 ${getRoofSurfaceClass(
-                configuration
-              )} backdrop-blur-[1px]`}
+  const sideOffset = 68 + lengthProgress * 34;
+  const sideLift = 44 + lengthProgress * 16;
+
+  const roofFrontY = frontY - 38;
+  const roofBackY = roofFrontY - sideLift;
+  const roofOverhang = 30;
+
+  const roofFill = getRoofFill(configuration.roof);
+  const roofOpacity = getRoofOpacity(configuration.roof);
+
+  const label = hasWalls ? "Zabudowa ze ścianami" : "Konstrukcja otwarta";
+
+  const modelStyle: CSSProperties = {
+    filter: "drop-shadow(0 34px 34px rgba(15, 23, 42, 0.22))",
+  };
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-[2rem] border border-neutral-200 bg-white">
+      <svg
+        viewBox="0 0 800 520"
+        role="img"
+        aria-label="Podgląd konfiguracji produktu"
+        className="h-auto w-full"
+        style={modelStyle}
+      >
+        <defs>
+          <linearGradient id="sceneSky" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f9fafb" />
+            <stop offset="48%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#fff7df" />
+          </linearGradient>
+
+          <linearGradient id="terraceFloor" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f4f1ea" />
+            <stop offset="100%" stopColor="#b9afa0" />
+          </linearGradient>
+
+          <linearGradient id="glassFront" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#78909c" stopOpacity="0.58" />
+            <stop offset="48%" stopColor="#31444b" stopOpacity="0.68" />
+            <stop offset="100%" stopColor="#0f172a" stopOpacity="0.72" />
+          </linearGradient>
+
+          <linearGradient id="glassSide" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#90a4ae" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#0f172a" stopOpacity="0.48" />
+          </linearGradient>
+
+          <linearGradient id="profileGradient" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#2b2b2b" />
+            <stop offset="100%" stopColor="#020202" />
+          </linearGradient>
+
+          <radialGradient id="warmLight">
+            <stop offset="0%" stopColor="#ffe08a" stopOpacity="1" />
+            <stop offset="55%" stopColor="#ffd54f" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#ffd54f" stopOpacity="0" />
+          </radialGradient>
+
+          <filter id="softBlur">
+            <feGaussianBlur stdDeviation="9" />
+          </filter>
+        </defs>
+
+        <rect width="800" height="520" fill="url(#sceneSky)" />
+
+        <g opacity="0.38">
+          {Array.from({ length: 11 }).map((_, index) => (
+            <line
+              key={`wall-grid-${index}`}
+              x1={90 + index * 62}
+              x2={90 + index * 62}
+              y1="40"
+              y2="372"
+              stroke="#e5e7eb"
+              strokeWidth="1"
             />
+          ))}
+        </g>
 
-            {configuration.hasAwning ? (
-              <div className="absolute -top-5 left-4 right-4 h-5 bg-emerald-700/90 shadow-lg">
-                <div className="h-full bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.20)_0_8px,transparent_8px_16px)]" />
-              </div>
-            ) : null}
+        <rect y="300" width="800" height="220" fill="#ede7db" />
+        <rect y="365" width="800" height="155" fill="#d8cfc0" />
 
-            {hasLighting ? (
-              <div className="absolute bottom-3 left-8 right-8 h-1 rounded-full bg-amber-300 shadow-[0_0_24px_rgba(252,211,77,0.95)]" />
-            ) : null}
-          </div>
+        <polygon
+          points={`${frontX - 84},${frontBottom - 14} ${
+            frontRight + 84
+          },${frontBottom - 14} ${frontRight + 132},${frontBottom + 54} ${
+            frontX - 132
+          },${frontBottom + 54}`}
+          fill="url(#terraceFloor)"
+          stroke="#d7d2ca"
+          strokeWidth="2"
+        />
 
-          <div className="absolute inset-x-0 bottom-0 h-full border-[10px] border-neutral-950 bg-neutral-950 shadow-2xl">
-            <div className="absolute inset-[10px] overflow-hidden bg-[linear-gradient(135deg,rgba(15,23,42,0.72),rgba(15,23,42,0.26)),linear-gradient(120deg,rgba(255,255,255,0.18),transparent_28%,rgba(255,255,255,0.12)_58%,transparent)]">
-              {hasWalls ? (
-                <div
-                  className={`absolute inset-0 ${getWallSurfaceClass(
-                    configuration
-                  )} backdrop-blur-[1px]`}
+        <ellipse
+          cx="400"
+          cy={frontBottom + 72}
+          rx={frontWidth / 1.6}
+          ry="34"
+          fill="#000000"
+          opacity="0.16"
+          filter="url(#softBlur)"
+        />
+
+        <g>
+          <polygon
+            points={`${frontRight},${frontY} ${frontRight + sideOffset},${
+              frontY - sideLift
+            } ${frontRight + sideOffset},${frontBottom - sideLift} ${frontRight},${frontBottom}`}
+            fill={hasWalls ? "url(#glassSide)" : "transparent"}
+            stroke="#111111"
+            strokeWidth="9"
+            strokeLinejoin="round"
+            opacity={hasWalls ? 1 : 0.65}
+          />
+
+          {hasWalls && configuration.hasRightZip ? (
+            <polygon
+              points={`${frontRight + 7},${frontY + 13} ${
+                frontRight + sideOffset - 12
+              },${frontY - sideLift + 21} ${
+                frontRight + sideOffset - 12
+              },${frontBottom - sideLift - 10} ${frontRight + 7},${
+                frontBottom - 17
+              }`}
+              fill="#111827"
+              opacity="0.78"
+            />
+          ) : null}
+
+          <polygon
+            points={`${frontX - roofOverhang},${roofFrontY} ${
+              frontRight + roofOverhang
+            },${roofFrontY} ${frontRight + sideOffset + roofOverhang},${roofBackY} ${
+              frontX + sideOffset - roofOverhang
+            },${roofBackY}`}
+            fill={roofFill}
+            opacity={roofOpacity}
+            stroke="#111111"
+            strokeWidth="11"
+            strokeLinejoin="round"
+          />
+
+          {configuration.hasAwning ? (
+            <g opacity="0.9">
+              <polygon
+                points={`${frontX - roofOverhang + 18},${roofFrontY - 4} ${
+                  frontRight + roofOverhang - 18
+                },${roofFrontY - 4} ${
+                  frontRight + sideOffset + roofOverhang - 30
+                },${roofBackY + 10} ${frontX + sideOffset - roofOverhang + 30},${
+                  roofBackY + 10
+                }`}
+                fill="#047857"
+                opacity="0.82"
+              />
+
+              {Array.from({ length: 13 }).map((_, index) => {
+                const x = frontX + 10 + index * (frontWidth / 12);
+
+                return (
+                  <line
+                    key={`awning-stripe-${index}`}
+                    x1={x}
+                    y1={roofFrontY - 3}
+                    x2={x + sideOffset}
+                    y2={roofBackY + 9}
+                    stroke="#34d399"
+                    strokeWidth="5"
+                    opacity="0.7"
+                  />
+                );
+              })}
+            </g>
+          ) : null}
+
+          <rect
+            x={frontX}
+            y={frontY}
+            width={frontWidth}
+            height={frontHeight}
+            fill={hasWalls ? "url(#glassFront)" : "transparent"}
+            stroke="#080808"
+            strokeWidth="14"
+            rx="1"
+          />
+
+          {!hasWalls ? (
+            <rect
+              x={frontX + 14}
+              y={frontY + 14}
+              width={frontWidth - 28}
+              height={frontHeight - 28}
+              fill="#111827"
+              opacity="0.08"
+            />
+          ) : null}
+
+          {hasWalls && configuration.hasFrontZip ? (
+            <g>
+              <rect
+                x={frontX + 12}
+                y={frontY + 14}
+                width={frontWidth - 24}
+                height={frontHeight - 28}
+                fill="#111827"
+                opacity="0.76"
+              />
+
+              {Array.from({ length: 18 }).map((_, index) => (
+                <line
+                  key={`front-zip-line-${index}`}
+                  x1={frontX + 24 + index * ((frontWidth - 48) / 17)}
+                  x2={frontX + 24 + index * ((frontWidth - 48) / 17)}
+                  y1={frontY + 20}
+                  y2={frontBottom - 20}
+                  stroke="#334155"
+                  strokeWidth="1"
+                  opacity="0.65"
                 />
-              ) : (
-                <div className="absolute inset-0 bg-black/8" />
-              )}
+              ))}
+            </g>
+          ) : null}
 
-              <div className="absolute bottom-0 left-0 top-0 w-[2px] bg-white/28" />
-              <div className="absolute bottom-0 left-1/4 top-0 w-[2px] bg-white/28" />
-              <div className="absolute bottom-0 left-1/2 top-0 w-[2px] bg-white/28" />
-              <div className="absolute bottom-0 left-3/4 top-0 w-[2px] bg-white/28" />
-              <div className="absolute bottom-0 right-0 top-0 w-[2px] bg-white/28" />
+          {hasWalls && configuration.hasLeftZip ? (
+            <polygon
+              points={`${frontX - 8},${frontY + 13} ${
+                frontX + sideOffset - 54
+              },${frontY - sideLift + 21} ${
+                frontX + sideOffset - 54
+              },${frontBottom - sideLift - 10} ${frontX - 8},${
+                frontBottom - 17
+              }`}
+              fill="#111827"
+              opacity="0.72"
+            />
+          ) : null}
 
-              <div className="absolute left-[8%] top-[14%] h-[1px] w-[28%] rotate-[-18deg] bg-white/50" />
-              <div className="absolute right-[12%] top-[22%] h-[1px] w-[32%] rotate-[-18deg] bg-white/40" />
-              <div className="absolute bottom-[16%] left-[16%] h-[1px] w-[40%] rotate-[-18deg] bg-white/28" />
+          {Array.from({ length: 5 }).map((_, index) => {
+            const x = frontX + (frontWidth / 4) * index;
 
-              {configuration.hasFrontZip && hasWalls ? (
-                <div className="absolute inset-x-[9%] top-0 h-full bg-neutral-950/40 backdrop-blur-[1px]">
-                  <div className="h-full bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.12)_0_1px,transparent_1px_9px)]" />
-                </div>
-              ) : null}
+            return (
+              <rect
+                key={`front-post-${index}`}
+                x={x - 4}
+                y={frontY}
+                width="8"
+                height={frontHeight}
+                fill="url(#profileGradient)"
+                opacity={index === 0 || index === 4 ? 1 : 0.82}
+              />
+            );
+          })}
 
-              {configuration.hasLeftZip && hasWalls ? (
-                <div className="absolute bottom-0 left-0 top-0 w-[16%] bg-neutral-950/45 backdrop-blur-[1px]" />
-              ) : null}
+          <rect
+            x={frontX - 8}
+            y={frontY - 7}
+            width={frontWidth + 16}
+            height="16"
+            fill="url(#profileGradient)"
+          />
+          <rect
+            x={frontX - 8}
+            y={frontBottom - 8}
+            width={frontWidth + 16}
+            height="17"
+            fill="url(#profileGradient)"
+          />
 
-              {configuration.hasRightZip && hasWalls ? (
-                <div className="absolute bottom-0 right-0 top-0 w-[16%] bg-neutral-950/45 backdrop-blur-[1px]" />
-              ) : null}
+          {hasWalls ? (
+            <g opacity="0.5">
+              <line
+                x1={frontX + 42}
+                y1={frontY + 54}
+                x2={frontX + 118}
+                y2={frontY + 24}
+                stroke="#ffffff"
+                strokeWidth="2"
+              />
+              <line
+                x1={frontX + frontWidth * 0.58}
+                y1={frontY + 74}
+                x2={frontX + frontWidth * 0.75}
+                y2={frontY + 42}
+                stroke="#ffffff"
+                strokeWidth="2"
+              />
+              <line
+                x1={frontX + frontWidth * 0.22}
+                y1={frontBottom - 34}
+                x2={frontX + frontWidth * 0.55}
+                y2={frontBottom - 82}
+                stroke="#ffffff"
+                strokeWidth="1.5"
+              />
+            </g>
+          ) : null}
 
-              {configuration.hasLed ? (
-                <div className="absolute left-[12%] right-[12%] top-[12%] flex justify-between">
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className="h-2 w-2 rounded-full bg-amber-200 shadow-[0_0_18px_rgba(252,211,77,0.9)]"
+          {configuration.hasLed ? (
+            <g>
+              {Array.from({ length: 6 }).map((_, index) => {
+                const x = frontX + 44 + index * ((frontWidth - 88) / 5);
+                const y = frontY + 42;
+
+                return (
+                  <g key={`led-${index}`}>
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r="24"
+                      fill="url(#warmLight)"
+                      opacity="0.65"
                     />
-                  ))}
-                </div>
-              ) : null}
+                    <circle cx={x} cy={y} r="5" fill="#ffe082" />
+                  </g>
+                );
+              })}
+            </g>
+          ) : null}
 
-              {configuration.hasCob ? (
-                <div className="absolute bottom-[12%] left-[10%] right-[10%] h-1 rounded-full bg-amber-300 shadow-[0_0_24px_rgba(252,211,77,0.9)]" />
-              ) : null}
-            </div>
+          {configuration.hasCob ? (
+            <g>
+              <line
+                x1={frontX + 40}
+                x2={frontRight - 40}
+                y1={frontY - 28}
+                y2={frontY - 28}
+                stroke="#ffd54f"
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+              <line
+                x1={frontX + 40}
+                x2={frontRight - 40}
+                y1={frontY - 28}
+                y2={frontY - 28}
+                stroke="#ffd54f"
+                strokeWidth="16"
+                strokeLinecap="round"
+                opacity="0.18"
+              />
+            </g>
+          ) : null}
 
-            <div className="absolute -bottom-4 left-0 right-0 h-4 bg-neutral-900" />
-          </div>
+          <rect
+            x={frontX + frontWidth / 2 - 76}
+            y={frontBottom + 12}
+            width="152"
+            height="34"
+            rx="17"
+            fill="#ffffff"
+            stroke="#d4d4d4"
+          />
+          <text
+            x="400"
+            y={frontBottom + 34}
+            textAnchor="middle"
+            fontSize="14"
+            fontWeight="700"
+            fill="#525252"
+          >
+            {label}
+          </text>
 
-          {productKind === "terrace_roof" ? (
-            <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-neutral-700 shadow-lg">
-              Konstrukcja otwarta
-            </div>
-          ) : (
-            <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-neutral-700 shadow-lg">
-              Zabudowa ze ścianami
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
-            Dach
-          </p>
-          <p className="mt-2 text-sm font-bold text-neutral-950">
-            {ROOF_LABELS[configuration.roof]}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
-            Ściany
-          </p>
-          <p className="mt-2 text-sm font-bold text-neutral-950">
-            {WALL_LABELS[configuration.walls]}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
-            Dodatki
-          </p>
-          <p className="mt-2 text-sm font-bold text-neutral-950">
-            {activeFeatures.length > 0
-              ? activeFeatures.slice(1).join(", ")
-              : "Brak dodatków"}
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl bg-emerald-50 p-4 text-sm leading-6 text-emerald-950 ring-1 ring-emerald-100">
-        To jest poglądowa wizualizacja konfiguracji. Finalny wygląd konstrukcji
-        zależy od pomiaru, koloru profili, rodzaju szkła i warunków montażu.
-      </div>
+          {hasAnyZip ? (
+            <g>
+              <rect
+                x={frontX + frontWidth - 96}
+                y={frontY + frontHeight - 42}
+                width="78"
+                height="24"
+                rx="12"
+                fill="#111827"
+                opacity="0.88"
+              />
+              <text
+                x={frontX + frontWidth - 57}
+                y={frontY + frontHeight - 25}
+                textAnchor="middle"
+                fontSize="11"
+                fontWeight="800"
+                fill="#ffffff"
+              >
+                ZIP
+              </text>
+            </g>
+          ) : null}
+        </g>
+      </svg>
     </div>
   );
 }
+
+function InfoCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4">
+      <p className="text-xs font-black uppercase tracking-[0.2em] text-neutral-500">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-bold leading-5 text-neutral-950">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function getSelectedExtras(configuration: ProductConfiguration): string[] {
+  const extras: string[] = [];
+
+  if (configuration.hasFrontZip) {
+    extras.push("ZIP przód");
+  }
+
+  if (configuration.hasLeftZip) {
+    extras.push("ZIP lewa");
+  }
+
+  if (configuration.hasRightZip) {
+    extras.push("ZIP prawa");
+  }
+
+  if (configuration.hasAwning) {
+    extras.push("Markiza");
+  }
+
+  if (configuration.hasLed) {
+    extras.push("LED punktowe");
+  }
+
+  if (configuration.hasCob) {
+    extras.push("LED taśma");
+  }
+
+  if (configuration.hasHandles) {
+    extras.push("Uchwyty");
+  }
+
+  if (configuration.hasBrushes) {
+    extras.push("Szczotki");
+  }
+
+  if (configuration.hasLevelingProfile) {
+    extras.push("Profil wyrównujący");
+  }
+
+  return extras;
+}
+
+function getRoofFill(roof: RoofOption): string {
+  if (roof === "glass_clear") {
+    return "#dbeafe";
+  }
+
+  if (roof === "glass_milky") {
+    return "#e5e7eb";
+  }
+
+  if (roof === "polycarbonate_milky") {
+    return "#d9f99d";
+  }
+
+  if (roof === "polycarbonate_grey") {
+    return "#9ca3af";
+  }
+
+  if (roof === "polycarbonate_smoke") {
+    return "#64748b";
+  }
+
+  return "#a7f3d0";
+}
+
+function getRoofOpacity(roof: RoofOption): number {
+  if (roof === "glass_clear") {
+    return 0.42;
+  }
+
+  if (roof === "glass_milky") {
+    return 0.72;
+  }
+
+  return 0.78;
+}
+
+function normalize(value: number, min: number, max: number): number {
+  return Math.max(0, Math.min(1, (value - min) / (max - min)));
+} 
