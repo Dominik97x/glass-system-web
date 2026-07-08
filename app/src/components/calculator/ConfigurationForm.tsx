@@ -1,14 +1,13 @@
+import type { ReactNode } from "react";
+
+import { ROOF_LABELS, WALL_LABELS } from "@/data/configuration-labels";
 import type {
+  Length,
   ProductConfiguration,
   RoofOption,
   WallOption,
   Width,
-  Length,
 } from "@/domain/ProductConfiguration";
-import {
-  ROOF_LABELS,
-  WALL_LABELS,
-} from "@/data/configuration-labels";
 
 interface Props {
   configuration: ProductConfiguration;
@@ -39,6 +38,7 @@ const WALL_OPTIONS: WallOption[] = [
 
 export function ConfigurationForm({ configuration, onChange }: Props) {
   const hasWalls = configuration.walls !== "none";
+  const productLabel = hasWalls ? "Ogród zimowy" : "Zadaszenie tarasu";
 
   function updateConfiguration(partial: Partial<ProductConfiguration>) {
     onChange({
@@ -57,14 +57,52 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
     });
   }
 
+  function updateSpotLed(checked: boolean) {
+    onChange({
+      ...configuration,
+      hasLed: checked,
+      hasCob: checked ? false : configuration.hasCob,
+    });
+  }
+
+  function updateStripLed(checked: boolean) {
+    onChange({
+      ...configuration,
+      hasCob: checked,
+      hasLed: checked ? false : configuration.hasLed,
+    });
+  }
+
   return (
-    <div className="space-y-6">
-      <ConfigurationGroup
-        eyebrow="Krok 1"
-        title="Wymiary konstrukcji"
-        description="Wybierz podstawowy wymiar produktu. Cena aktualizuje się automatycznie."
-      >
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+    <div className="space-y-3">
+      <section className="rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">
+              Konfiguracja
+            </p>
+            <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-tight text-neutral-950">
+              Parametry produktu
+            </h3>
+          </div>
+
+          <div className="min-w-28 rounded-2xl bg-neutral-950 px-3 py-3 text-right text-white">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-300">
+              Typ
+            </p>
+            <p className="mt-1 text-sm font-bold leading-tight">
+              {productLabel}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-3 text-sm leading-6 text-neutral-600">
+          Wybierz parametry. Cena i wizualizacja aktualizują się automatycznie.
+        </p>
+      </section>
+
+      <CompactPanel title="Wymiary">
+        <div className="grid grid-cols-2 gap-3">
           <SelectField
             label="Szerokość"
             value={configuration.width}
@@ -89,14 +127,10 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }))}
           />
         </div>
-      </ConfigurationGroup>
+      </CompactPanel>
 
-      <ConfigurationGroup
-        eyebrow="Krok 2"
-        title="Dach i ściany"
-        description="Dach wpływa na wygląd konstrukcji, a wybór ścian zmienia produkt w ogród zimowy."
-      >
-        <div className="space-y-3">
+      <CompactPanel title="Dach i ściany">
+        <div className="grid gap-3">
           <SelectField
             label="Pokrycie dachu"
             value={configuration.roof}
@@ -118,24 +152,19 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
               label: WALL_LABELS[walls],
             }))}
           />
-
-          <div className="rounded-2xl bg-neutral-100 p-4 text-sm leading-6 text-neutral-600">
-            {hasWalls
-              ? "Wybrane ściany oznaczają konfigurację ogrodu zimowego. Możesz dodać rolety ZIP."
-              : "Brak ścian oznacza otwarte zadaszenie tarasu. Rolety ZIP są dostępne po wybraniu ścian."}
-          </div>
         </div>
-      </ConfigurationGroup>
 
-      <ConfigurationGroup
-        eyebrow="Krok 3"
-        title="Osłony i komfort"
-        description="Dobierz elementy zwiększające komfort korzystania z tarasu."
-      >
-        <div className="grid gap-3">
-          <ToggleCard
-            title="Roleta ZIP przód"
-            description="Osłona przedniej części zabudowy."
+        <div className="mt-3 rounded-2xl bg-neutral-100 px-4 py-3 text-sm leading-6 text-neutral-600">
+          {hasWalls
+            ? "Ściany zmieniają produkt w ogród zimowy i odblokowują ZIP."
+            : "Brak ścian oznacza zadaszenie tarasu. ZIP dostępny po wyborze ścian."}
+        </div>
+      </CompactPanel>
+
+      <CompactPanel title="Opcje">
+        <div className="grid grid-cols-2 gap-2">
+          <OptionTile
+            label="ZIP przód"
             checked={configuration.hasFrontZip}
             disabled={!hasWalls}
             onChange={(checked) =>
@@ -143,9 +172,8 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }
           />
 
-          <ToggleCard
-            title="Roleta ZIP lewa"
-            description="Osłona boczna po lewej stronie."
+          <OptionTile
+            label="ZIP lewa"
             checked={configuration.hasLeftZip}
             disabled={!hasWalls}
             onChange={(checked) =>
@@ -153,9 +181,8 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }
           />
 
-          <ToggleCard
-            title="Roleta ZIP prawa"
-            description="Osłona boczna po prawej stronie."
+          <OptionTile
+            label="ZIP prawa"
             checked={configuration.hasRightZip}
             disabled={!hasWalls}
             onChange={(checked) =>
@@ -163,97 +190,73 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }
           />
 
-          <ToggleCard
-            title="Markiza dachowa"
-            description="Dodatkowe zacienienie konstrukcji."
+          <OptionTile
+            label="Markiza"
             checked={configuration.hasAwning}
             onChange={(checked) =>
               updateConfiguration({ hasAwning: checked })
             }
           />
-        </div>
-      </ConfigurationGroup>
 
-      <ConfigurationGroup
-        eyebrow="Krok 4"
-        title="Oświetlenie"
-        description="Dodaj światło, które podkreśli konstrukcję wieczorem."
-      >
-        <div className="grid gap-3">
-          <ToggleCard
-            title="Oświetlenie LED punktowe"
-            description="Punkty świetlne w konstrukcji."
+          <OptionTile
+            label="LED punktowe"
             checked={configuration.hasLed}
-            onChange={(checked) => updateConfiguration({ hasLed: checked })}
+            onChange={updateSpotLed}
           />
 
-          <ToggleCard
-            title="Oświetlenie LED taśma"
-            description="Dekoracyjna linia światła w konstrukcji."
+          <OptionTile
+            label="LED taśma"
             checked={configuration.hasCob}
-            onChange={(checked) => updateConfiguration({ hasCob: checked })}
+            onChange={updateStripLed}
           />
-        </div>
-      </ConfigurationGroup>
 
-      <ConfigurationGroup
-        eyebrow="Krok 5"
-        title="Akcesoria"
-        description="Elementy techniczne i wykończeniowe potrzebne przy zabudowie."
-      >
-        <div className="grid gap-3">
-          <ToggleCard
-            title="Uchwyty"
-            description="Zestaw uchwytów do systemu ścian."
+          <OptionTile
+            label="Uchwyty"
             checked={configuration.hasHandles}
             onChange={(checked) =>
               updateConfiguration({ hasHandles: checked })
             }
           />
 
-          <ToggleCard
-            title="Szczotki"
-            description="Elementy uszczelniające i przeciwkurzowe."
+          <OptionTile
+            label="Szczotki"
             checked={configuration.hasBrushes}
             onChange={(checked) =>
               updateConfiguration({ hasBrushes: checked })
             }
           />
 
-          <ToggleCard
-            title="Profil wyrównujący"
-            description="Przygotowanie pod stabilny montaż systemu."
-            checked={configuration.hasLevelingProfile}
-            onChange={(checked) =>
-              updateConfiguration({ hasLevelingProfile: checked })
-            }
-          />
+          <div className="col-span-2">
+            <OptionTile
+              label="Profil wyrównujący"
+              checked={configuration.hasLevelingProfile}
+              onChange={(checked) =>
+                updateConfiguration({ hasLevelingProfile: checked })
+              }
+            />
+          </div>
         </div>
-      </ConfigurationGroup>
+
+        <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-950">
+          LED punktowe i LED taśma są wariantami alternatywnymi — wybór jednej
+          opcji automatycznie wyłącza drugą.
+        </div>
+      </CompactPanel>
     </div>
   );
 }
 
-interface ConfigurationGroupProps {
-  eyebrow: string;
+interface CompactPanelProps {
   title: string;
-  description: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-function ConfigurationGroup({
-  eyebrow,
-  title,
-  description,
-  children,
-}: ConfigurationGroupProps) {
+function CompactPanel({ title, children }: CompactPanelProps) {
   return (
-    <section className="rounded-[1.25rem] border border-neutral-200 bg-neutral-50 p-4">
-      <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">
-        {eyebrow}
-      </p>
-      <h4 className="mt-2 text-lg font-semibold text-neutral-950">{title}</h4>
-      <p className="mt-2 text-sm leading-6 text-neutral-600">{description}</p>
+    <section className="rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm">
+      <h4 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-500">
+        {title}
+      </h4>
 
       <div className="mt-4">{children}</div>
     </section>
@@ -275,13 +278,13 @@ interface SelectFieldProps {
 function SelectField({ label, value, options, onChange }: SelectFieldProps) {
   return (
     <label className="block">
-      <span className="text-xs font-black uppercase tracking-[0.18em] text-neutral-500">
+      <span className="text-[11px] font-black uppercase tracking-[0.18em] text-neutral-500">
         {label}
       </span>
       <select
         value={String(value)}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-bold text-neutral-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+        className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-sm font-bold text-neutral-950 outline-none transition hover:bg-white focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -293,59 +296,52 @@ function SelectField({ label, value, options, onChange }: SelectFieldProps) {
   );
 }
 
-interface ToggleCardProps {
-  title: string;
-  description: string;
+interface OptionTileProps {
+  label: string;
   checked: boolean;
   disabled?: boolean;
   onChange(checked: boolean): void;
 }
 
-function ToggleCard({
-  title,
-  description,
+function OptionTile({
+  label,
   checked,
   disabled = false,
   onChange,
-}: ToggleCardProps) {
+}: OptionTileProps) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={[
-        "group flex w-full items-start justify-between gap-4 rounded-2xl border p-4 text-left transition",
+        "flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border px-3 py-3 text-left transition",
         checked
-          ? "border-emerald-500 bg-emerald-50 shadow-sm"
-          : "border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50",
+          ? "border-emerald-500 bg-emerald-50"
+          : "border-neutral-200 bg-neutral-50 hover:border-neutral-300 hover:bg-white",
         disabled
-          ? "cursor-not-allowed opacity-45 hover:border-neutral-200 hover:bg-white"
+          ? "cursor-not-allowed opacity-45 hover:border-neutral-200 hover:bg-neutral-50"
           : "cursor-pointer",
       ].join(" ")}
     >
-      <span>
-        <span className="block text-sm font-bold text-neutral-950">
-          {title}
+      <span className="min-w-0">
+        <span className="block text-sm font-bold leading-tight text-neutral-950">
+          {label}
         </span>
-        <span className="mt-1 block text-sm leading-5 text-neutral-600">
-          {description}
+        <span className="mt-1 block text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-400">
+          {disabled ? "niedostępne" : checked ? "wybrane" : "dodaj"}
         </span>
-        {disabled ? (
-          <span className="mt-2 block text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">
-            Dostępne po wybraniu ścian
-          </span>
-        ) : null}
       </span>
 
       <span
         className={[
-          "mt-1 flex h-7 w-12 shrink-0 items-center rounded-full p-1 transition",
+          "flex h-6 w-11 shrink-0 items-center rounded-full p-1 transition",
           checked ? "bg-emerald-500" : "bg-neutral-300",
         ].join(" ")}
       >
         <span
           className={[
-            "h-5 w-5 rounded-full bg-white shadow-sm transition",
+            "h-4 w-4 rounded-full bg-white shadow-sm transition",
             checked ? "translate-x-5" : "translate-x-0",
           ].join(" ")}
         />
