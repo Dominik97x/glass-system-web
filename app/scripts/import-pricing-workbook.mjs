@@ -117,6 +117,9 @@ async function main() {
   console.log(`Output:   ${path.relative(repoRoot, outputPath)}`);
   console.log(`Rows:     ${priceMatrix.length}`);
   console.log(`Dims:     ${dimensions.length}`);
+  console.log(
+    "QA correction: handlesGross and brushesGross were swapped during import."
+  );
 }
 
 function normalizePriceMatrixRow(row) {
@@ -141,7 +144,33 @@ function normalizePriceMatrixRow(row) {
     normalizedRow[priceField] = toNumber(getValue(row, priceField));
   }
 
+  applyEgQaCorrections(normalizedRow);
+
   return normalizedRow;
+}
+
+function applyEgQaCorrections(row) {
+  /*
+   * QA z kalkulatora EG wykazało, że wcześniejsza interpretacja kolumn
+   * dodatków była odwrócona:
+   *
+   * - uchwyty: 423 zł dla 300 x 306 cm,
+   * - szczotki: 465 zł dla 300 x 306 cm.
+   *
+   * W workbooku wartości są obecnie zapisane odwrotnie, dlatego importer
+   * zamienia je podczas generowania snapshotu.
+   *
+   * Taśma LED CCT nie jest tutaj poprawiana, bo wymaga osobnej reguły
+   * lub potwierdzenia źródła ceny.
+   */
+  swapNumericFields(row, "handlesGross", "brushesGross");
+}
+
+function swapNumericFields(row, firstField, secondField) {
+  const firstValue = row[firstField];
+
+  row[firstField] = row[secondField];
+  row[secondField] = firstValue;
 }
 
 function createDimensions(priceMatrix) {
