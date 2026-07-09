@@ -395,3 +395,77 @@ Dla wymiaru bazowego 300 x 306 cm dopłata wynosi:
 
 ```text
 1 274 zł
+
+---
+
+## 15. Decyzje po konsultacji koncepcji wizualizacji
+
+Po konsultacji ze znajomym kierunek nowej wizualizacji został wstępnie zaakceptowany.
+
+### Co zostało zaakceptowane
+
+- inny kąt kamery niż w kalkulatorze EcoGardens,
+- bardziej premium / realistyczna scena,
+- większy nacisk na obraz jako główny element sprzedażowy,
+- własny budynek i własne otoczenie, żeby uniknąć zbyt dużego podobieństwa do EG.
+
+### Co wymaga poprawy
+
+Konstrukcja na wygenerowanej wizualizacji musi bardziej przypominać realny produkt sprzedawany przez znajomego, czyli system podobny do realizacji EG.
+
+W szczególności należy zwrócić uwagę na:
+
+- masywniejszą przednią belkę / rynnę,
+- proste antracytowe słupy,
+- dach z widocznymi krokwiami,
+- system szklanych ścian przesuwnych,
+- realistyczne prowadnice dolne i pionowe podziały szkła,
+- wariant otwarty bez ścian,
+- wariant ze ścianami przezroczystymi,
+- wariant z mlecznymi/przyciemnianymi szybami,
+- warianty ZIP i LED.
+
+### Ryzyko wydajności
+
+Znajomy zwrócił uwagę, że rozbudowana wizualizacja może spowalniać działanie konfiguratora. Ryzyko jest realne, jeśli visualizer będzie ładował zbyt dużo dużych obrazów lub będzie oparty o ciężkie 3D.
+
+Decyzja techniczna:
+
+- nie robimy pełnego 3D w przeglądarce,
+- nie ładujemy wszystkich wariantów naraz,
+- idziemy w image-based visualizer,
+- używamy zoptymalizowanych obrazów przez Next/Image,
+- aktualny obraz ładuje się priorytetowo,
+- kolejne warianty mogą być preloadowane dopiero po wejściu użytkownika do kalkulatora,
+- miniatury powinny mieć osobne, małe pliki,
+- warianty rzadkie nie powinny być ładowane na start.
+
+### Kolory konstrukcji
+
+Do konfiguratora warto dodać kolor konstrukcji:
+
+| Kolor | Status |
+| --- | --- |
+| Antracyt | domyślny standard |
+| Biały | opcja do potwierdzenia |
+| Brąz | opcja do potwierdzenia |
+| RAL indywidualny | wycena indywidualna, dopłata od ok. 8 000 zł+ |
+
+Kolor RAL nie powinien być automatycznie doliczany jako stała cena bez potwierdzenia zasad cennika. W kalkulatorze powinien raczej oznaczać konfigurację jako wymagającą wyceny indywidualnej.
+
+### Rekomendowany kierunek assetów
+
+Na start nie generujemy wszystkich możliwych kombinacji. Przygotowujemy ograniczony zestaw głównych wariantów:
+
+1. zadaszenie tarasu — dzień,
+2. zadaszenie tarasu — wieczór / LED,
+3. ogród zimowy — szyby przezroczyste,
+4. ogród zimowy — szyby mleczne,
+5. ogród zimowy — szyby przyciemniane,
+6. ogród zimowy — ZIP przód,
+7. ogród zimowy — ZIP pełny,
+8. ogród zimowy — markiza,
+9. ogród zimowy — LED punktowe,
+10. ogród zimowy — taśma LED.
+
+Opcje mniej widoczne, takie jak uchwyty, szczotki i profil wyrównujący, mogą być na pierwszym etapie prezentowane jako badge/opis, a nie osobny render.

@@ -183,14 +183,14 @@ export default function KalkulatorPage() {
         </div>
       </section>
 
-        <section
-          id="kalkulator"
-          className="bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.10),transparent_32%),linear-gradient(180deg,#f4efe6_0%,#f8f5ef_100%)] px-4 py-12 sm:px-6 lg:px-8"
-        >
-          <div className="mx-auto max-w-[1540px]">
-            <Calculator />
-          </div>
-        </section>
+      <section
+        id="kalkulator"
+        className="bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.10),transparent_32%),linear-gradient(180deg,#f4efe6_0%,#f8f5ef_100%)] px-2 py-8 sm:px-4 lg:px-5"
+      >
+        <div className="mx-auto max-w-[1880px]">
+          <Calculator />
+        </div>
+      </section>
 
       <section className="relative overflow-hidden bg-neutral-950 px-6 py-20 text-white sm:px-8 lg:px-12">
         <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block">
