@@ -2,16 +2,16 @@ import Image from "next/image";
 
 import { ROOF_LABELS, WALL_LABELS } from "@/data/configuration-labels";
 import type { ProductConfiguration } from "@/domain/ProductConfiguration";
+import {
+  getVisualizerAsset,
+  getVisualizerAssetByKey,
+  VISUALIZER_TILES,
+  type VisualizerTileId,
+} from "./visualizer/visualizer-assets";
 
 interface Props {
   configuration: ProductConfiguration;
 }
-
-const visualImages = {
-  terraceRoof: "/images/glass-system/product-terrace-roof-sunset.png",
-  winterGarden: "/images/glass-system/product-winter-garden-day.png",
-  evening: "/images/glass-system/hero-winter-garden-evening.png",
-} as const;
 
 export function VisualizationPanel({ configuration }: Props) {
   const hasWalls = configuration.walls !== "none";
@@ -22,7 +22,8 @@ export function VisualizationPanel({ configuration }: Props) {
       configuration.hasRightZip);
   const hasLight = configuration.hasLed || configuration.hasCob;
   const selectedExtras = getSelectedExtras(configuration);
-  const imageSrc = getVisualizationImage(configuration);
+  const activeAsset = getVisualizerAsset(configuration);
+  const isEveningView = activeAsset.mode === "evening";
 
   return (
     <section className="min-w-0 bg-neutral-100 p-3 lg:p-4">
@@ -36,7 +37,7 @@ export function VisualizationPanel({ configuration }: Props) {
               Podgląd konfiguracji
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-neutral-600">
-              Duży podgląd pokazuje orientacyjny wygląd konstrukcji. Dokładne
+              Duży podgląd pokazuje orientacyjny wygląd konstrukcji. Finalne
               warianty obrazu przygotujemy jako osobne rendery.
             </p>
           </div>
@@ -55,7 +56,7 @@ export function VisualizationPanel({ configuration }: Props) {
               <span
                 className={[
                   "rounded-xl px-3 py-2 text-xs font-black",
-                  hasLight
+                  isEveningView
                     ? "text-neutral-500"
                     : "bg-white text-neutral-950 shadow-sm",
                 ].join(" ")}
@@ -65,7 +66,7 @@ export function VisualizationPanel({ configuration }: Props) {
               <span
                 className={[
                   "rounded-xl px-3 py-2 text-xs font-black",
-                  hasLight
+                  isEveningView
                     ? "bg-neutral-950 text-white shadow-sm"
                     : "text-neutral-500",
                 ].join(" ")}
@@ -78,8 +79,8 @@ export function VisualizationPanel({ configuration }: Props) {
 
         <div className="relative flex-1 overflow-hidden rounded-[1.35rem] border border-neutral-200 bg-neutral-900">
           <Image
-            src={imageSrc}
-            alt="Poglądowa wizualizacja konfiguracji Glass System"
+            src={activeAsset.src}
+            alt={`${activeAsset.label} - poglądowa wizualizacja Glass System`}
             fill
             priority
             sizes="(min-width: 1280px) 60vw, 100vw"
@@ -107,7 +108,7 @@ export function VisualizationPanel({ configuration }: Props) {
                 Wybrana konfiguracja
               </p>
               <p className="mt-2 text-2xl font-semibold leading-tight">
-                {hasWalls ? "Zabudowa tarasu ze szkłem" : "Zadaszenie tarasu"}
+                {activeAsset.label}
               </p>
               <p className="mt-2 text-sm leading-6 text-white/75">
                 {ROOF_LABELS[configuration.roof]} ·{" "}
@@ -121,36 +122,18 @@ export function VisualizationPanel({ configuration }: Props) {
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-2 lg:grid-cols-6">
-          <VariantTile
-            label="Brak ścian"
-            active={!hasWalls}
-            image={visualImages.terraceRoof}
-          />
-          <VariantTile
-            label="Przezroczyste"
-            active={configuration.walls === "glass_clear"}
-            image={visualImages.winterGarden}
-          />
-          <VariantTile
-            label="Mleczne"
-            active={configuration.walls === "glass_milky"}
-            image={visualImages.winterGarden}
-          />
-          <VariantTile
-            label="ZIP"
-            active={hasAnyZip}
-            image={visualImages.winterGarden}
-          />
-          <VariantTile
-            label="Markiza"
-            active={configuration.hasAwning}
-            image={visualImages.winterGarden}
-          />
-          <VariantTile
-            label="Wieczór LED"
-            active={hasLight}
-            image={visualImages.evening}
-          />
+          {VISUALIZER_TILES.map((tile) => {
+            const tileAsset = getVisualizerAssetByKey(tile.assetKey);
+
+            return (
+              <VariantTile
+                key={tile.id}
+                label={tile.label}
+                active={isTileActive(tile.id, configuration)}
+                image={tileAsset.thumbnailSrc}
+              />
+            );
+          })}
         </div>
 
         <div className="mt-3 grid gap-2 md:grid-cols-3">
@@ -227,16 +210,31 @@ function InfoCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function getVisualizationImage(configuration: ProductConfiguration): string {
-  if (configuration.hasLed || configuration.hasCob) {
-    return visualImages.evening;
-  }
+function isTileActive(
+  tileId: VisualizerTileId,
+  configuration: ProductConfiguration
+): boolean {
+  const hasWalls = configuration.walls !== "none";
+  const hasAnyZip =
+    hasWalls &&
+    (configuration.hasFrontZip ||
+      configuration.hasLeftZip ||
+      configuration.hasRightZip);
 
-  if (configuration.walls !== "none") {
-    return visualImages.winterGarden;
+  switch (tileId) {
+    case "terrace_roof":
+      return !hasWalls;
+    case "glass_clear":
+      return configuration.walls === "glass_clear";
+    case "glass_milky":
+      return configuration.walls === "glass_milky";
+    case "zip":
+      return hasAnyZip;
+    case "awning":
+      return configuration.hasAwning;
+    case "lighting":
+      return configuration.hasLed || configuration.hasCob;
   }
-
-  return visualImages.terraceRoof;
 }
 
 function getSelectedExtras(configuration: ProductConfiguration): string[] {
