@@ -209,13 +209,12 @@ function validateConfiguration(
 
   if (
     validatedConfiguration.walls === "none" &&
-    (validatedConfiguration.hasFrontZip ||
-      validatedConfiguration.hasLeftZip ||
+    (validatedConfiguration.hasLeftZip ||
       validatedConfiguration.hasRightZip)
   ) {
     return {
       success: false,
-      message: "Rolety ZIP wymagają wybrania ścian.",
+      message: "Boczne rolety ZIP wymagają wybrania ścian.",
     };
   }
 

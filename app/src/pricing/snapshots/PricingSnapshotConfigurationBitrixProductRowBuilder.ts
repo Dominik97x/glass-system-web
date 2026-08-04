@@ -127,7 +127,7 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       );
     }
 
-    if (configuration.walls !== "none" && configuration.hasFrontZip) {
+    if (configuration.hasFrontZip) {
       addRow(
         {
           quoteItemCategory: "zip",

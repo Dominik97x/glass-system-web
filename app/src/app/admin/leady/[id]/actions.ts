@@ -49,3 +49,21 @@ export async function updateInquiryStatusAction(
 
   redirect(`/admin/leady/${id}`);
 }
+export async function retryBitrix24SyncAction(
+  formData: FormData
+): Promise<void> {
+  await requireAdminSession("/admin/leady");
+
+  const id = formData.get("id");
+
+  if (typeof id !== "string" || id.trim().length === 0) {
+    return;
+  }
+
+  await inquiryAdminService.retryBitrix24Sync(id);
+
+  revalidatePath("/admin/leady");
+  revalidatePath(`/admin/leady/${id}`);
+
+  redirect(`/admin/leady/${id}`);
+}

@@ -23,8 +23,8 @@ export function WallsSection({ configuration, onChange }: Props) {
             onChange({
               ...configuration,
               walls: wallsValue,
-              hasFrontZip:
-                wallsValue === "none" ? false : configuration.hasFrontZip,
+              // Przedni ZIP jest dostępny również dla samego zadaszenia.
+              hasFrontZip: configuration.hasFrontZip,
               hasLeftZip:
                 wallsValue === "none" ? false : configuration.hasLeftZip,
               hasRightZip:

@@ -104,6 +104,30 @@ function checkTamperedQuoteIsIgnored(): CheckResult {
   };
 }
 
+function checkAcceptedPayload(
+  id: string,
+  name: string,
+  configuration: ProductConfiguration,
+  expectedTotalGross: number
+): CheckResult {
+  const validation = validateCalculatorInquirySubmission(
+    createValidPayload(configuration)
+  );
+
+  if (!validation.success) {
+    return { id, name, passed: false, details: validation.message };
+  }
+
+  const lead = serverQuoteService.createTrustedLead(validation.submission);
+
+  return {
+    id,
+    name,
+    passed: lead.quote.totalGross === expectedTotalGross,
+    details: `Oczekiwano ${expectedTotalGross} zł, serwer wyliczył ${lead.quote.totalGross} zł.`,
+  };
+}
+
 function checkRejectedPayload(
   id: string,
   name: string,
@@ -142,18 +166,28 @@ export function GET() {
   const checks: CheckResult[] = [
     checkTrustedTotal(),
     checkTamperedQuoteIsIgnored(),
-    checkRejectedPayload(
+    checkAcceptedPayload(
       "B3",
-      "ZIP bez ścian jest odrzucany",
+      "Przedni ZIP bez ścian jest akceptowany i wyceniany",
       {
         ...DEFAULT_CONFIGURATION,
         walls: "none",
         hasFrontZip: true,
       },
-      "Rolety ZIP wymagają"
+      10_738
     ),
     checkRejectedPayload(
       "B4",
+      "Boczny ZIP bez ścian jest odrzucany",
+      {
+        ...DEFAULT_CONFIGURATION,
+        walls: "none",
+        hasLeftZip: true,
+      },
+      "Boczne rolety ZIP wymagają"
+    ),
+    checkRejectedPayload(
+      "B5",
       "Dach szklany 550/600 cm jest odrzucany",
       {
         ...DEFAULT_CONFIGURATION,
@@ -163,7 +197,7 @@ export function GET() {
       "wymaga wyceny indywidualnej"
     ),
     checkRejectedPayload(
-      "B5",
+      "B6",
       "LED punktowe i CCT jednocześnie są odrzucane",
       {
         ...DEFAULT_CONFIGURATION,
@@ -173,7 +207,7 @@ export function GET() {
       "nie mogą być wybrane jednocześnie"
     ),
     checkRejectedPayload(
-      "B6",
+      "B7",
       "Nieobsługiwany wymiar jest odrzucany",
       {
         ...DEFAULT_CONFIGURATION,
@@ -182,7 +216,7 @@ export function GET() {
       "szerokość nie jest obsługiwana"
     ),
     checkRejectedPayload(
-      "B7",
+      "B8",
       "Niepublikowane szkło mleczne jest odrzucane",
       {
         ...DEFAULT_CONFIGURATION,
@@ -191,7 +225,7 @@ export function GET() {
       "wariant dachu nie jest dostępny"
     ),
     checkRejectedPayload(
-      "B8",
+      "B9",
       "Nieprawidłowy typ pola logicznego jest odrzucany",
       {
         ...DEFAULT_CONFIGURATION,

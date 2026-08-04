@@ -6,9 +6,7 @@ interface Props {
 }
 
 export function ZipSection({ configuration, onChange }: Props) {
-  if (configuration.walls === "none") {
-    return null;
-  }
+  const hasWalls = configuration.walls !== "none";
 
   return (
     <section>
@@ -32,6 +30,7 @@ export function ZipSection({ configuration, onChange }: Props) {
         <input
           type="checkbox"
           checked={configuration.hasLeftZip}
+          disabled={!hasWalls}
           onChange={(event) =>
             onChange({
               ...configuration,
@@ -48,6 +47,7 @@ export function ZipSection({ configuration, onChange }: Props) {
         <input
           type="checkbox"
           checked={configuration.hasRightZip}
+          disabled={!hasWalls}
           onChange={(event) =>
             onChange({
               ...configuration,
@@ -57,6 +57,10 @@ export function ZipSection({ configuration, onChange }: Props) {
         />{" "}
         Roleta ZIP prawa
       </label>
+
+      {!hasWalls && (
+        <p>Bez ścian dostępna jest tylko roleta ZIP z przodu.</p>
+      )}
     </section>
   );
 }

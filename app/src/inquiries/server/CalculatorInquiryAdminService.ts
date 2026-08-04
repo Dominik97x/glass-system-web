@@ -3,9 +3,11 @@ import type {
   StoredCalculatorInquiryLead,
 } from "@/domain/StoredCalculatorInquiryLead";
 import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
+import { CalculatorInquiryBitrix24SyncService } from "@/inquiries/sync/CalculatorInquiryBitrix24SyncService";
 
 export class CalculatorInquiryAdminService {
   private repository = createCalculatorInquiryRepository();
+  private bitrix24SyncService = new CalculatorInquiryBitrix24SyncService();
 
   async getAllInquiries(): Promise<StoredCalculatorInquiryLead[]> {
     const inquiries = await this.repository.findAll();
@@ -21,6 +23,10 @@ export class CalculatorInquiryAdminService {
     id: string
   ): Promise<StoredCalculatorInquiryLead | null> {
     return this.repository.findById(id);
+  }
+
+  async retryBitrix24Sync(id: string): Promise<void> {
+    await this.bitrix24SyncService.retryInquiry(id);
   }
 
   async updateInquiryStatus(

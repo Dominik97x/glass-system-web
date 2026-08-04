@@ -6,6 +6,7 @@ export interface Bitrix24ApiErrorResponse {
 export interface Bitrix24ItemAddPayload {
   entityTypeId: number;
   fields: Record<string, unknown>;
+  useOriginalUfNames?: "Y" | "N";
 }
 
 export interface Bitrix24ItemAddResponse extends Bitrix24ApiErrorResponse {
@@ -24,6 +25,7 @@ export interface Bitrix24ProductRow {
   sort?: number;
   taxRate?: number;
   taxIncluded?: "Y" | "N";
+  measureCode?: number;
 }
 
 export interface Bitrix24ProductRowSetPayload {
@@ -43,8 +45,7 @@ export interface Bitrix24Category {
   isDefault?: "Y" | "N";
 }
 
-export interface Bitrix24CategoryListResponse
-  extends Bitrix24ApiErrorResponse {
+export interface Bitrix24CategoryListResponse extends Bitrix24ApiErrorResponse {
   result?: {
     categories?: Bitrix24Category[];
   };
@@ -52,7 +53,14 @@ export interface Bitrix24CategoryListResponse
 
 export interface Bitrix24ItemFieldsPayload {
   entityTypeId: number;
-  useOriginalUfNames?: boolean;
+  useOriginalUfNames?: boolean | "Y" | "N";
+}
+
+export interface Bitrix24ItemFieldEnumItem {
+  ID?: string | number;
+  VALUE?: string;
+  id?: string | number;
+  value?: string;
 }
 
 export interface Bitrix24ItemFieldDefinition {
@@ -63,7 +71,7 @@ export interface Bitrix24ItemFieldDefinition {
   isImmutable?: boolean;
   isMultiple?: boolean;
   isDynamic?: boolean;
-  items?: unknown[];
+  items?: Bitrix24ItemFieldEnumItem[];
 }
 
 export interface Bitrix24ItemFieldsResponse extends Bitrix24ApiErrorResponse {
@@ -90,4 +98,31 @@ export interface Bitrix24Status {
 
 export interface Bitrix24StatusListResponse extends Bitrix24ApiErrorResponse {
   result?: Bitrix24Status[];
+}
+
+export interface Bitrix24DuplicateSearchResult {
+  CONTACT?: Array<string | number>;
+}
+
+export interface Bitrix24ContactAddResponse extends Bitrix24ApiErrorResponse {
+  result?: string | number;
+}
+
+export interface Bitrix24DealListItem {
+  ID?: string | number;
+}
+
+export interface Bitrix24Measure {
+  id?: string | number;
+  code?: string | number;
+  measureTitle?: string;
+  symbol?: string;
+  symbolIntl?: string;
+  symbolLetterIntl?: string;
+}
+
+export interface Bitrix24MeasureListResponse extends Bitrix24ApiErrorResponse {
+  result?: {
+    measures?: Bitrix24Measure[];
+  };
 }

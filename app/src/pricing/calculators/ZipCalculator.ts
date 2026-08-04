@@ -5,25 +5,29 @@ export class ZipCalculator {
   constructor(private repository: PriceRepository) {}
 
   calculate(configuration: ProductConfiguration): number {
-    if (configuration.walls === "none") {
-      return 0;
+    if (
+      configuration.walls === "none" &&
+      (configuration.hasLeftZip || configuration.hasRightZip)
+    ) {
+      throw new Error("Boczne rolety ZIP wymagają wybrania ścian.");
     }
-
-    const sideZipPrice = this.repository.getSideZipPrice(configuration);
-    const frontZipPrice = this.repository.getFrontZipPrice(configuration);
 
     let total = 0;
 
-    if (configuration.hasLeftZip) {
-      total += sideZipPrice;
-    }
-
-    if (configuration.hasRightZip) {
-      total += sideZipPrice;
-    }
-
     if (configuration.hasFrontZip) {
-      total += frontZipPrice;
+      total += this.repository.getFrontZipPrice(configuration);
+    }
+
+    if (configuration.walls !== "none") {
+      const sideZipPrice = this.repository.getSideZipPrice(configuration);
+
+      if (configuration.hasLeftZip) {
+        total += sideZipPrice;
+      }
+
+      if (configuration.hasRightZip) {
+        total += sideZipPrice;
+      }
     }
 
     return total;

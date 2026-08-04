@@ -1,4 +1,4 @@
-app/scripts/bitrix24/test-flow.ts
-README-ETAP-D2.md
-docs/bitrix24-test-flow.md
-README-ETAP-D2.1.md
+app/src/integrations/bitrix24/Bitrix24InquiryProductRowBuilder.ts
+README-ETAP-D3.5-FIX-KATALOG-IBLOCK.md
+changed-files.txt
+MANIFEST-ETAP-D3.5.sha256

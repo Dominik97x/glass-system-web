@@ -1,0 +1,9 @@
+62e37f953f5aa5f5b48b4d5a0ec89b89d5333c927206efb9307c1704d098a585  ./README-ETAP-D3.4-DOMKNIECIE-D3.md
+0b199a78a425cd9e57fdfbd62b7f25a825c85394e0c0dcc4286f2539e09b1742  ./app/.env.local.example
+0bb1ebc4e5c010524e54ad8dc6a9f455996d5318b98c3c3d4be10fa63785a8f3  ./app/scripts/bitrix24-retry-pending.ts
+e18e353e35d8659cb20b0cbf8a00c6539558068e4d63cfdb819ef272c8802d07  ./app/scripts/bitrix24/test-flow.ts
+61dd7d755ef48e921fd542e41e63116923c668ebe3bf13bef878cfbdf599b185  ./app/src/app/admin/leady/[id]/page.tsx
+740d0acd823ad6861d48dcd3ba65983b43cd7f26e1c6bdcaf21b7fb44d105daf  ./app/src/inquiries/sync/CalculatorInquiryBitrix24SyncService.ts
+9a6d5b8360b9b831150dd33c602b23563ab6d15dc955f7eb2776ca03b7c359d4  ./app/src/integrations/bitrix24/Bitrix24DealMapper.ts
+08afed17852df842fa7bed859348aea24cd103cad020534b610d38d6e6f75b2b  ./app/src/integrations/bitrix24/Bitrix24PortalLinks.ts
+b9267a05d03fc0dbc5d68c7ad5fcf38a550177d7b259f2ad066c974027e284bf  ./changed-files.txt

@@ -79,8 +79,12 @@ export class SnapshotQuoteService {
     }
 
     let zipPrice = 0;
+    // Przedni ZIP jest dostępny również dla samego zadaszenia.
+    if (configuration.hasFrontZip) {
+      zipPrice += this.getPrice(criteria, "zipFrontGross");
+    }
+    // Rolety boczne mogą być wycenione tylko przy wybranych ścianach.
     if (configuration.walls !== "none") {
-      if (configuration.hasFrontZip) zipPrice += this.getPrice(criteria, "zipFrontGross");
       if (configuration.hasLeftZip) zipPrice += this.getPrice(criteria, "zipLeftGross");
       if (configuration.hasRightZip) zipPrice += this.getPrice(criteria, "zipRightGross");
     }
@@ -152,11 +156,9 @@ function assertPriceableConfiguration(
 
   if (
     configuration.walls === "none" &&
-    (configuration.hasFrontZip ||
-      configuration.hasLeftZip ||
-      configuration.hasRightZip)
+    (configuration.hasLeftZip || configuration.hasRightZip)
   ) {
-    throw new Error("Rolety ZIP wymagają wybrania ścian.");
+    throw new Error("Boczne rolety ZIP wymagają wybrania ścian.");
   }
 
   if (configuration.length >= 550 && configuration.roof.startsWith("glass_")) {

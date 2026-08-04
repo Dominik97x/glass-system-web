@@ -1,0 +1,13 @@
+d183809f899a27e9150acaa28b0655b96bfd8a6a4c5658a2649574d1f2dd1179  ./README-ETAP-D3.3-ZIP-PRZOD-BEZ-SCIAN.md
+a2902f0106fdb64f5dd856b71d36c8c3891fb1480a1cf6dd05d47c5f20cf9b74  ./app/src/app/api/dev/inquiries/server-quote-check/route.ts
+63201adbbce8308d7cfdf469e7545ecd4ce29728af30388baf8442d271d1e2ab  ./app/src/app/api/dev/pricing/snapshot-coverage/route.ts
+5d879ec06a3a86dc73a1da79eca3b64e668bf41612f2457a2f6fa10da54261d8  ./app/src/app/api/dev/quote-check/route.ts
+0932478be795700a047b906d6cf9da8176b6f72b1917299893183aba128e8b5b  ./app/src/components/calculator/ConfigurationForm.tsx
+b528eec901a9c5b5a1a8594e25384cfa9bd387e0a5ea1728c472a978dc1d82c9  ./app/src/components/calculator/sections/WallsSection.tsx
+2968d8c0be9202775e2bdfb8d13f47fdbdf3e73c3d22852a2e3f99679af937dc  ./app/src/components/calculator/sections/ZipSection.tsx
+e4b33a1490f1691ffde23261b7ec9993fb0a2356d8d87b8fb71c0fe6fe18d5c4  ./app/src/inquiries/validators/calculator-inquiry-validator.ts
+aac0fb02060512463a330c2115933c0a5eb1ae37ef65d7e79908b30c8ce2aa1b  ./app/src/integrations/bitrix24/Bitrix24InquiryProductRowBuilder.ts
+7e3835d4ca398eb389d433e1540e6e5b2b73a6a5faae70bebc171c1ac82ac87f  ./app/src/pricing/calculators/ZipCalculator.ts
+a0a99239744d6d6105fc903e117523b6c4fcf1099bdf3688fc5b8fd98399b9d4  ./app/src/pricing/services/SnapshotQuoteService.ts
+fc2757c569068a72c25aa7ed79458d66faffc3b294fdb840e58c723c6e70057b  ./app/src/pricing/snapshots/PricingSnapshotConfigurationBitrixProductRowBuilder.ts
+130f53f0967ce7a7ca14ff12233c6cbcc7b2ee1444d1c055b4bc9057dc7768f3  ./app/src/pricing/snapshots/PricingSnapshotConfigurationPriceCalculator.ts

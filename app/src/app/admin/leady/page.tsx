@@ -51,8 +51,13 @@ export default async function AdminLeadyPage() {
                     </Link>
                   </div>
 
-                  <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
-                    status: {inquiry.status}
+                  <div className="flex flex-wrap gap-2">
+                    <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
+                      status: {inquiry.status}
+                    </div>
+                    <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
+                      Bitrix24: {inquiry.bitrix24?.status ?? "brak"}
+                    </div>
                   </div>
                 </div>
 

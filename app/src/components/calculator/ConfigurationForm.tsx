@@ -47,7 +47,9 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
     onChange({
       ...configuration,
       walls,
-      hasFrontZip: walls === "none" ? false : configuration.hasFrontZip,
+      // Roleta przednia może być zamontowana także w samym zadaszeniu.
+      hasFrontZip: configuration.hasFrontZip,
+      // Rolety boczne wymagają ścian, więc po ich usunięciu czyścimy wybór.
       hasLeftZip: walls === "none" ? false : configuration.hasLeftZip,
       hasRightZip: walls === "none" ? false : configuration.hasRightZip,
     });
@@ -109,16 +111,16 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
 
       <CompactPanel title="Osłony ZIP">
         <div className="grid grid-cols-3 gap-2">
+          <SmallOption label="Przód" active={configuration.hasFrontZip}
+            onClick={() => updateConfiguration({ hasFrontZip: !configuration.hasFrontZip })} />
           <SmallOption label="Lewa" active={configuration.hasLeftZip} disabled={!hasWalls}
             onClick={() => updateConfiguration({ hasLeftZip: !configuration.hasLeftZip })} />
           <SmallOption label="Prawa" active={configuration.hasRightZip} disabled={!hasWalls}
             onClick={() => updateConfiguration({ hasRightZip: !configuration.hasRightZip })} />
-          <SmallOption label="Przód" active={configuration.hasFrontZip} disabled={!hasWalls}
-            onClick={() => updateConfiguration({ hasFrontZip: !configuration.hasFrontZip })} />
         </div>
         {!hasWalls && (
           <p className="mt-2 text-[11px] leading-4 text-neutral-500">
-            Rolety ZIP są dostępne dopiero po dodaniu ścian.
+            Bez ścian dostępna jest roleta ZIP z przodu. Rolety boczne wymagają ścian.
           </p>
         )}
       </CompactPanel>

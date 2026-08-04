@@ -1,10 +1,13 @@
-import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
-import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import type {
+  Bitrix24SyncStatus,
+  CalculatorInquiryStatus,
+  StoredCalculatorInquiryLead,
+} from "@/domain/StoredCalculatorInquiryLead";
 import type { QuoteSnapshot } from "@/lib/quote-snapshot";
 import type { CalculatorInquiryRepository } from "./CalculatorInquiryRepository";
 import { runCalculatorInquiryDatabaseOperation } from "./PostgresCalculatorInquiryDatabase";
 
-interface CalculatorInquiryDatabaseRow {
+export interface CalculatorInquiryDatabaseRow {
   id: string;
   source: string;
   status: CalculatorInquiryStatus;
@@ -16,9 +19,15 @@ interface CalculatorInquiryDatabaseRow {
   customer_message: string;
   quote_total_gross: string | number;
   quote_snapshot: unknown;
-  bitrix24_sync_status: string;
+  bitrix24_sync_status: Bitrix24SyncStatus;
+  bitrix24_contact_id: string | number | null;
   bitrix24_deal_id: string | number | null;
+  bitrix24_sync_attempts: string | number;
   bitrix24_error: string | null;
+  bitrix24_last_attempt_at: Date | string | null;
+  bitrix24_sync_started_at: Date | string | null;
+  bitrix24_synced_at: Date | string | null;
+  bitrix24_next_retry_at: Date | string | null;
   notification_status: string;
   notification_error: string | null;
   created_in_database_at: Date | string;
@@ -111,12 +120,7 @@ export class DatabaseCalculatorInquiryRepository
     );
 
     const row = result.rows[0];
-
-    if (!row) {
-      return null;
-    }
-
-    return mapDatabaseRowToStoredCalculatorInquiryLead(row);
+    return row ? mapDatabaseRowToStoredCalculatorInquiryLead(row) : null;
   }
 
   async updateStatus(
@@ -136,16 +140,11 @@ export class DatabaseCalculatorInquiryRepository
     );
 
     const row = result.rows[0];
-
-    if (!row) {
-      return null;
-    }
-
-    return mapDatabaseRowToStoredCalculatorInquiryLead(row);
+    return row ? mapDatabaseRowToStoredCalculatorInquiryLead(row) : null;
   }
 }
 
-function mapDatabaseRowToStoredCalculatorInquiryLead(
+export function mapDatabaseRowToStoredCalculatorInquiryLead(
   row: CalculatorInquiryDatabaseRow
 ): StoredCalculatorInquiryLead {
   return {
@@ -161,6 +160,17 @@ function mapDatabaseRowToStoredCalculatorInquiryLead(
       message: row.customer_message,
     },
     quote: parseQuoteSnapshot(row.quote_snapshot),
+    bitrix24: {
+      status: row.bitrix24_sync_status,
+      contactId: toNullableNumber(row.bitrix24_contact_id),
+      dealId: toNullableNumber(row.bitrix24_deal_id),
+      attempts: Number(row.bitrix24_sync_attempts ?? 0),
+      lastError: row.bitrix24_error,
+      lastAttemptAt: toNullableIsoString(row.bitrix24_last_attempt_at),
+      startedAt: toNullableIsoString(row.bitrix24_sync_started_at),
+      syncedAt: toNullableIsoString(row.bitrix24_synced_at),
+      nextRetryAt: toNullableIsoString(row.bitrix24_next_retry_at),
+    },
   };
 }
 
@@ -180,8 +190,24 @@ function toIsoString(value: Date | string): string {
   return new Date(value).toISOString();
 }
 
-function getInitialBitrix24SyncStatus(): string {
-  if (process.env.BITRIX24_ENABLED === "true") {
+function toNullableIsoString(value: Date | string | null): string | null {
+  return value === null ? null : toIsoString(value);
+}
+
+function toNullableNumber(value: string | number | null): number | null {
+  if (value === null) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getInitialBitrix24SyncStatus(): Bitrix24SyncStatus {
+  if (
+    process.env.BITRIX24_ENABLED === "true" &&
+    process.env.CALCULATOR_INQUIRY_REPOSITORY === "database"
+  ) {
     return "pending";
   }
 

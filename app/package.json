@@ -15,7 +15,9 @@
     "bitrix:apply": "tsx scripts/bitrix24-provisioner.ts apply",
     "bitrix:products:pilot": "tsx scripts/bitrix24-provisioner.ts products:pilot",
     "bitrix:verify": "tsx scripts/bitrix24-provisioner.ts verify",
-    "bitrix:test-flow": "tsx scripts/bitrix24-test-flow.ts"
+    "bitrix:test-flow": "tsx scripts/bitrix24-test-flow.ts",
+    "db:migrate:d3": "tsx scripts/migrate-d3-bitrix-sync.ts",
+    "bitrix:retry-pending": "tsx scripts/bitrix24-retry-pending.ts"
   },
   "dependencies": {
     "next": "16.2.9",

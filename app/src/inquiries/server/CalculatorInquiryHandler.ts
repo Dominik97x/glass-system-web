@@ -3,6 +3,7 @@ import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInqui
 import type { CalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationService";
 import { createCalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationServiceFactory";
 import type { CalculatorInquiryRepository } from "../repositories/CalculatorInquiryRepository";
+import { CalculatorInquiryBitrix24SyncService } from "../sync/CalculatorInquiryBitrix24SyncService";
 import { CalculatorInquiryQuoteService } from "./CalculatorInquiryQuoteService";
 
 export interface CalculatorInquiryHandlerResult {
@@ -18,7 +19,9 @@ export class CalculatorInquiryHandler {
     private readonly notificationService: CalculatorInquiryNotificationService =
       createCalculatorInquiryNotificationService(),
     private readonly quoteService: CalculatorInquiryQuoteService =
-      new CalculatorInquiryQuoteService()
+      new CalculatorInquiryQuoteService(),
+    private readonly bitrix24SyncService: CalculatorInquiryBitrix24SyncService =
+      new CalculatorInquiryBitrix24SyncService()
   ) {}
 
   async handle(
@@ -29,6 +32,7 @@ export class CalculatorInquiryHandler {
 
     await this.repository.save(storedLead);
     await this.notifySafely(storedLead);
+    await this.syncBitrix24Safely(storedLead.id);
 
     return {
       success: true,
@@ -36,6 +40,17 @@ export class CalculatorInquiryHandler {
       message: `Zapytanie zostało przyjęte. Numer zapytania: ${storedLead.id}. Zweryfikowana wartość konfiguracji: ${storedLead.quote.totalGross.toLocaleString("pl-PL")} zł.`,
       totalGross: storedLead.quote.totalGross,
     };
+  }
+
+  private async syncBitrix24Safely(inquiryId: string): Promise<void> {
+    try {
+      await this.bitrix24SyncService.syncInquiry(inquiryId);
+    } catch (error) {
+      console.error("Unexpected Bitrix24 synchronization failure:", {
+        inquiryId,
+        error,
+      });
+    }
   }
 
   private async notifySafely(

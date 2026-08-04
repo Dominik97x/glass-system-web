@@ -146,6 +146,18 @@ const testCases: TestCase[] = [
       hasHandles: true,
     },
   },
+  {
+    id: "T11",
+    name: "300 x 306 cm — zadaszenie z przednim ZIP-em bez ścian",
+    expectedTotalGross: 10738,
+    configuration: {
+      ...DEFAULT_CONFIGURATION,
+      width: 306,
+      length: 300,
+      walls: "none",
+      hasFrontZip: true,
+    },
+  },
 ];
 
 export function GET() {

@@ -53,6 +53,10 @@ export function getPricingSnapshotPriceFieldsForConfiguration(
     fields.push(wallField);
   }
 
+  if (configuration.hasFrontZip) {
+    fields.push("zipFrontGross");
+  }
+
   if (configuration.walls !== "none") {
     if (configuration.hasRightZip) {
       fields.push("zipRightGross");
@@ -60,10 +64,6 @@ export function getPricingSnapshotPriceFieldsForConfiguration(
 
     if (configuration.hasLeftZip) {
       fields.push("zipLeftGross");
-    }
-
-    if (configuration.hasFrontZip) {
-      fields.push("zipFrontGross");
     }
   }
 

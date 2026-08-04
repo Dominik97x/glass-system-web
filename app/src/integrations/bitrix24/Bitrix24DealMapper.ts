@@ -23,13 +23,14 @@ export function mapInquiryToBitrix24DealPayload(
 
 function createDealTitle(inquiry: StoredCalculatorInquiryLead): string {
   const productType = getSummaryValue(inquiry, "Typ produktu");
-  const dimensions = getSummaryValue(inquiry, "Wymiary");
+  const configuration = inquiry.quote.configuration;
+  const dimensions = `${configuration.length} × ${configuration.width} cm`;
 
-  if (productType && dimensions) {
-    return `${productType} ${dimensions} - ${inquiry.customer.name}`;
+  if (productType) {
+    return `${productType} ${dimensions} — ${inquiry.customer.name}`;
   }
 
-  return `Zapytanie z kalkulatora - ${inquiry.customer.name}`;
+  return `Zapytanie ${dimensions} — ${inquiry.customer.name}`;
 }
 
 function createDealDescription(

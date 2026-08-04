@@ -46,7 +46,7 @@ interface TestQuote {
 
 const TEST_CONFIGURATION_SUMMARY = [
   "Typ produktu: Ogród zimowy",
-  "Wymiary: 306 × 300 cm",
+  "Wymiary: 300 × 306 cm",
   "Dach: Szkło bezbarwne",
   "Ściany: Szkło bezbarwne",
   "Rolety ZIP: Brak",
