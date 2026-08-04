@@ -1,0 +1,36 @@
+{
+  "stage": "B - server-side pricing",
+  "generatedAt": "2026-08-04T14:45:00+02:00",
+  "sourceState": "Project snapshot after Phase A and ZIP-requires-walls fix",
+  "checks": {
+    "typescriptServerFiles": {
+      "status": "passed",
+      "command": "tsc -p tsconfig.phase-b-check.json",
+      "scope": "All TypeScript server files (src/**/*.ts)"
+    },
+    "businessPricingT1T10": {
+      "status": "passed",
+      "passed": 10,
+      "failed": 0
+    },
+    "serverSecurityB1B8": {
+      "status": "passed",
+      "passed": 8,
+      "failed": 0,
+      "cases": [
+        "B1 correct configuration is priced on the server",
+        "B2 client-supplied totalGross=1 is ignored",
+        "B3 ZIP without walls is rejected",
+        "B4 glass roof at length 600 is rejected",
+        "B5 spot LED and CCT together are rejected",
+        "B6 unsupported width is rejected",
+        "B7 unpublished glass_milky is rejected",
+        "B8 invalid boolean field type is rejected"
+      ]
+    },
+    "npmBuildInAuditEnvironment": {
+      "status": "not-run",
+      "reason": "The internal npm mirror did not contain zod-validation-error@4.0.2. Run npm run lint and npm run build in the local project after extraction."
+    }
+  }
+}

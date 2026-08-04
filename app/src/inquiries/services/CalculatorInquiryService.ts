@@ -1,21 +1,22 @@
-import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
+import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 
 export interface SubmitCalculatorInquiryResult {
   success: boolean;
   message: string;
   inquiryId?: string;
+  totalGross?: number;
 }
 
 export class CalculatorInquiryService {
   async submit(
-    lead: CalculatorInquiryLead
+    submission: CalculatorInquirySubmission
   ): Promise<SubmitCalculatorInquiryResult> {
     const response = await fetch("/api/inquiries", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(lead),
+      body: JSON.stringify(submission),
     });
 
     let result: SubmitCalculatorInquiryResult | null = null;

@@ -1,11 +1,13 @@
 import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
-import { validateCalculatorInquiryLead } from "@/inquiries/validators/calculator-inquiry-validator";
+import { InvalidCalculatorInquiryConfigurationError } from "@/inquiries/server/CalculatorInquiryQuoteService";
+import { validateCalculatorInquirySubmission } from "@/inquiries/validators/calculator-inquiry-validator";
 
 interface SubmitCalculatorInquiryResponse {
   success: boolean;
   message: string;
   inquiryId?: string;
+  totalGross?: number;
 }
 
 export const runtime = "nodejs";
@@ -35,7 +37,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(response, { status: 400 });
   }
 
-  const validation = validateCalculatorInquiryLead(payload);
+  const validation = validateCalculatorInquirySubmission(payload);
 
   if (!validation.success) {
     const response: SubmitCalculatorInquiryResponse = {
@@ -46,7 +48,27 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(response, { status: 400 });
   }
 
-  const result = await inquiryHandler.handle(validation.lead);
+  try {
+    const result = await inquiryHandler.handle(validation.submission);
+    return Response.json(result, { status: 201 });
+  } catch (error) {
+    if (error instanceof InvalidCalculatorInquiryConfigurationError) {
+      const response: SubmitCalculatorInquiryResponse = {
+        success: false,
+        message: error.message,
+      };
 
-  return Response.json(result);
+      return Response.json(response, { status: 400 });
+    }
+
+    console.error("Calculator inquiry submission failed:", error);
+
+    const response: SubmitCalculatorInquiryResponse = {
+      success: false,
+      message:
+        "Nie udało się zapisać zapytania. Spróbuj ponownie później.",
+    };
+
+    return Response.json(response, { status: 500 });
+  }
 }

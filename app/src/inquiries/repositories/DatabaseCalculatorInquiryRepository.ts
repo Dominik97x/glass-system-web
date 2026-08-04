@@ -2,7 +2,7 @@ import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLe
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 import type { QuoteSnapshot } from "@/lib/quote-snapshot";
 import type { CalculatorInquiryRepository } from "./CalculatorInquiryRepository";
-import { getCalculatorInquiryDatabasePool } from "./PostgresCalculatorInquiryDatabase";
+import { runCalculatorInquiryDatabaseOperation } from "./PostgresCalculatorInquiryDatabase";
 
 interface CalculatorInquiryDatabaseRow {
   id: string;
@@ -29,84 +29,85 @@ export class DatabaseCalculatorInquiryRepository
   implements CalculatorInquiryRepository
 {
   async save(lead: StoredCalculatorInquiryLead): Promise<void> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    await pool.query(
-      `
-        insert into calculator_inquiries (
-          id,
-          source,
-          status,
-          created_at,
-          received_at,
-          customer_name,
-          customer_email,
-          customer_phone,
-          customer_message,
-          quote_total_gross,
-          quote_snapshot,
-          bitrix24_sync_status,
-          notification_status
-        )
-        values (
-          $1,
-          $2,
-          $3,
-          $4,
-          $5,
-          $6,
-          $7,
-          $8,
-          $9,
-          $10,
-          $11::jsonb,
-          $12,
-          $13
-        )
-      `,
-      [
-        lead.id,
-        lead.source,
-        lead.status,
-        lead.createdAt,
-        lead.receivedAt,
-        lead.customer.name,
-        lead.customer.email,
-        lead.customer.phone,
-        lead.customer.message,
-        lead.quote.totalGross,
-        JSON.stringify(lead.quote),
-        getInitialBitrix24SyncStatus(),
-        getInitialNotificationStatus(),
-      ]
+    await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query(
+        `
+          insert into calculator_inquiries (
+            id,
+            source,
+            status,
+            created_at,
+            received_at,
+            customer_name,
+            customer_email,
+            customer_phone,
+            customer_message,
+            quote_total_gross,
+            quote_snapshot,
+            bitrix24_sync_status,
+            notification_status
+          )
+          values (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8,
+            $9,
+            $10,
+            $11::jsonb,
+            $12,
+            $13
+          )
+          on conflict (id) do nothing
+        `,
+        [
+          lead.id,
+          lead.source,
+          lead.status,
+          lead.createdAt,
+          lead.receivedAt,
+          lead.customer.name,
+          lead.customer.email,
+          lead.customer.phone,
+          lead.customer.message,
+          lead.quote.totalGross,
+          JSON.stringify(lead.quote),
+          getInitialBitrix24SyncStatus(),
+          getInitialNotificationStatus(),
+        ]
+      )
     );
   }
 
   async findAll(): Promise<StoredCalculatorInquiryLead[]> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    const result = await pool.query<CalculatorInquiryDatabaseRow>(
-      `
-        select *
-        from calculator_inquiries
-        order by received_at desc
-      `
+    const result = await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query<CalculatorInquiryDatabaseRow>(
+        `
+          select *
+          from calculator_inquiries
+          order by received_at desc
+        `
+      )
     );
 
     return result.rows.map(mapDatabaseRowToStoredCalculatorInquiryLead);
   }
 
   async findById(id: string): Promise<StoredCalculatorInquiryLead | null> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    const result = await pool.query<CalculatorInquiryDatabaseRow>(
-      `
-        select *
-        from calculator_inquiries
-        where id = $1
-        limit 1
-      `,
-      [id]
+    const result = await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query<CalculatorInquiryDatabaseRow>(
+        `
+          select *
+          from calculator_inquiries
+          where id = $1
+          limit 1
+        `,
+        [id]
+      )
     );
 
     const row = result.rows[0];
@@ -122,16 +123,16 @@ export class DatabaseCalculatorInquiryRepository
     id: string,
     status: CalculatorInquiryStatus
   ): Promise<StoredCalculatorInquiryLead | null> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    const result = await pool.query<CalculatorInquiryDatabaseRow>(
-      `
-        update calculator_inquiries
-        set status = $2
-        where id = $1
-        returning *
-      `,
-      [id, status]
+    const result = await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query<CalculatorInquiryDatabaseRow>(
+        `
+          update calculator_inquiries
+          set status = $2
+          where id = $1
+          returning *
+        `,
+        [id, status]
+      )
     );
 
     const row = result.rows[0];

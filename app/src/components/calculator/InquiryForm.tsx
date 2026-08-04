@@ -2,10 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 
-import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
+import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { Quote } from "@/domain/Quote";
 import { CalculatorInquiryService } from "@/inquiries/services/CalculatorInquiryService";
-import { createQuoteSnapshot } from "@/lib/quote-snapshot";
 
 interface Props {
   quote: Quote;
@@ -49,20 +48,18 @@ export function InquiryForm({ quote, onCancel }: Props) {
     setIsSubmitting(true);
     setSubmitMessage(null);
 
-    const inquiryLead: CalculatorInquiryLead = {
-      source: "calculator",
-      createdAt: new Date().toISOString(),
+    const submission: CalculatorInquirySubmission = {
       customer: {
         name: form.name,
         email: form.email,
         phone: form.phone,
         message: form.message,
       },
-      quote: createQuoteSnapshot(quote),
+      configuration: quote.configuration,
     };
 
     try {
-      const result = await inquiryService.submit(inquiryLead);
+      const result = await inquiryService.submit(submission);
 
       setSubmitMessage(result.message);
       setIsSubmitted(result.success);
