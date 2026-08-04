@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "pricing:import": "node scripts/import-pricing-workbook.mjs"
+    "pricing:import": "node scripts/import-pricing-workbook.mjs",
+    "admin:generate-config": "node scripts/generate-admin-auth-config.mjs",
+    "admin:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-admin-auth.ps1"
   },
   "dependencies": {
     "next": "16.2.9",

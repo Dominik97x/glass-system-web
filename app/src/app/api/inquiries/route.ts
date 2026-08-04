@@ -1,3 +1,4 @@
+import { getAdminSession } from "@/auth/admin-session";
 import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
 import { InvalidCalculatorInquiryConfigurationError } from "@/inquiries/server/CalculatorInquiryQuoteService";
@@ -16,11 +17,35 @@ const inquiryRepository = createCalculatorInquiryRepository();
 const inquiryHandler = new CalculatorInquiryHandler(inquiryRepository);
 
 export async function GET(): Promise<Response> {
+  const session = await getAdminSession();
+
+  if (!session) {
+    return Response.json(
+      {
+        success: false,
+        message: "Wymagane jest zalogowanie administratora.",
+      },
+      {
+        status: 401,
+        headers: {
+          "Cache-Control": "no-store",
+          Vary: "Cookie",
+        },
+      }
+    );
+  }
+
   const inquiries = await inquiryRepository.findAll();
 
-  return Response.json({
-    inquiries,
-  });
+  return Response.json(
+    { inquiries },
+    {
+      headers: {
+        "Cache-Control": "no-store",
+        Vary: "Cookie",
+      },
+    }
+  );
 }
 
 export async function POST(request: Request): Promise<Response> {

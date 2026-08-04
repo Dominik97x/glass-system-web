@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requireAdminSession } from "@/auth/admin-session";
+import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
 import { formatPrice } from "@/lib/format-price";
@@ -30,6 +32,7 @@ const inquiryAdminService = new CalculatorInquiryAdminService();
 
 export default async function AdminLeadDetailsPage({ params }: Props) {
   const { id } = await params;
+  const session = await requireAdminSession(`/admin/leady/${id}`);
   const inquiry = await inquiryAdminService.getInquiryById(id);
 
   if (!inquiry) {
@@ -39,6 +42,8 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
+        <AdminToolbar username={session.username} />
+
         <Link
           href="/admin/leady"
           className="text-sm text-neutral-400 underline-offset-4 hover:text-white hover:underline"

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { requireAdminSession } from "@/auth/admin-session";
+import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
 import { formatPrice } from "@/lib/format-price";
 
@@ -9,11 +11,14 @@ export const dynamic = "force-dynamic";
 const inquiryAdminService = new CalculatorInquiryAdminService();
 
 export default async function AdminLeadyPage() {
+  const session = await requireAdminSession("/admin/leady");
   const inquiries = await inquiryAdminService.getAllInquiries();
 
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
+        <AdminToolbar username={session.username} />
+
         <header className="mb-8">
           <h1 className="text-3xl font-bold">Leady z kalkulatora</h1>
           <p className="mt-2 text-neutral-400">

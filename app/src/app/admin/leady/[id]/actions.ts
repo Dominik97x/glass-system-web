@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requireAdminSession } from "@/auth/admin-session";
 import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
 
@@ -28,6 +29,8 @@ function isCalculatorInquiryStatus(
 export async function updateInquiryStatusAction(
   formData: FormData
 ): Promise<void> {
+  await requireAdminSession("/admin/leady");
+
   const id = formData.get("id");
   const status = formData.get("status");
 

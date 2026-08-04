@@ -1,0 +1,32 @@
+{
+  "stage": "C",
+  "name": "Admin authentication and lead protection",
+  "staticTypeCheck": {
+    "command": "tsc -p tsconfig.audit-zipfix.json --pretty false",
+    "passed": true
+  },
+  "authenticationChecks": {
+    "configurationDetected": true,
+    "validCredentialsAccepted": true,
+    "wrongUsernameRejected": true,
+    "wrongPasswordRejected": true,
+    "validSignedSessionAccepted": true,
+    "tamperedSessionRejected": true
+  },
+  "requestSecurityChecks": {
+    "sameOriginAccepted": true,
+    "crossOriginRejected": true,
+    "fifthFailedLoginTriggersBlock": true,
+    "loginAttemptResetWorks": true
+  },
+  "protectedSurfaces": [
+    "/admin",
+    "/admin/leady",
+    "/admin/leady/[id]",
+    "status update server action",
+    "GET /api/inquiries"
+  ],
+  "publicSurfacePreserved": "POST /api/inquiries",
+  "fullNextBuildExecutedInAuditEnvironment": false,
+  "note": "Final npm run lint and npm run build must be confirmed in the user's installed local environment."
+}
