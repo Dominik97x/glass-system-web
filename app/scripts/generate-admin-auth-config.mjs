@@ -24,7 +24,7 @@ console.log("Dodaj poniższe wartości do app/.env.local:");
 console.log("");
 console.log(`ADMIN_USERNAME=${username}`);
 console.log(
-  `ADMIN_PASSWORD_HASH=scrypt-v1$${salt.toString("base64url")}$${passwordHash.toString("base64url")}`
+  `ADMIN_PASSWORD_HASH=scrypt-v1\\${salt.toString("base64url")}\\${passwordHash.toString("base64url")}`
 );
 console.log(`ADMIN_SESSION_SECRET=${sessionSecret}`);
 console.log("ADMIN_SESSION_TTL_HOURS=12");
