@@ -49,3 +49,5 @@ data/inquiries/calculator-inquiries.json
 
 # Local inquiry data
 data/
+# Local Bitrix24 provisioner reports and generated portal mappings
+/.bitrix24/

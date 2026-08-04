@@ -9,7 +9,12 @@
     "lint": "eslint",
     "pricing:import": "node scripts/import-pricing-workbook.mjs",
     "admin:generate-config": "node scripts/generate-admin-auth-config.mjs",
-    "admin:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-admin-auth.ps1"
+    "admin:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-admin-auth.ps1",
+    "bitrix:audit": "tsx scripts/bitrix24-provisioner.ts audit",
+    "bitrix:plan": "tsx scripts/bitrix24-provisioner.ts plan",
+    "bitrix:apply": "tsx scripts/bitrix24-provisioner.ts apply",
+    "bitrix:products:pilot": "tsx scripts/bitrix24-provisioner.ts products:pilot",
+    "bitrix:verify": "tsx scripts/bitrix24-provisioner.ts verify"
   },
   "dependencies": {
     "next": "16.2.9",

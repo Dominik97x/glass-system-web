@@ -1,0 +1,14 @@
+65222d97fae472a0ff43e1872ca0bbb582d5d443e03309e19d58382bd73611c5  ./README-ETAP-D1-BITRIX24-PROVISIONER.md
+4cb76514b5fa3e5a8a344323f9e978d8e2b8670fadf98658b6d9e37e766d3a4c  ./app/.env.local.example
+a17c71574b436a50d728dde03fa7873ec57694b4d52c727a54a830654650291e  ./app/.gitignore
+8dec2d3b8c191532daf012409d34a525df2fb97f161515df54e5410fe093f911  ./app/package.json
+9e222b0e4bb99494899a2cf67ebd849de3c4eb2a39b52fe40c56b5390de7d60c  ./app/scripts/bitrix24-provisioner.ts
+1fac6da342323893be623b8019e053462849e8334f1ea42abd73c690e69b7294  ./app/scripts/bitrix24/blueprint.ts
+f8c98df5898db83e1f7dc95ee6645405006731c783c3ddab94a3e7e19e04d5d6  ./app/scripts/bitrix24/client.ts
+900694945e505bc8aa3a9e7a670ca33eee70a963cfe33ad9ea507c57baa0e3d4  ./app/scripts/bitrix24/env.ts
+a4ae26f2787f632aee26026e9e4075d560b0f8a104fd128c90702e14228ee4a9  ./app/scripts/bitrix24/io.ts
+03bbe12cde6beabf817030adaa7982a4fc18da8e572a4891de9b56037bb3342f  ./app/scripts/bitrix24/pilot-products.ts
+e4353b04bd7784c988dd9b128ca4bb199746fcae8e7f9227817d1962a5c66308  ./app/scripts/bitrix24/provisioner.ts
+dfd5e8f818dbe0fec370d7e36f278f45a6baa5a76b1556a807cffc2c1c614ae1  ./app/scripts/bitrix24/types.ts
+991eb4f1f2b6b8c3e77edc43ed41bf1f215b97f61ad5951512b99c232e8d6d11  ./docs/bitrix24-moonglass-specification.md
+fef76267246f215c7e43560351beb25a476160166ec182e09d9b7b3538c53aad  ./docs/bitrix24-provisioner.md
