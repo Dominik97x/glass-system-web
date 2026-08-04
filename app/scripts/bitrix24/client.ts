@@ -24,26 +24,15 @@ export class ProvisionerBitrixClient {
   }
 
   async call<T>(method: string, params: Record<string, unknown> = {}): Promise<T> {
-    let lastError: unknown;
-
-    for (let attempt = 1; attempt <= this.retryCount; attempt += 1) {
-      try {
-        return await this.callOnce<T>(method, params);
-      } catch (error) {
-        lastError = error;
-        if (!shouldRetry(error) || attempt === this.retryCount) throw error;
-        await sleep(Math.min(1000 * 2 ** (attempt - 1), 5000));
-      }
-    }
-
-    throw lastError instanceof Error ? lastError : new Error(String(lastError));
+    const response = await this.callRawWithRetry<T>(method, params);
+    return response.result as T;
   }
 
   async callWithMeta<T>(
     method: string,
     params: Record<string, unknown> = {}
   ): Promise<BitrixResponse<T>> {
-    return this.callRaw<T>(method, params);
+    return this.callRawWithRetry<T>(method, params);
   }
 
   async listAll<T>(
@@ -55,7 +44,13 @@ export class ProvisionerBitrixClient {
     let start = 0;
 
     while (true) {
-      const response = await this.callRaw<unknown>(method, { ...params, start });
+      // Każda strona listy korzysta z takiego samego retry/backoff jak zwykłe wywołania.
+      // Wcześniej paginowane odczyty omijały retry, przez co chwilowy limit API
+      // mógł zostać błędnie zinterpretowany jako pusta lista pól lub produktów.
+      const response = await this.callRawWithRetry<unknown>(method, {
+        ...params,
+        start,
+      });
       all.push(...extract(response.result));
       if (response.next === undefined || response.next === null) break;
       start = Number(response.next);
@@ -74,19 +69,33 @@ export class ProvisionerBitrixClient {
       const existing = result.isExisting ?? result.IS_EXISTING;
       return Boolean(available ?? existing);
     } catch (error) {
-      if (error instanceof Bitrix24RestError && /METHOD_NOT_FOUND|ERROR_METHOD_NOT_FOUND/i.test(error.code)) {
+      if (
+        error instanceof Bitrix24RestError &&
+        /METHOD_NOT_FOUND|ERROR_METHOD_NOT_FOUND/i.test(error.code)
+      ) {
         return false;
       }
       throw error;
     }
   }
 
-  private async callOnce<T>(
+  private async callRawWithRetry<T>(
     method: string,
     params: Record<string, unknown>
-  ): Promise<T> {
-    const response = await this.callRaw<T>(method, params);
-    return response.result as T;
+  ): Promise<BitrixResponse<T>> {
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= this.retryCount; attempt += 1) {
+      try {
+        return await this.callRaw<T>(method, params);
+      } catch (error) {
+        lastError = error;
+        if (!shouldRetry(error) || attempt === this.retryCount) throw error;
+        await sleep(Math.min(1000 * 2 ** (attempt - 1), 5000));
+      }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error(String(lastError));
   }
 
   private async callRaw<T>(
@@ -101,7 +110,7 @@ export class ProvisionerBitrixClient {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify(params),
         signal: controller.signal,
@@ -152,7 +161,9 @@ function shouldRetry(error: unknown): boolean {
       error.status === 408 ||
       error.status === 429 ||
       error.status >= 500 ||
-      /QUERY_LIMIT_EXCEEDED|OVERLOAD_LIMIT|REQUEST_TIMEOUT/i.test(error.code)
+      /QUERY_LIMIT_EXCEEDED|OVERLOAD_LIMIT|REQUEST_TIMEOUT|OPERATION_TIME_LIMIT/i.test(
+        error.code
+      )
     );
   }
   return error instanceof TypeError;

@@ -27,6 +27,11 @@ const PLAN_MD_FILE = "plan.md";
 const MAPPING_FILE = "mapping.generated.json";
 const VERIFY_FILE = "verify.json";
 
+interface AuditOptions {
+  checkMethods?: boolean;
+  strictCriticalReads?: boolean;
+}
+
 const methodChecks = [
   "crm.category.list",
   "crm.category.add",
@@ -37,6 +42,9 @@ const methodChecks = [
   "crm.item.list",
   "userfieldconfig.list",
   "userfieldconfig.add",
+  "crm.deal.userfield.list",
+  "crm.contact.userfield.list",
+  "crm.company.userfield.list",
   "catalog.catalog.list",
   "catalog.section.list",
   "catalog.section.add",
@@ -64,16 +72,20 @@ export class Bitrix24Provisioner {
     );
   }
 
-  async audit(): Promise<PortalAudit> {
+  async audit(options: AuditOptions = {}): Promise<PortalAudit> {
     const warnings: string[] = [];
     const availableMethods: Record<string, boolean> = {};
+    const checkMethods = options.checkMethods !== false;
+    const strictCriticalReads = options.strictCriticalReads === true;
 
-    for (const method of methodChecks) {
-      try {
-        availableMethods[method] = await this.client.isMethodAvailable(method);
-      } catch (error) {
-        availableMethods[method] = false;
-        warnings.push(`Nie udało się sprawdzić metody ${method}: ${formatError(error)}`);
+    if (checkMethods) {
+      for (const method of methodChecks) {
+        try {
+          availableMethods[method] = await this.client.isMethodAvailable(method);
+        } catch (error) {
+          availableMethods[method] = false;
+          warnings.push(`Nie udało się sprawdzić metody ${method}: ${formatError(error)}`);
+        }
       }
     }
 
@@ -116,15 +128,42 @@ export class Bitrix24Provisioner {
       order: { SORT: "ASC" },
     });
 
+    const userFieldsWarningStart = warnings.length;
     const userFields = await this.safeListUserFields(warnings);
+    throwOnCriticalReadWarnings(
+      strictCriticalReads,
+      "pól niestandardowych",
+      warnings.slice(userFieldsWarningStart)
+    );
+
+    const catalogsWarningStart = warnings.length;
     const catalogs = await this.safeListCatalogs(warnings);
+    throwOnCriticalReadWarnings(
+      strictCriticalReads,
+      "katalogów",
+      warnings.slice(catalogsWarningStart)
+    );
+
     const iblockId = chooseCatalogIblockId(catalogs);
+    const sectionsWarningStart = warnings.length;
     const sections = iblockId
       ? await this.safeListSections(iblockId, warnings)
       : [];
+    throwOnCriticalReadWarnings(
+      strictCriticalReads,
+      "sekcji katalogu",
+      warnings.slice(sectionsWarningStart)
+    );
+
+    const productsWarningStart = warnings.length;
     const products = iblockId
       ? await this.safeListProducts(iblockId, warnings)
       : [];
+    throwOnCriticalReadWarnings(
+      strictCriticalReads,
+      "produktów",
+      warnings.slice(productsWarningStart)
+    );
 
     const audit: PortalAudit = {
       generatedAt: new Date().toISOString(),
@@ -405,8 +444,20 @@ export class Bitrix24Provisioner {
       await this.upsertPrice(productId, priceTypeId, product);
     }
 
-    const auditAfter = await this.audit();
+    await this.waitForProductsVisible(
+      iblockId,
+      products.map((product) => product.sku)
+    );
+
+    // Po serii zapisów katalog Bitrix24 bywa spójny z niewielkim opóźnieniem.
+    // Czekamy na widoczność wszystkich SKU i dopiero wtedy budujemy mapowanie.
+    // Pomijamy kosztowne method.get, aby nie zwiększać ryzyka limitu API.
+    const auditAfter = await this.audit({
+      checkMethods: false,
+      strictCriticalReads: true,
+    });
     const mapping = buildMapping(auditAfter);
+    const missingSkus: string[] = [];
     if (mapping.catalog) {
       for (const product of products) {
         const existing = auditAfter.products.find(
@@ -418,15 +469,35 @@ export class Bitrix24Provisioner {
             name: existing.name,
             priceGross: product.priceGross,
           };
+        } else {
+          missingSkus.push(product.sku);
         }
       }
+    } else {
+      missingSkus.push(...products.map((product) => product.sku));
     }
+
+    if (missingSkus.length > 0) {
+      throw new Error(
+        `Po synchronizacji nie udało się odczytać ${missingSkus.length} produktów: ${missingSkus
+          .slice(0, 5)
+          .join(", ")}${missingSkus.length > 5 ? ", ..." : ""}`
+      );
+    }
+
     writeJson(this.reportPath(MAPPING_FILE), mapping);
     return mapping;
   }
 
   async verify(): Promise<{ ok: boolean; remainingActions: PlanAction[]; mapping: ProvisioningMapping }> {
-    const audit = await this.audit();
+    // Verify wykonuje jeden świeży, rygorystyczny odczyt. Nie uruchamia ponownie
+    // serii method.get, więc nie generuje niepotrzebnego obciążenia API.
+    // Jeżeli odczyt pól lub katalogu się nie powiedzie, kończy się błędem zamiast
+    // udawać, że wszystkie elementy zniknęły i proponować ich ponowne utworzenie.
+    const audit = await this.audit({
+      checkMethods: false,
+      strictCriticalReads: true,
+    });
     const plan = await this.plan(audit);
     const remainingActions = plan.actions.filter(
       (action) => action.kind === "create" || action.kind === "update" || action.kind === "warning"
@@ -453,6 +524,7 @@ export class Bitrix24Provisioner {
 
     for (const pipeline of MOONGLASS_BLUEPRINT.pipelines) {
       let category = findCategoryForPipeline(pipeline, audit.categories);
+      const categoryWasCreated = !category;
       if (!category) {
         const result = await this.client.call<{ category?: BitrixCategory }>(
           "crm.category.add",
@@ -477,8 +549,15 @@ export class Bitrix24Provisioner {
         filter: { ENTITY_ID: stageEntityId(category.id) },
         order: { SORT: "ASC" },
       });
-      const dealCount = audit.categoryDealCounts[String(category.id)] ?? -1;
-      await this.applyStages(pipeline, category, statuses, dealCount === 0);
+      const dealCount = categoryWasCreated
+        ? 0
+        : (audit.categoryDealCounts[String(category.id)] ?? -1);
+      await this.applyStages(
+        pipeline,
+        category,
+        statuses,
+        categoryWasCreated || dealCount === 0
+      );
     }
 
     return categoriesByKey;
@@ -492,6 +571,10 @@ export class Bitrix24Provisioner {
   ): Promise<void> {
     const entityId = stageEntityId(category.id);
     const used = new Set<BitrixStatus>();
+
+    if (mayReuseGeneric && shouldOpenProcessStageWindow(pipeline, existingStatuses)) {
+      await this.moveTerminalStagesToTemporaryRange(pipeline, existingStatuses);
+    }
 
     for (const stage of pipeline.stages) {
       let existing = findStatus(stage, existingStatuses, used);
@@ -534,6 +617,50 @@ export class Bitrix24Provisioner {
     }
   }
 
+  private async moveTerminalStagesToTemporaryRange(
+    pipeline: PipelineBlueprint,
+    existingStatuses: BitrixStatus[]
+  ): Promise<void> {
+    const successStages = existingStatuses
+      .filter((status) => semantics(status) === "S")
+      .sort(compareStatusSort);
+    const failureStages = existingStatuses
+      .filter((status) => semantics(status) === "F")
+      .sort(compareStatusSort);
+
+    if (successStages.length === 0 && failureStages.length === 0) return;
+
+    const highestSort = Math.max(
+      1000,
+      ...pipeline.stages.map((stage) => stage.sort),
+      ...existingStatuses.map((status) => Number(status.SORT ?? 0))
+    );
+    const temporarySuccessBase = highestSort + 10_000;
+    const temporaryFailureBase = temporarySuccessBase + 10_000;
+
+    // Najpierw odsuwamy etapy przegrane, a dopiero później wygrany.
+    // Bitrix wymaga stałej kolejności grup: aktywne -> wygrany -> przegrane.
+    for (const [index, status] of failureStages.entries()) {
+      if (!status.ID) throw new Error(`Etap ${status.STATUS_ID} nie ma ID.`);
+      const temporarySort = temporaryFailureBase + index * 100;
+      await this.client.call("crm.status.update", {
+        id: Number(status.ID),
+        fields: { SORT: temporarySort },
+      });
+      status.SORT = temporarySort;
+    }
+
+    for (const [index, status] of successStages.entries()) {
+      if (!status.ID) throw new Error(`Etap ${status.STATUS_ID} nie ma ID.`);
+      const temporarySort = temporarySuccessBase + index * 100;
+      await this.client.call("crm.status.update", {
+        id: Number(status.ID),
+        fields: { SORT: temporarySort },
+      });
+      status.SORT = temporarySort;
+    }
+  }
+
   private async applySources(): Promise<void> {
     const existingSources = await this.client.call<BitrixStatus[]>("crm.status.list", {
       filter: { ENTITY_ID: "SOURCE" },
@@ -563,7 +690,7 @@ export class Bitrix24Provisioner {
   }
 
   private async applyUserFields(): Promise<void> {
-    const existingFields = await this.safeListUserFields([]);
+    const existingFields = await this.listUserFieldsStrict();
 
     for (const field of MOONGLASS_BLUEPRINT.userFields) {
       const fieldName = getUserFieldName(field);
@@ -580,10 +707,34 @@ export class Bitrix24Provisioner {
         continue;
       }
 
-      await this.client.call("userfieldconfig.add", {
-        moduleId: "crm",
-        field: createUserFieldPayload(field),
-      });
+      const result = await this.client.call<{ field?: BitrixUserField }>(
+        "userfieldconfig.add",
+        {
+          moduleId: "crm",
+          field: createUserFieldPayload(field),
+        }
+      );
+      if (!result.field) {
+        throw new Error(`Bitrix24 nie zwrócił utworzonego pola ${fieldName}.`);
+      }
+      existingFields.push(result.field);
+    }
+
+    const fieldsAfter = await this.listUserFieldsStrict();
+    const missing = MOONGLASS_BLUEPRINT.userFields.filter((field) => {
+      const fieldName = getUserFieldName(field);
+      const xmlId = getUserFieldXmlId(field);
+      return !fieldsAfter.some(
+        (item) => item.fieldName === fieldName || item.xmlId === xmlId
+      );
+    });
+    if (missing.length > 0) {
+      throw new Error(
+        `Po utworzeniu nie udało się odczytać ${missing.length} pól MoonGlass: ${missing
+          .slice(0, 5)
+          .map((field) => getUserFieldName(field))
+          .join(", ")}${missing.length > 5 ? ", ..." : ""}`
+      );
     }
   }
 
@@ -701,19 +852,77 @@ export class Bitrix24Provisioner {
 
   private async safeListUserFields(warnings: string[]): Promise<BitrixUserField[]> {
     try {
-      return await this.client.listAll<BitrixUserField>(
-        "userfieldconfig.list",
-        {
-          moduleId: "crm",
-          select: ["*", "language"],
-          order: { id: "ASC" },
-        },
-        (result) => asRecord(result).fields as BitrixUserField[] ?? []
-      );
+      return await this.listUserFieldsStrict();
     } catch (error) {
       warnings.push(`Nie udało się odczytać pól niestandardowych: ${formatError(error)}`);
       return [];
     }
+  }
+
+  private async listUserFieldsStrict(): Promise<BitrixUserField[]> {
+    const collected: BitrixUserField[] = [];
+    const errors: string[] = [];
+    let universalSucceeded = false;
+    let legacySucceeded = false;
+
+    try {
+      const fields = await this.client.listAll<BitrixUserField>(
+        "userfieldconfig.list",
+        {
+          moduleId: "crm",
+          // W REST parametr language jest nazwanym elementem select,
+          // a nie zwykłą pozycją tablicy obok "*".
+          select: { 0: "*", language: "pl" },
+          order: { id: "ASC" },
+        },
+        (result) => {
+          const fields = asRecord(result).fields;
+          return Array.isArray(fields) ? (fields as BitrixUserField[]) : [];
+        }
+      );
+      collected.push(...fields);
+      universalSucceeded = true;
+    } catch (error) {
+      errors.push(`userfieldconfig.list: ${formatError(error)}`);
+    }
+
+    // Drugi odczyt przez metody encji jest celowym zabezpieczeniem.
+    // Pozwala zweryfikować pola także wtedy, gdy uniwersalna lista
+    // zwróci pusty lub nietypowy wynik na konkretnym portalu Bitrix24.
+    try {
+      const legacyGroups = await Promise.all([
+        this.listLegacyUserFields("crm.deal.userfield.list", "CRM_DEAL"),
+        this.listLegacyUserFields("crm.contact.userfield.list", "CRM_CONTACT"),
+        this.listLegacyUserFields("crm.company.userfield.list", "CRM_COMPANY"),
+      ]);
+      for (const group of legacyGroups) collected.push(...group);
+      legacySucceeded = true;
+    } catch (error) {
+      errors.push(`metody crm.*.userfield.list: ${formatError(error)}`);
+    }
+
+    if (!universalSucceeded && !legacySucceeded) {
+      throw new Error(errors.join("; "));
+    }
+
+    return deduplicateUserFields(collected);
+  }
+
+  private async listLegacyUserFields(
+    method: string,
+    fallbackEntityId: string
+  ): Promise<BitrixUserField[]> {
+    return this.client.listAll<BitrixUserField>(
+      method,
+      {
+        order: { ID: "ASC" },
+        filter: { LANG: "pl" },
+      },
+      (result) => {
+        if (!Array.isArray(result)) return [];
+        return result.map((item) => normalizeLegacyUserField(item, fallbackEntityId));
+      }
+    );
   }
 
   private async safeListCatalogs(warnings: string[]): Promise<BitrixCatalog[]> {
@@ -769,9 +978,87 @@ export class Bitrix24Provisioner {
     }
   }
 
+  private async waitForProductsVisible(
+    iblockId: number,
+    expectedSkus: string[]
+  ): Promise<void> {
+    const expected = new Set(expectedSkus);
+    const attempts = Math.max(4, this.env.retryCount + 3);
+
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      const products = await this.safeListProducts(iblockId, []);
+      const visible = new Set(
+        products
+          .map((product) => product.xmlId || product.code)
+          .filter((sku): sku is string => Boolean(sku))
+      );
+      const missing = [...expected].filter((sku) => !visible.has(sku));
+      if (missing.length === 0) return;
+      if (attempt < attempts) await sleep(750 * attempt);
+    }
+
+    throw new Error(
+      "Bitrix24 zapisał produkty, ale nie zwrócił jeszcze wszystkich pozycji w katalogu. Odczekaj chwilę i uruchom ponownie products:pilot; istniejące SKU zostaną zaktualizowane, a nie zdublowane."
+    );
+  }
+
   private reportPath(fileName: string): string {
     return path.join(this.env.reportDir, fileName);
   }
+}
+
+
+function throwOnCriticalReadWarnings(
+  strict: boolean,
+  resourceLabel: string,
+  warnings: string[]
+): void {
+  if (!strict || warnings.length === 0) return;
+  throw new Error(
+    `Audyt nie mógł wiarygodnie odczytać ${resourceLabel}: ${warnings.join("; ")}`
+  );
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function normalizeLegacyUserField(
+  value: unknown,
+  fallbackEntityId: string
+): BitrixUserField {
+  const item = asRecord(value);
+  return {
+    id: String(item.ID ?? item.id ?? ""),
+    entityId: String(item.ENTITY_ID ?? item.entityId ?? fallbackEntityId),
+    fieldName: String(item.FIELD_NAME ?? item.fieldName ?? ""),
+    userTypeId: String(item.USER_TYPE_ID ?? item.userTypeId ?? ""),
+    xmlId: item.XML_ID === null || item.xmlId === null
+      ? null
+      : String(item.XML_ID ?? item.xmlId ?? ""),
+    sort: String(item.SORT ?? item.sort ?? ""),
+    multiple: String(item.MULTIPLE ?? item.multiple ?? "N") as "Y" | "N",
+    mandatory: String(item.MANDATORY ?? item.mandatory ?? "N") as "Y" | "N",
+    editFormLabel:
+      typeof item.EDIT_FORM_LABEL === "string"
+        ? item.EDIT_FORM_LABEL
+        : typeof item.editFormLabel === "string"
+          ? item.editFormLabel
+          : undefined,
+  };
+}
+
+function deduplicateUserFields(fields: BitrixUserField[]): BitrixUserField[] {
+  const result = new Map<string, BitrixUserField>();
+  for (const field of fields) {
+    if (!field.fieldName) continue;
+    const key = field.fieldName.toUpperCase();
+    const current = result.get(key);
+    if (!current || (!current.xmlId && field.xmlId)) result.set(key, field);
+  }
+  return [...result.values()].sort((left, right) =>
+    String(left.id).localeCompare(String(right.id), "pl", { numeric: true })
+  );
 }
 
 function createUserFieldPayload(field: UserFieldBlueprint): Record<string, unknown> {
@@ -794,7 +1081,7 @@ function createUserFieldPayload(field: UserFieldBlueprint): Record<string, unkno
             xmlId: item.xmlId,
             value: item.value,
             sort: item.sort,
-            default: item.default ? "Y" : "N",
+            def: item.default ? "Y" : "N",
           })),
         }
       : {}),
@@ -878,6 +1165,34 @@ function statusCode(statusId: string): string {
 
 function semantics(status: BitrixStatus): "" | "S" | "F" {
   return status.SEMANTICS === "S" || status.SEMANTICS === "F" ? status.SEMANTICS : "";
+}
+
+function shouldOpenProcessStageWindow(
+  pipeline: PipelineBlueprint,
+  existingStatuses: BitrixStatus[]
+): boolean {
+  const desiredProcessStages = pipeline.stages.filter((stage) => stage.semantics === "");
+  const existingProcessStages = existingStatuses.filter((status) => semantics(status) === "");
+  const terminalSorts = existingStatuses
+    .filter((status) => semantics(status) !== "")
+    .map((status) => Number(status.SORT ?? 0))
+    .filter(Number.isFinite);
+
+  if (terminalSorts.length === 0 || desiredProcessStages.length === 0) return false;
+
+  const firstTerminalSort = Math.min(...terminalSorts);
+  const highestDesiredProcessSort = Math.max(
+    ...desiredProcessStages.map((stage) => stage.sort)
+  );
+
+  return (
+    existingProcessStages.length < desiredProcessStages.length ||
+    firstTerminalSort <= highestDesiredProcessSort
+  );
+}
+
+function compareStatusSort(left: BitrixStatus, right: BitrixStatus): number {
+  return Number(left.SORT ?? 0) - Number(right.SORT ?? 0);
 }
 
 function stageEntityId(categoryId: number): string {

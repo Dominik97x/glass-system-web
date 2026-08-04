@@ -239,7 +239,7 @@ const catalogSections: CatalogSectionBlueprint[] = [
 ];
 
 export const MOONGLASS_BLUEPRINT: ProvisioningBlueprint = {
-  version: "2026-08-04.1",
+  version: "2026-08-04.3",
   portalLabel: "MoonGlass",
   dealEntityTypeId: 2,
   pipelines: [salesPipeline, realizationPipeline, complaintsPipeline],
