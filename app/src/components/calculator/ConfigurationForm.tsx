@@ -29,6 +29,7 @@ const ALL_ROOF_OPTIONS: RoofOption[] = [
 const WALL_OPTIONS: WallOption[] = ["none", "glass_clear", "glass_tinted"];
 
 export function ConfigurationForm({ configuration, onChange }: Props) {
+  const hasWalls = configuration.walls !== "none";
   const roofGlassAvailable = configuration.length <= 500;
   const roofOptions = roofGlassAvailable
     ? ALL_ROOF_OPTIONS
@@ -43,7 +44,13 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   }
 
   function updateWalls(walls: WallOption) {
-    onChange({ ...configuration, walls });
+    onChange({
+      ...configuration,
+      walls,
+      hasFrontZip: walls === "none" ? false : configuration.hasFrontZip,
+      hasLeftZip: walls === "none" ? false : configuration.hasLeftZip,
+      hasRightZip: walls === "none" ? false : configuration.hasRightZip,
+    });
   }
 
   function updateSpotLed(checked: boolean) {
@@ -102,13 +109,18 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
 
       <CompactPanel title="Osłony ZIP">
         <div className="grid grid-cols-3 gap-2">
-          <SmallOption label="Lewa" active={configuration.hasLeftZip}
+          <SmallOption label="Lewa" active={configuration.hasLeftZip} disabled={!hasWalls}
             onClick={() => updateConfiguration({ hasLeftZip: !configuration.hasLeftZip })} />
-          <SmallOption label="Prawa" active={configuration.hasRightZip}
+          <SmallOption label="Prawa" active={configuration.hasRightZip} disabled={!hasWalls}
             onClick={() => updateConfiguration({ hasRightZip: !configuration.hasRightZip })} />
-          <SmallOption label="Przód" active={configuration.hasFrontZip}
+          <SmallOption label="Przód" active={configuration.hasFrontZip} disabled={!hasWalls}
             onClick={() => updateConfiguration({ hasFrontZip: !configuration.hasFrontZip })} />
         </div>
+        {!hasWalls && (
+          <p className="mt-2 text-[11px] leading-4 text-neutral-500">
+            Rolety ZIP są dostępne dopiero po dodaniu ścian.
+          </p>
+        )}
       </CompactPanel>
 
       <CompactPanel title="Komfort">

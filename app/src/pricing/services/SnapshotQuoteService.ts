@@ -79,9 +79,11 @@ export class SnapshotQuoteService {
     }
 
     let zipPrice = 0;
-    if (configuration.hasFrontZip) zipPrice += this.getPrice(criteria, "zipFrontGross");
-    if (configuration.hasLeftZip) zipPrice += this.getPrice(criteria, "zipLeftGross");
-    if (configuration.hasRightZip) zipPrice += this.getPrice(criteria, "zipRightGross");
+    if (configuration.walls !== "none") {
+      if (configuration.hasFrontZip) zipPrice += this.getPrice(criteria, "zipFrontGross");
+      if (configuration.hasLeftZip) zipPrice += this.getPrice(criteria, "zipLeftGross");
+      if (configuration.hasRightZip) zipPrice += this.getPrice(criteria, "zipRightGross");
+    }
     this.addItem(items, { id: "zip", name: "Rolety ZIP", category: "zip", price: zipPrice });
 
     this.addItem(items, {
@@ -146,6 +148,15 @@ function assertPriceableConfiguration(
     throw new Error(
       "LED punktowe i LED CCT nie mogą być wybrane jednocześnie."
     );
+  }
+
+  if (
+    configuration.walls === "none" &&
+    (configuration.hasFrontZip ||
+      configuration.hasLeftZip ||
+      configuration.hasRightZip)
+  ) {
+    throw new Error("Rolety ZIP wymagają wybrania ścian.");
   }
 
   if (configuration.length >= 550 && configuration.roof.startsWith("glass_")) {

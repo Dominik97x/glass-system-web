@@ -105,7 +105,7 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       );
     }
 
-    if (configuration.hasRightZip) {
+    if (configuration.walls !== "none" && configuration.hasRightZip) {
       addRow(
         {
           quoteItemCategory: "zip",
@@ -116,7 +116,7 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       );
     }
 
-    if (configuration.hasLeftZip) {
+    if (configuration.walls !== "none" && configuration.hasLeftZip) {
       addRow(
         {
           quoteItemCategory: "zip",
@@ -127,7 +127,7 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       );
     }
 
-    if (configuration.hasFrontZip) {
+    if (configuration.walls !== "none" && configuration.hasFrontZip) {
       addRow(
         {
           quoteItemCategory: "zip",

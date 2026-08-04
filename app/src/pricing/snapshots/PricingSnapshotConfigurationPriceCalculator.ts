@@ -53,16 +53,18 @@ export function getPricingSnapshotPriceFieldsForConfiguration(
     fields.push(wallField);
   }
 
-  if (configuration.hasRightZip) {
-    fields.push("zipRightGross");
-  }
+  if (configuration.walls !== "none") {
+    if (configuration.hasRightZip) {
+      fields.push("zipRightGross");
+    }
 
-  if (configuration.hasLeftZip) {
-    fields.push("zipLeftGross");
-  }
+    if (configuration.hasLeftZip) {
+      fields.push("zipLeftGross");
+    }
 
-  if (configuration.hasFrontZip) {
-    fields.push("zipFrontGross");
+    if (configuration.hasFrontZip) {
+      fields.push("zipFrontGross");
+    }
   }
 
   if (configuration.hasAwning) {

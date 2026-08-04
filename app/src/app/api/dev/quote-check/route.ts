@@ -52,12 +52,13 @@ const testCases: TestCase[] = [
   },
   {
     id: "T4",
-    name: "450 x 506 cm — ZIP prawy, markiza i LED punktowe",
-    expectedTotalGross: 30522,
+    name: "450 x 506 cm — ściany przezroczyste, ZIP prawy, markiza i LED punktowe",
+    expectedTotalGross: 53361,
     configuration: {
       ...DEFAULT_CONFIGURATION,
       width: 506,
       length: 450,
+      walls: "glass_clear",
       hasRightZip: true,
       hasAwning: true,
       hasLed: true,
