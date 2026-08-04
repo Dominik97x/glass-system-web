@@ -1,0 +1,10 @@
+6f45535d7a3e1bd5e30c9dd776df9ecd63de59ac61eabf5138bad530bb4f9c0a  ./README-ETAP-D4-PELNY-KATALOG-BITRIX24.md
+c0e3cfc640747978fe9118c9c05fe54b3b8037bfe0e97453455c879228b2d6e9  ./app/.env.local.example
+26061764d1c06287713e9464489d7e8f5779a80500676fb5540248b6a7009675  ./app/package.json
+1d868c1544009fa8b9f75c77168daeb8c48d080cc0bc971a12d2c0d10e08fa77  ./app/scripts/bitrix24-full-catalog.ts
+fef63c59879a3bea22aca28f06f22190fc3ea6375182afb485d349d018c52a9b  ./app/scripts/bitrix24/catalog-products.ts
+b5ff5aacbd9aea0b1cd81268cea9aa8f7334f289c16e31556bdcb45177834f84  ./app/scripts/bitrix24/full-catalog.ts
+14932413bd28f3f1a437026fd086f6901105a9c98dfe625dbc29672b3b2208ae  ./app/scripts/bitrix24/pilot-products.ts
+4e6d82afa9d09d25028a9ef0f340ef6a2bb09e2d449e18b8b4efb4bbddca9ef8  ./app/scripts/bitrix24/types.ts
+e1dd6ce1bb0b8b06eff4cc0afc0ad51057414fc3df92d4fc2fa2f7a1c515cc2f  ./changed-files.txt
+3e0dec77bb41c27d5c8c89ec478b96031e0148820eb73a6f44281d2e5b51a79c  ./docs/bitrix24-full-catalog.md

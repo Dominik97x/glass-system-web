@@ -1,4 +1,11 @@
-app/src/integrations/bitrix24/Bitrix24InquiryProductRowBuilder.ts
-README-ETAP-D3.5-FIX-KATALOG-IBLOCK.md
+app/.env.local.example
+app/package.json
+app/scripts/bitrix24-full-catalog.ts
+app/scripts/bitrix24/catalog-products.ts
+app/scripts/bitrix24/full-catalog.ts
+app/scripts/bitrix24/pilot-products.ts
+app/scripts/bitrix24/types.ts
+docs/bitrix24-full-catalog.md
+README-ETAP-D4-PELNY-KATALOG-BITRIX24.md
 changed-files.txt
-MANIFEST-ETAP-D3.5.sha256
+MANIFEST-ETAP-D4.sha256

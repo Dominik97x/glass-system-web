@@ -17,7 +17,11 @@
     "bitrix:verify": "tsx scripts/bitrix24-provisioner.ts verify",
     "bitrix:test-flow": "tsx scripts/bitrix24-test-flow.ts",
     "db:migrate:d3": "tsx scripts/migrate-d3-bitrix-sync.ts",
-    "bitrix:retry-pending": "tsx scripts/bitrix24-retry-pending.ts"
+    "bitrix:retry-pending": "tsx scripts/bitrix24-retry-pending.ts",
+    "bitrix:products:full:source": "tsx scripts/bitrix24-full-catalog.ts source",
+    "bitrix:products:full:plan": "tsx scripts/bitrix24-full-catalog.ts plan",
+    "bitrix:products:full:apply": "tsx scripts/bitrix24-full-catalog.ts apply",
+    "bitrix:products:full:verify": "tsx scripts/bitrix24-full-catalog.ts verify"
   },
   "dependencies": {
     "next": "16.2.9",

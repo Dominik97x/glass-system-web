@@ -74,6 +74,8 @@ export interface ProductBlueprint {
   priceGross: number;
   currency: string;
   description?: string;
+  family?: string;
+  sort?: number;
 }
 
 export interface ProvisioningBlueprint {
