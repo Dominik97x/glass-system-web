@@ -5,10 +5,6 @@ export class ZipCalculator {
   constructor(private repository: PriceRepository) {}
 
   calculate(configuration: ProductConfiguration): number {
-    if (configuration.walls === "none") {
-      return 0;
-    }
-
     const sideZipPrice = this.repository.getSideZipPrice(configuration);
     const frontZipPrice = this.repository.getFrontZipPrice(configuration);
 

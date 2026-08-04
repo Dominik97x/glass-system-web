@@ -1,3 +1,37 @@
+export interface Bitrix24ApiErrorResponse {
+  error?: string;
+  error_description?: string;
+}
+
+export interface Bitrix24ItemAddPayload {
+  entityTypeId: number;
+  fields: Record<string, unknown>;
+}
+
+export interface Bitrix24ItemAddResponse extends Bitrix24ApiErrorResponse {
+  result?: {
+    item?: {
+      id?: number | string;
+    };
+  };
+}
+
+export interface Bitrix24ProductRow {
+  productId?: number;
+  productName?: string;
+  price: number;
+  quantity: number;
+  sort?: number;
+  taxRate?: number;
+  taxIncluded?: "Y" | "N";
+}
+
+export interface Bitrix24ProductRowSetPayload {
+  ownerType: string;
+  ownerId: number | string;
+  productRows: Bitrix24ProductRow[];
+}
+
 export interface Bitrix24CategoryListPayload {
   entityTypeId: number;
 }

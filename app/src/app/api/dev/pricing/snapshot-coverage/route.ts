@@ -22,7 +22,7 @@ const WIDTH_OPTIONS: Width[] = [
   306, 406, 506, 606, 706, 806, 906, 1006, 1106, 1206,
 ];
 
-const LENGTH_OPTIONS: Length[] = [300, 350, 400, 450, 500];
+const LENGTH_OPTIONS: Length[] = [300, 350, 400, 450, 500, 550, 600];
 
 interface SnapshotCoverageScenario {
   id: string;
@@ -131,6 +131,26 @@ const scenarios: SnapshotCoverageScenario[] = [
       hasHandles: true,
       hasBrushes: true,
       hasLevelingProfile: true,
+    }),
+  },
+  {
+    id: "terrace_roof_cct",
+    label: "Zadaszenie tarasu - LED CCT i ZIP bez ścian",
+    createConfiguration: (width, length) => ({
+      ...DEFAULT_CONFIGURATION,
+      width,
+      length,
+      walls: "none",
+      roof: "polycarbonate_clear",
+      hasFrontZip: false,
+      hasLeftZip: false,
+      hasRightZip: true,
+      hasAwning: false,
+      hasLed: false,
+      hasCob: true,
+      hasHandles: false,
+      hasBrushes: false,
+      hasLevelingProfile: false,
     }),
   },
 ];
@@ -317,7 +337,7 @@ function createSnapshotCoverageResponse({
     successfulDimensions: getSuccessfulDimensions(records),
     recommendedNextSteps: [
       "Snapshot wygenerowany z workbooka ma być teraz głównym kandydatem na docelowe źródło cen.",
-      "Jeżeli problems = 0 i successfulQuoteChecks = 200, można przygotować snapshot-based QuoteService.",
+      "Jeżeli problems = 0, snapshot ma pełne pokrycie aktywnych scenariuszy.",
       "Przed przepięciem kalkulatora warto porównać kilka cen z Excelem i obecnym UI.",
       "Przed integracją Bitrix uzupełnić bitrixProductId albo świadomie zostawić productName-only dla pierwszych testów.",
       "Ujednolicić kategorię ścian: docelowo używać 'walls' zamiast starego 'wall'.",

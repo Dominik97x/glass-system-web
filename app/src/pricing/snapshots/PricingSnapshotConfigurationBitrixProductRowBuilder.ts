@@ -91,21 +91,21 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       priceMatrixRow[roofField]
     );
 
-    const wallField = getWallPriceField(configuration.walls);
-    const hasWalls = wallField !== null;
+    const wallOption = configuration.walls;
+    const wallField = getWallPriceField(wallOption);
 
-    if (wallField) {
+    if (wallField && wallOption !== "none") {
       addRow(
         {
           quoteItemCategory: "walls",
-          quoteItemKey: getWallQuoteItemKey(configuration.walls),
-          optionCode: configuration.walls,
+          quoteItemKey: getWallQuoteItemKey(wallOption),
+          optionCode: wallOption,
         },
         priceMatrixRow[wallField]
       );
     }
 
-    if (hasWalls && configuration.hasRightZip) {
+    if (configuration.hasRightZip) {
       addRow(
         {
           quoteItemCategory: "zip",
@@ -116,7 +116,7 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       );
     }
 
-    if (hasWalls && configuration.hasLeftZip) {
+    if (configuration.hasLeftZip) {
       addRow(
         {
           quoteItemCategory: "zip",
@@ -127,7 +127,7 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       );
     }
 
-    if (hasWalls && configuration.hasFrontZip) {
+    if (configuration.hasFrontZip) {
       addRow(
         {
           quoteItemCategory: "zip",
@@ -164,10 +164,10 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
       addRow(
         {
           quoteItemCategory: "lighting",
-          quoteItemKey: "led_cob",
-          optionCode: "cob",
+          quoteItemKey: "led_cct",
+          optionCode: "cct",
         },
-        priceMatrixRow.ledCobGross
+        priceMatrixRow.ledStripGross
       );
     }
 
@@ -267,7 +267,11 @@ function getRoofPriceField(roofOption: RoofOption): PricingSnapshotPriceField {
     return "roofGlassClearGross";
   }
 
-  return "roofGlassMilkyGross";
+  if (roofOption === "glass_milky") {
+    return "roofGlassMilkyGross";
+  }
+
+  return "roofGlassTintedGross";
 }
 
 function getRoofQuoteItemKey(roofOption: RoofOption): string {

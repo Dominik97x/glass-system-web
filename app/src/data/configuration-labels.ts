@@ -1,7 +1,4 @@
-import type {
-  RoofOption,
-  WallOption,
-} from "@/domain/ProductConfiguration";
+import type { RoofOption, WallOption } from "@/domain/ProductConfiguration";
 
 const roofOptionValues: RoofOption[] = [
   "polycarbonate_clear",
@@ -9,13 +6,12 @@ const roofOptionValues: RoofOption[] = [
   "polycarbonate_grey",
   "polycarbonate_smoke",
   "glass_clear",
-  "glass_milky",
+  "glass_tinted",
 ];
 
 const wallOptionValues: WallOption[] = [
   "none",
   "glass_clear",
-  "glass_milky",
   "glass_tinted",
 ];
 
@@ -25,13 +21,14 @@ export const ROOF_LABELS: Record<RoofOption, string> = {
   polycarbonate_grey: "Poliwęglan szary",
   polycarbonate_smoke: "Poliwęglan dymiony",
   glass_clear: "Szkło przezroczyste",
-  glass_milky: "Szkło mleczne",
+  glass_milky: "Szkło mleczne — wariant niepublikowany",
+  glass_tinted: "Szkło przyciemniane",
 };
 
 export const WALL_LABELS: Record<WallOption, string> = {
   none: "Brak ścian",
   glass_clear: "Szyby przezroczyste",
-  glass_milky: "Szyby mleczne",
+  glass_milky: "Szyby mleczne — wariant niepublikowany",
   glass_tinted: "Szyby przyciemniane",
 };
 

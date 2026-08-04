@@ -1,0 +1,74 @@
+{
+  "tests": [
+    {
+      "test": "T1",
+      "expected": 13246,
+      "actual": 13246,
+      "status": "OK"
+    },
+    {
+      "test": "T2",
+      "expected": 31298,
+      "actual": 31298,
+      "status": "OK"
+    },
+    {
+      "test": "T3",
+      "expected": 33132,
+      "actual": 33132,
+      "status": "OK"
+    },
+    {
+      "test": "T4",
+      "expected": 30522,
+      "actual": 30522,
+      "status": "OK"
+    },
+    {
+      "test": "T5",
+      "expected": 89278,
+      "actual": 89278,
+      "status": "OK"
+    },
+    {
+      "test": "T6",
+      "expected": 30249,
+      "actual": 30249,
+      "status": "OK"
+    },
+    {
+      "test": "T7",
+      "expected": 69966,
+      "actual": 69966,
+      "status": "OK"
+    },
+    {
+      "test": "T8",
+      "expected": 24599,
+      "actual": 24599,
+      "status": "OK"
+    },
+    {
+      "test": "T9",
+      "expected": 36507,
+      "actual": 36507,
+      "status": "OK"
+    },
+    {
+      "test": "T10",
+      "expected": 109087,
+      "actual": 109087,
+      "status": "OK"
+    }
+  ],
+  "allTestsPassed": true,
+  "snapshot": {
+    "dimensions": 140,
+    "priceMatrixRows": 140,
+    "expectedKeys": 140,
+    "missingKeys": [],
+    "extraKeys": [],
+    "negativePrices": [],
+    "glass550600Disabled": true
+  }
+}

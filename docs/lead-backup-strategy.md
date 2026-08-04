@@ -1,7 +1,7 @@
-﻿# Lead backup strategy
+# Lead backup strategy
 
 Status dokumentu: draft roboczy  
-Projekt: Glass System / glass-system-web  
+Projekt: EcoGardens / glass-system-web  
 Decyzja: produkcyjny backup leadów będzie oparty o Postgres, docelowo Neon.
 
 ---
@@ -427,4 +427,16 @@ Wykonane kroki:
 7. Panel /admin/leady odczytał lead z aktywnego repozytorium.
 8. Zmiana statusu leadu na contacted zadziałała.
 
+OK — Postgres/Neon działa jako trwały backup leadów dla MVP.
 
+Aktualne ograniczenia:
+
+notification_status i bitrix24_sync_status są przygotowane w tabeli,
+ale aplikacja nie aktualizuje ich jeszcze automatycznie po każdej próbie wysyłki.
+To zostaje na późniejszy etap, gdy wrócimy do pełnej integracji Bitrix24/Resend.
+
+Decyzja:
+
+Na MVP uznajemy etap bazy danych za wystarczająco domknięty.
+Nie rozbudowujemy teraz retry, historii eventów ani pełnego systemu synchronizacji.
+Przechodzimy do warstwy wizualnej strony i kalkulatora.

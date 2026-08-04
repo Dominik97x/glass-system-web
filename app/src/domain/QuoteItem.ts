@@ -1,6 +1,6 @@
 export type QuoteItemCategory =
   | "construction"
-  | "wall"
+  | "walls"
   | "roof"
   | "zip"
   | "awning"

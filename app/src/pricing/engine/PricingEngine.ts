@@ -51,7 +51,7 @@ if (wallPrice > 0) {
   items.push({
     id: "walls",
     name: "Ściany przesuwne",
-    category: "wall",
+    category: "walls",
     quantity: 1,
     unitPriceGross: wallPrice,
     totalPriceGross: wallPrice,

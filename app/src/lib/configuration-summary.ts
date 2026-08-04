@@ -21,10 +21,6 @@ function getProductKindLabel(configuration: ProductConfiguration): string {
 }
 
 function getZipSummary(configuration: ProductConfiguration): string {
-  if (configuration.walls === "none") {
-    return "Niedostępne bez ścian";
-  }
-
   const selectedZips: string[] = [];
 
   if (configuration.hasFrontZip) {
@@ -50,7 +46,7 @@ function getLightingSummary(configuration: ProductConfiguration): string {
   }
 
   if (configuration.hasCob) {
-    selectedLighting.push("LED taśma");
+    selectedLighting.push("LED CCT");
   }
 
   return selectedLighting.length > 0

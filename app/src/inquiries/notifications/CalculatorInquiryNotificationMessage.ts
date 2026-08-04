@@ -177,7 +177,7 @@ function createConfigurationLines(
     `ZIP prawy: ${formatBoolean(configuration.hasRightZip)}`,
     `Markiza: ${formatBoolean(configuration.hasAwning)}`,
     `LED: ${formatBoolean(configuration.hasLed)}`,
-    `COB: ${formatBoolean(configuration.hasCob)}`,
+    `LED CCT: ${formatBoolean(configuration.hasCob)}`,
     `Uchwyty: ${formatBoolean(configuration.hasHandles)}`,
     `Szczotki: ${formatBoolean(configuration.hasBrushes)}`,
     `Profil wyrównujący: ${formatBoolean(configuration.hasLevelingProfile)}`,
@@ -216,7 +216,7 @@ function createHtmlConfigurationSection(
     ["ZIP prawy", formatBoolean(configuration.hasRightZip)],
     ["Markiza", formatBoolean(configuration.hasAwning)],
     ["LED", formatBoolean(configuration.hasLed)],
-    ["COB", formatBoolean(configuration.hasCob)],
+    ["LED CCT", formatBoolean(configuration.hasCob)],
     ["Uchwyty", formatBoolean(configuration.hasHandles)],
     ["Szczotki", formatBoolean(configuration.hasBrushes)],
     ["Profil wyrównujący", formatBoolean(configuration.hasLevelingProfile)],
@@ -399,6 +399,7 @@ function formatRoof(roof: ProductConfiguration["roof"]): string {
     polycarbonate_smoke: "Poliwęglan dymiony",
     glass_clear: "Szkło przezroczyste",
     glass_milky: "Szkło mleczne",
+    glass_tinted: "Szkło przyciemniane",
   };
 
   return labels[roof];

@@ -59,7 +59,7 @@ function getLightingLabel(quote: Quote): string {
   }
 
   if (quote.configuration.hasCob) {
-    return "LED taśma";
+    return "LED CCT";
   }
 
   return "Brak";

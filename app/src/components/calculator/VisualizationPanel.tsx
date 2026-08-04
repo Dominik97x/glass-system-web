@@ -16,10 +16,9 @@ interface Props {
 export function VisualizationPanel({ configuration }: Props) {
   const hasWalls = configuration.walls !== "none";
   const hasAnyZip =
-    hasWalls &&
-    (configuration.hasFrontZip ||
-      configuration.hasLeftZip ||
-      configuration.hasRightZip);
+    configuration.hasFrontZip ||
+    configuration.hasLeftZip ||
+    configuration.hasRightZip;
   const hasLight = configuration.hasLed || configuration.hasCob;
   const selectedExtras = getSelectedExtras(configuration);
   const activeAsset = getVisualizerAsset(configuration);
@@ -97,7 +96,7 @@ export function VisualizationPanel({ configuration }: Props) {
             {configuration.hasAwning && <VisualBadge label="Markiza" />}
             {hasLight && (
               <VisualBadge
-                label={configuration.hasLed ? "LED punktowe" : "LED taśma"}
+                label={configuration.hasLed ? "LED punktowe" : "LED CCT"}
               />
             )}
           </div>
@@ -216,10 +215,9 @@ function isTileActive(
 ): boolean {
   const hasWalls = configuration.walls !== "none";
   const hasAnyZip =
-    hasWalls &&
-    (configuration.hasFrontZip ||
-      configuration.hasLeftZip ||
-      configuration.hasRightZip);
+    configuration.hasFrontZip ||
+    configuration.hasLeftZip ||
+    configuration.hasRightZip;
 
   switch (tileId) {
     case "terrace_roof":
@@ -261,7 +259,7 @@ function getSelectedExtras(configuration: ProductConfiguration): string[] {
   }
 
   if (configuration.hasCob) {
-    extras.push("LED taśma");
+    extras.push("LED CCT");
   }
 
   if (configuration.hasHandles) {

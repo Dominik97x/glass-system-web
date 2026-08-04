@@ -138,6 +138,6 @@ export function validateCalculatorInquiryLead(
 
   return {
     success: true,
-    lead: value as CalculatorInquiryLead,
+    lead: value as unknown as CalculatorInquiryLead,
   };
 }

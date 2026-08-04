@@ -139,9 +139,9 @@ export const VISUALIZER_ASSETS = {
   },
   winter_garden_led_strip: {
     key: "winter_garden_led_strip",
-    label: "Ogród zimowy z taśmą LED",
-    shortLabel: "LED taśma",
-    description: "Zabudowa tarasu z liniowym oświetleniem LED.",
+    label: "Ogród zimowy z LED CCT",
+    shortLabel: "LED CCT",
+    description: "Zabudowa tarasu z liniowym oświetleniem LED CCT.",
     src: CURRENT_IMAGES.eveningLed,
     thumbnailSrc: CURRENT_IMAGES.eveningLed,
     mode: "evening",
@@ -189,10 +189,9 @@ export function getVisualizerAsset(
 ): VisualizerAsset {
   const hasWalls = configuration.walls !== "none";
   const hasAnyZip =
-    hasWalls &&
-    (configuration.hasFrontZip ||
-      configuration.hasLeftZip ||
-      configuration.hasRightZip);
+    configuration.hasFrontZip ||
+    configuration.hasLeftZip ||
+    configuration.hasRightZip;
   const hasFullZip =
     hasWalls &&
     configuration.hasFrontZip &&

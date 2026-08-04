@@ -8,9 +8,7 @@ import {
 } from "@/domain/ProductConfiguration";
 import type { Quote } from "@/domain/Quote";
 import type { QuoteItem } from "@/domain/QuoteItem";
-import type {
-  PricingSnapshot,
-} from "@/pricing/snapshots/PricingSnapshot";
+import type { PricingSnapshot } from "@/pricing/snapshots/PricingSnapshot";
 import {
   PricingSnapshotPriceReader,
   type PricingSnapshotPriceField,
@@ -37,7 +35,6 @@ export class SnapshotQuoteService {
 
   constructor() {
     const validation = validatePricingSnapshot(snapshot);
-
     if (!validation.success) {
       throw new Error(
         `Generated pricing snapshot is invalid: ${validation.errors
@@ -45,31 +42,29 @@ export class SnapshotQuoteService {
           .join(", ")}`
       );
     }
-
     this.reader = new PricingSnapshotPriceReader(snapshot);
   }
 
   createQuote(configuration: ProductConfiguration): Quote {
-    const productType = getProductKind(configuration);
+    assertPriceableConfiguration(configuration);
 
     const criteria: PricingCriteria = {
-      productType,
+      productType: getProductKind(configuration),
       widthCm: configuration.width,
       lengthCm: configuration.length,
     };
-
     const items: QuoteItem[] = [];
 
     this.addItem(items, {
       id: "construction",
-      name: "Konstrukcja",
+      name: "Konstrukcja z dachem poliwęglanowym",
       category: "construction",
       price: this.getPrice(criteria, "constructionGross"),
     });
 
     this.addItem(items, {
       id: "roof",
-      name: "Pokrycie dachu",
+      name: "Dopłata do wariantu dachu",
       category: "roof",
       price: this.getPrice(criteria, getRoofPriceField(configuration.roof)),
     });
@@ -83,38 +78,35 @@ export class SnapshotQuoteService {
       });
     }
 
-    const zipPrice = this.calculateZipPrice(configuration, criteria);
-
-    this.addItem(items, {
-      id: "zip",
-      name: "Rolety ZIP",
-      category: "zip",
-      price: zipPrice,
-    });
+    let zipPrice = 0;
+    if (configuration.hasFrontZip) zipPrice += this.getPrice(criteria, "zipFrontGross");
+    if (configuration.hasLeftZip) zipPrice += this.getPrice(criteria, "zipLeftGross");
+    if (configuration.hasRightZip) zipPrice += this.getPrice(criteria, "zipRightGross");
+    this.addItem(items, { id: "zip", name: "Rolety ZIP", category: "zip", price: zipPrice });
 
     this.addItem(items, {
       id: "awning",
       name: "Markiza",
       category: "awning",
-      price: configuration.hasAwning
-        ? this.getPrice(criteria, "awningGross")
-        : 0,
+      price: configuration.hasAwning ? this.getPrice(criteria, "awningGross") : 0,
     });
 
-    const lightingPrice = this.calculateLightingPrice(configuration, criteria);
-
+    const lightingPrice = configuration.hasLed
+      ? this.getPrice(criteria, "ledSpotGross")
+      : configuration.hasCob
+        ? this.getPrice(criteria, "ledStripGross")
+        : 0;
     this.addItem(items, {
       id: "led",
-      name: "Oświetlenie LED",
+      name: configuration.hasCob ? "Oświetlenie LED CCT" : "Oświetlenie LED punktowe",
       category: "lighting",
       price: lightingPrice,
     });
 
-    const accessoriesPrice = this.calculateAccessoriesPrice(
-      configuration,
-      criteria
-    );
-
+    let accessoriesPrice = 0;
+    if (configuration.hasHandles) accessoriesPrice += this.getPrice(criteria, "handlesGross");
+    if (configuration.hasBrushes) accessoriesPrice += this.getPrice(criteria, "brushesGross");
+    if (configuration.hasLevelingProfile) accessoriesPrice += this.getPrice(criteria, "levelingProfileGross");
     this.addItem(items, {
       id: "accessories",
       name: "Akcesoria",
@@ -122,24 +114,16 @@ export class SnapshotQuoteService {
       price: accessoriesPrice,
     });
 
-    const totalGross = items.reduce(
-      (sum, item) => sum + item.totalPriceGross,
-      0
-    );
-
     return {
       configuration,
       items,
-      totalGross,
+      totalGross: items.reduce((sum, item) => sum + item.totalPriceGross, 0),
       currency: "PLN",
     };
   }
 
   private addItem(items: QuoteItem[], input: SnapshotQuoteItemInput) {
-    if (input.price <= 0) {
-      return;
-    }
-
+    if (input.price <= 0) return;
     items.push({
       id: input.id,
       name: input.name,
@@ -150,116 +134,46 @@ export class SnapshotQuoteService {
     });
   }
 
-  private calculateZipPrice(
-    configuration: ProductConfiguration,
-    criteria: PricingCriteria
-  ): number {
-    if (configuration.walls === "none") {
-      return 0;
-    }
-
-    let total = 0;
-
-    if (configuration.hasFrontZip) {
-      total += this.getPrice(criteria, "zipFrontGross");
-    }
-
-    if (configuration.hasLeftZip) {
-      total += this.getPrice(criteria, "zipLeftGross");
-    }
-
-    if (configuration.hasRightZip) {
-      total += this.getPrice(criteria, "zipRightGross");
-    }
-
-    return total;
+  private getPrice(criteria: PricingCriteria, field: PricingSnapshotPriceField): number {
+    return this.reader.getPrice(criteria, field);
   }
+}
 
-  private calculateLightingPrice(
-    configuration: ProductConfiguration,
-    criteria: PricingCriteria
-  ): number {
-    let total = 0;
-
-    if (configuration.hasLed) {
-      total += this.getPrice(criteria, "ledSpotGross");
-    }
-
-    if (configuration.hasCob) {
-      total += this.getPrice(criteria, "ledCobGross");
-    }
-
-    return total;
-  }
-
-  private calculateAccessoriesPrice(
-    configuration: ProductConfiguration,
-    criteria: PricingCriteria
-  ): number {
-    let total = 0;
-
-    if (configuration.hasHandles) {
-      total += this.getPrice(criteria, "handlesGross");
-    }
-
-    if (configuration.hasBrushes) {
-      total += this.getPrice(criteria, "brushesGross");
-    }
-
-    if (configuration.hasLevelingProfile) {
-      total += this.getPrice(criteria, "levelingProfileGross");
-    }
-
-    return total;
-  }
-
-  private getPrice(
-    criteria: PricingCriteria,
-    field: PricingSnapshotPriceField
-  ): number {
-    return this.reader.getPrice(
-      {
-        productType: criteria.productType,
-        widthCm: criteria.widthCm,
-        lengthCm: criteria.lengthCm,
-      },
-      field
+function assertPriceableConfiguration(
+  configuration: ProductConfiguration
+): void {
+  if (configuration.hasLed && configuration.hasCob) {
+    throw new Error(
+      "LED punktowe i LED CCT nie mogą być wybrane jednocześnie."
     );
+  }
+
+  if (configuration.length >= 550 && configuration.roof.startsWith("glass_")) {
+    throw new Error(
+      "Dach szklany dla długości 550 i 600 cm wymaga wyceny indywidualnej."
+    );
+  }
+
+  if (
+    configuration.roof === "glass_milky" ||
+    configuration.walls === "glass_milky"
+  ) {
+    throw new Error("Wybrany wariant szkła nie jest publikowany na stronie.");
   }
 }
 
 function getRoofPriceField(roof: RoofOption): PricingSnapshotPriceField {
-  if (roof === "polycarbonate_clear") {
-    return "roofPolycarbonateClearGross";
-  }
-
-  if (roof === "polycarbonate_milky") {
-    return "roofPolycarbonateMilkyGross";
-  }
-
-  if (roof === "polycarbonate_grey") {
-    return "roofPolycarbonateGreyGross";
-  }
-
-  if (roof === "polycarbonate_smoke") {
-    return "roofPolycarbonateSmokeGross";
-  }
-
-  if (roof === "glass_clear") {
-    return "roofGlassClearGross";
-  }
-
-  return "roofGlassMilkyGross";
+  if (roof === "polycarbonate_clear") return "roofPolycarbonateClearGross";
+  if (roof === "polycarbonate_milky") return "roofPolycarbonateMilkyGross";
+  if (roof === "polycarbonate_grey") return "roofPolycarbonateGreyGross";
+  if (roof === "polycarbonate_smoke") return "roofPolycarbonateSmokeGross";
+  if (roof === "glass_clear") return "roofGlassClearGross";
+  if (roof === "glass_milky") return "roofGlassMilkyGross";
+  return "roofGlassTintedGross";
 }
 
 function getWallPriceField(walls: WallOption): PricingSnapshotPriceField {
-  if (walls === "glass_clear") {
-    return "wallGlassClearGross";
-  }
-
-  if (walls === "glass_milky") {
-    return "wallGlassMilkyGross";
-  }
-
+  if (walls === "glass_clear") return "wallGlassClearGross";
+  if (walls === "glass_milky") return "wallGlassMilkyGross";
   return "wallGlassTintedGross";
 }

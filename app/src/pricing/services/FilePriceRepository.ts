@@ -74,6 +74,10 @@ getWallPrice(configuration: ProductConfiguration): number {
         return row.glassClear;
       case "glass_milky":
         return row.glassMilky;
+      case "glass_tinted":
+        throw new Error(
+          "Tinted glass roof is not supported by the legacy TypeScript price tables."
+        );
     }
   }
 private getZipRow(configuration: ProductConfiguration) {

@@ -1,0 +1,45 @@
+warning: in the working copy of 'app/src/app/api/dev/inquiries/notification-preview/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/app/api/dev/pricing/snapshot-coverage/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/app/kontakt/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/app/oferta/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/components/calculator/ConfigurationForm.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/components/calculator/PriceSidebar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/components/calculator/VisualizationPanel.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/components/calculator/visualizer/visualizer-assets.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/data/configuration-labels.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/domain/ProductConfiguration.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/domain/QuoteItem.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/inquiries/notifications/CalculatorInquiryNotificationMessage.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/inquiries/validators/calculator-inquiry-validator.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/integrations/bitrix24/Bitrix24Types.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/lib/configuration-summary.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/pricing/calculators/ZipCalculator.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/pricing/engine/PricingEngine.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/pricing/services/FilePriceRepository.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/pricing/services/SnapshotQuoteService.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/pricing/snapshots/PricingSnapshotConfigurationBitrixProductRowBuilder.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/src/pricing/snapshots/PricingSnapshotConfigurationPriceCalculator.ts', LF will be replaced by CRLF the next time Git touches it
+ .../dev/inquiries/notification-preview/route.ts    |  61 [32m++[m[31m-[m
+ .../app/api/dev/pricing/snapshot-coverage/route.ts |  24 [32m+[m[31m-[m
+ app/src/app/kontakt/page.tsx                       |  36 [32m++[m
+ app/src/app/oferta/page.tsx                        |  52 [32m++[m
+ .../components/calculator/ConfigurationForm.tsx    | 360 [32m+++[m[31m-----------[m
+ app/src/components/calculator/PriceSidebar.tsx     |   2 [32m+[m[31m-[m
+ .../components/calculator/VisualizationPanel.tsx   |  18 [32m+[m[31m-[m
+ .../calculator/visualizer/visualizer-assets.ts     |  13 [32m+[m[31m-[m
+ app/src/data/configuration-labels.ts               |  15 [32m+[m[31m-[m
+ app/src/domain/ProductConfiguration.ts             |  32 [32m+[m[31m-[m
+ app/src/domain/QuoteItem.ts                        |   2 [32m+[m[31m-[m
+ .../CalculatorInquiryNotificationMessage.ts        |   5 [32m+[m[31m-[m
+ .../validators/calculator-inquiry-validator.ts     |   2 [32m+[m[31m-[m
+ app/src/integrations/bitrix24/Bitrix24Types.ts     |  34 [32m++[m
+ app/src/lib/configuration-summary.ts               |   6 [32m+[m[31m-[m
+ app/src/pricing/calculators/ZipCalculator.ts       |   4 [31m-[m
+ app/src/pricing/engine/PricingEngine.ts            |   2 [32m+[m[31m-[m
+ app/src/pricing/services/FilePriceRepository.ts    |   4 [32m+[m
+ app/src/pricing/services/SnapshotQuoteService.ts   | 190 [32m++[m[31m------[m
+ ...SnapshotConfigurationBitrixProductRowBuilder.ts |  28 [32m+[m[31m-[m
+ .../PricingSnapshotConfigurationPriceCalculator.ts |  15 [32m+[m[31m-[m
+ docs/lead-backup-strategy.md                       |  16 [32m+[m[31m-[m
+ docs/pricing-source-strategy.md                    | 540 [32m++++++++++++++++++++[m[31m-[m
+ 23 files changed, 925 insertions(+), 536 deletions(-)
