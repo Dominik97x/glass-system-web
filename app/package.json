@@ -14,7 +14,8 @@
     "bitrix:plan": "tsx scripts/bitrix24-provisioner.ts plan",
     "bitrix:apply": "tsx scripts/bitrix24-provisioner.ts apply",
     "bitrix:products:pilot": "tsx scripts/bitrix24-provisioner.ts products:pilot",
-    "bitrix:verify": "tsx scripts/bitrix24-provisioner.ts verify"
+    "bitrix:verify": "tsx scripts/bitrix24-provisioner.ts verify",
+    "bitrix:test-flow": "tsx scripts/bitrix24-test-flow.ts"
   },
   "dependencies": {
     "next": "16.2.9",

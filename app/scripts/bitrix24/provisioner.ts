@@ -52,6 +52,7 @@ const methodChecks = [
   "catalog.product.list",
   "catalog.product.add",
   "catalog.product.update",
+  "catalog.measure.list",
   "catalog.priceType.list",
   "catalog.price.list",
   "catalog.price.add",
@@ -395,6 +396,7 @@ export class Bitrix24Provisioner {
 
     const products = buildPilotProducts(this.cwd, this.env.pilotDimensions);
     const priceTypeId = await this.getBasePriceTypeId();
+    const pieceMeasure = await this.getPieceMeasure();
     const existingProducts = await this.safeListProducts(iblockId, []);
 
     for (const product of products) {
@@ -415,6 +417,7 @@ export class Bitrix24Provisioner {
             xmlId: product.sku,
             iblockSectionId: sectionId,
             active: "Y",
+            measure: pieceMeasure.id,
             detailText: product.description ?? "",
             detailTextType: "text",
           },
@@ -430,6 +433,7 @@ export class Bitrix24Provisioner {
               code: product.sku,
               xmlId: product.sku,
               active: "Y",
+              measure: pieceMeasure.id,
               detailText: product.description ?? "",
               detailTextType: "text",
             },
@@ -804,6 +808,49 @@ export class Bitrix24Provisioner {
 
       sectionByKey.set(desired.key, existing);
     }
+  }
+
+  private async getPieceMeasure(): Promise<{ id: number; code: number }> {
+    const result = await this.client.call<{
+      measures?: Array<{
+        id: number;
+        code: number;
+        measureTitle?: string;
+        symbol?: string;
+        symbolIntl?: string;
+        symbolLetterIntl?: string;
+      }>;
+    }>("catalog.measure.list", {
+      select: [
+        "id",
+        "code",
+        "measureTitle",
+        "symbol",
+        "symbolIntl",
+        "symbolLetterIntl",
+      ],
+      order: { id: "ASC" },
+    });
+    const measures = result.measures ?? [];
+    const piece =
+      measures.find((measure) => Number(measure.code) === 796) ??
+      measures.find((measure) => {
+        const label = [
+          measure.measureTitle,
+          measure.symbol,
+          measure.symbolIntl,
+          measure.symbolLetterIntl,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return /(^|\s)(szt\.?|pcs?|piece)(\s|$)/i.test(label);
+      });
+    if (!piece) {
+      throw new Error(
+        "Nie znaleziono jednostki szt. w katalogu Bitrix24 (kod 796)."
+      );
+    }
+    return { id: Number(piece.id), code: Number(piece.code) };
   }
 
   private async getBasePriceTypeId(): Promise<number> {
