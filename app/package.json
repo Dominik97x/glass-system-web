@@ -21,7 +21,15 @@
     "bitrix:products:full:source": "tsx scripts/bitrix24-full-catalog.ts source",
     "bitrix:products:full:plan": "tsx scripts/bitrix24-full-catalog.ts plan",
     "bitrix:products:full:apply": "tsx scripts/bitrix24-full-catalog.ts apply",
-    "bitrix:products:full:verify": "tsx scripts/bitrix24-full-catalog.ts verify"
+    "bitrix:products:full:verify": "tsx scripts/bitrix24-full-catalog.ts verify",
+    "bitrix:automations:audit": "tsx scripts/bitrix24-automation.ts audit",
+    "bitrix:automations:plan": "tsx scripts/bitrix24-automation.ts plan",
+    "bitrix:automations:test": "tsx scripts/bitrix24-automation.ts test",
+    "bitrix:automations:apply": "tsx scripts/bitrix24-automation.ts apply",
+    "bitrix:documents:fields:audit": "tsx scripts/bitrix24-document-fields.ts audit",
+    "bitrix:documents:fields:plan": "tsx scripts/bitrix24-document-fields.ts plan",
+    "bitrix:documents:fields:apply": "tsx scripts/bitrix24-document-fields.ts apply",
+    "bitrix:documents:fields:verify": "tsx scripts/bitrix24-document-fields.ts verify"
   },
   "dependencies": {
     "next": "16.2.9",

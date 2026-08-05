@@ -112,6 +112,33 @@ function field(
   return { entity, alias, label, type, sort, ...extra };
 }
 
+export const DOCUMENT_USER_FIELDS: UserFieldBlueprint[] = [
+  field("company", "MG_KRS", "KRS", "string", 400, { searchable: true }),
+  field("company", "MG_COMPANY_REPRESENTATIVE", "Osoba reprezentująca firmę", "string", 500),
+  field("company", "MG_COMPANY_REPRESENTATIVE_ROLE", "Funkcja reprezentanta", "string", 600),
+
+  field("deal", "MG_OFFER_NUMBER", "Numer oferty", "string", 900, { searchable: true }),
+  field("deal", "MG_CONTRACT_NUMBER", "Numer umowy", "string", 910, { searchable: true }),
+  field("deal", "MG_CONTRACT_DATE", "Data zawarcia umowy", "date", 920),
+  field("deal", "MG_PLANNED_COMPLETION_DATE", "Planowany termin realizacji", "date", 930),
+  field("deal", "MG_ADVANCE_PERCENT", "Zaliczka [%]", "double", 940, { settings: { PRECISION: 2 } }),
+  field("deal", "MG_ADVANCE_DUE_DATE", "Termin wpłaty zaliczki", "date", 950),
+  field("deal", "MG_PAYMENT_METHOD", "Sposób płatności", "enumeration", 960, {
+    enumValues: enumValues(["Przelew", "Gotówka", "Karta", "Inne"]),
+  }),
+  field("deal", "MG_CONSTRUCTION_COLOR", "Kolor konstrukcji", "string", 970),
+  field("deal", "MG_SITE_PREPARATION", "Przygotowanie miejsca / podłoża", "string", 980, {
+    settings: { ROWS: 8 },
+  }),
+  field("deal", "MG_TECHNICAL_NOTES", "Uwagi techniczne do dokumentów", "string", 990, {
+    settings: { ROWS: 8 },
+  }),
+  field("deal", "MG_DOCUMENT_ISSUER", "Osoba wystawiająca dokument", "employee", 1000),
+  field("deal", "MG_DOCUMENT_VERSION", "Wersja dokumentacji", "string", 1010),
+  field("deal", "MG_OFFER_NOTES", "Uwagi do oferty", "string", 1020, { settings: { ROWS: 6 } }),
+  field("deal", "MG_CONTRACT_NOTES", "Uwagi do umowy", "string", 1030, { settings: { ROWS: 8 } }),
+];
+
 const userFields: UserFieldBlueprint[] = [
   field("contact", "MG_PREFERRED_CHANNEL", "Preferowany kanał kontaktu", "enumeration", 100, {
     enumValues: enumValues(["Telefon", "E-mail", "SMS", "WhatsApp"]),
@@ -219,6 +246,8 @@ const userFields: UserFieldBlueprint[] = [
   field("deal", "MG_NEXT_VISIT_AT", "Najbliższa wizyta", "datetime", 840),
   field("deal", "MG_DEFECTS", "Usterki / uwagi", "string", 850, { settings: { ROWS: 8 } }),
   field("deal", "MG_PROJECT_PAID", "Projekt opłacony", "boolean", 860),
+
+  ...DOCUMENT_USER_FIELDS,
 ];
 
 const catalogSections: CatalogSectionBlueprint[] = [
@@ -239,7 +268,7 @@ const catalogSections: CatalogSectionBlueprint[] = [
 ];
 
 export const MOONGLASS_BLUEPRINT: ProvisioningBlueprint = {
-  version: "2026-08-04.3",
+  version: "2026-08-05.1",
   portalLabel: "MoonGlass",
   dealEntityTypeId: 2,
   pipelines: [salesPipeline, realizationPipeline, complaintsPipeline],

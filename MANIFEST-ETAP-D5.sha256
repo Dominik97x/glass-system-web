@@ -1,0 +1,6 @@
+1d9cab0aef0706b546e95f27a912e2b908927ae19db2a5a6636345a3579cf102  ./README-ETAP-D5-AUTOMATYZACJE-BITRIX24.md
+c4458ede9d1a78c3094fd8180973015b11a1e2fd3b362f9e3b8cbf51c8b9d7d7  ./app/package.json
+5e4e9be55c721e23ca10436e898f9b17170f4ab1c1f35e92bed4ef524b66c4eb  ./app/scripts/bitrix24-automation.ts
+e2a264cdb2afac5c04da1bb39cc74d7c185cfd5b50869acf08c71005f2c80b77  ./app/scripts/bitrix24/automation-blueprint.ts
+f8c6936982302ebd28731ed370ea778b63fc297441f1ce26b3b50796cda27dba  ./app/scripts/bitrix24/automation-planner.ts
+962d7f45c93834358f18bf4b25f619d6bb6e70fd5e660606841322d413b49081  ./docs/bitrix24-automation-blueprint.md
