@@ -139,6 +139,119 @@ export const DOCUMENT_USER_FIELDS: UserFieldBlueprint[] = [
   field("deal", "MG_CONTRACT_NOTES", "Uwagi do umowy", "string", 1030, { settings: { ROWS: 8 } }),
 ];
 
+export const PAYMENT_SCHEDULE_USER_FIELDS: UserFieldBlueprint[] = [
+  field("deal", "MG_PAYMENT_STAGE2_AMOUNT", "II rata — 50% — kwota", "money", 1040),
+  field("deal", "MG_PAYMENT_STAGE3_AMOUNT", "III rata — 20% — kwota", "money", 1050),
+];
+
+export const MEASUREMENT_PROTOCOL_USER_FIELDS: UserFieldBlueprint[] = [
+  field("deal", "MG_MEASUREMENT_PROTOCOL_NUMBER", "Numer protokołu pomiaru", "string", 1060, {
+    searchable: true,
+  }),
+  field("deal", "MG_MEASURED_WIDTH_CM", "Szerokość po pomiarze [cm]", "double", 1070, {
+    settings: { PRECISION: 1 },
+  }),
+  field("deal", "MG_MEASURED_DEPTH_CM", "Głębokość po pomiarze [cm]", "double", 1080, {
+    settings: { PRECISION: 1 },
+  }),
+  field("deal", "MG_MEASURED_HEIGHT_WALL_CM", "Wysokość przy ścianie [cm]", "double", 1090, {
+    settings: { PRECISION: 1 },
+  }),
+  field("deal", "MG_MEASURED_HEIGHT_FRONT_CM", "Wysokość z przodu [cm]", "double", 1100, {
+    settings: { PRECISION: 1 },
+  }),
+  field("deal", "MG_MEASUREMENT_GROUND_STATUS", "Stan podłoża / fundamentu", "enumeration", 1110, {
+    enumValues: enumValues([
+      "Gotowe i równe",
+      "Gotowe — wymaga poziomowania",
+      "Wymaga przygotowania",
+      "Brak podłoża / fundamentu",
+      "Nie dotyczy",
+      "Indywidualne",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_WALL_STATUS", "Stan ściany montażowej", "enumeration", 1120, {
+    enumValues: enumValues([
+      "Gotowa do montażu",
+      "Wymaga przygotowania",
+      "Ocieplenie — wymagane kotwienie specjalne",
+      "Brak możliwości kotwienia",
+      "Nie dotyczy",
+      "Indywidualne",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_POWER_STATUS", "Zasilanie przy miejscu montażu", "enumeration", 1130, {
+    enumValues: enumValues([
+      "Dostępne do 5 m",
+      "Dostępne powyżej 5 m",
+      "Brak",
+      "Nie dotyczy",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_DRAINAGE", "Kierunek odprowadzenia wody", "enumeration", 1140, {
+    enumValues: enumValues([
+      "Lewa strona",
+      "Prawa strona",
+      "Przód",
+      "Do ustalenia",
+      "Nie dotyczy",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_ACCESS_STATUS", "Dojazd i możliwość rozładunku", "enumeration", 1150, {
+    enumValues: enumValues([
+      "Bez utrudnień",
+      "Ograniczony",
+      "Wymaga dodatkowej organizacji",
+      "Brak możliwości",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_PHOTOS_STATUS", "Dokumentacja zdjęciowa pomiaru", "enumeration", 1160, {
+    enumValues: enumValues([
+      "Nie wymagana",
+      "Do uzupełnienia",
+      "Kompletna",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_RESULT", "Wynik pomiaru", "enumeration", 1170, {
+    enumValues: enumValues([
+      "Zgodny z ofertą",
+      "Wymaga korekty wymiarów",
+      "Wymaga ponownej wyceny",
+      "Wymaga dodatkowych prac",
+      "Brak możliwości realizacji",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_APPROVAL_STATUS", "Status zatwierdzenia protokołu", "enumeration", 1180, {
+    enumValues: enumValues([
+      "Roboczy",
+      "Do akceptacji klienta",
+      "Zatwierdzony",
+      "Odrzucony / do poprawy",
+    ]),
+  }),
+  field("deal", "MG_MEASUREMENT_CLIENT_NOTES", "Uwagi klienta do pomiaru", "string", 1190, {
+    settings: { ROWS: 6 },
+  }),
+];
+
+export const VAT_CHANGER_USER_FIELDS: UserFieldBlueprint[] = [
+  field("deal", "MG_DOCUMENT_VAT_PERCENT", "VAT dokumentu / produktów [%]", "double", 1200, {
+    settings: { PRECISION: 2 },
+  }),
+  field("deal", "MG_VAT_CHANGE_STATUS", "Status przeliczenia VAT", "enumeration", 1210, {
+    enumValues: enumValues([
+      "Nie przeliczono",
+      "Przeliczono — do weryfikacji",
+      "Zatwierdzono",
+      "Błąd",
+    ]),
+  }),
+  field("deal", "MG_VAT_CHANGED_AT", "Data ostatniego przeliczenia VAT", "datetime", 1220),
+  field("deal", "MG_VAT_CHANGE_SUMMARY", "Podsumowanie ostatniego przeliczenia VAT", "string", 1230, {
+    settings: { ROWS: 6 },
+  }),
+];
+
 const userFields: UserFieldBlueprint[] = [
   field("contact", "MG_PREFERRED_CHANNEL", "Preferowany kanał kontaktu", "enumeration", 100, {
     enumValues: enumValues(["Telefon", "E-mail", "SMS", "WhatsApp"]),
@@ -248,6 +361,9 @@ const userFields: UserFieldBlueprint[] = [
   field("deal", "MG_PROJECT_PAID", "Projekt opłacony", "boolean", 860),
 
   ...DOCUMENT_USER_FIELDS,
+  ...PAYMENT_SCHEDULE_USER_FIELDS,
+  ...MEASUREMENT_PROTOCOL_USER_FIELDS,
+  ...VAT_CHANGER_USER_FIELDS,
 ];
 
 const catalogSections: CatalogSectionBlueprint[] = [
@@ -268,7 +384,7 @@ const catalogSections: CatalogSectionBlueprint[] = [
 ];
 
 export const MOONGLASS_BLUEPRINT: ProvisioningBlueprint = {
-  version: "2026-08-05.1",
+  version: "2026-08-05.4",
   portalLabel: "MoonGlass",
   dealEntityTypeId: 2,
   pipelines: [salesPipeline, realizationPipeline, complaintsPipeline],

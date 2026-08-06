@@ -6,6 +6,7 @@ import {
 } from "@/domain/ProductConfiguration";
 import { CalculatorInquiryQuoteService } from "@/inquiries/server/CalculatorInquiryQuoteService";
 import { validateCalculatorInquirySubmission } from "@/inquiries/validators/calculator-inquiry-validator";
+import { getQuoteSnapshotWebsiteTotalGross } from "@/lib/quote-snapshot";
 
 export const runtime = "nodejs";
 
@@ -59,8 +60,11 @@ function checkTrustedTotal(): CheckResult {
   return {
     id: "B1",
     name: "Poprawna konfiguracja jest liczona na serwerze",
-    passed: lead.quote.totalGross === expectedTotalGross,
-    details: `Oczekiwano ${expectedTotalGross} zł, serwer wyliczył ${lead.quote.totalGross} zł.`,
+    passed:
+      getQuoteSnapshotWebsiteTotalGross(lead.quote) === expectedTotalGross,
+    details: `Oczekiwano ${expectedTotalGross} zł na stronie, serwer wyliczył ${getQuoteSnapshotWebsiteTotalGross(
+      lead.quote
+    )} zł.`,
   };
 }
 
@@ -99,8 +103,11 @@ function checkTamperedQuoteIsIgnored(): CheckResult {
   return {
     id: "B2",
     name: "Cena przesłana przez klienta jest ignorowana",
-    passed: lead.quote.totalGross === expectedTotalGross,
-    details: `Klient przesłał 1 zł, serwer zapisał ${lead.quote.totalGross} zł.`,
+    passed:
+      getQuoteSnapshotWebsiteTotalGross(lead.quote) === expectedTotalGross,
+    details: `Klient przesłał 1 zł, serwer zapisał ${getQuoteSnapshotWebsiteTotalGross(
+      lead.quote
+    )} zł wyceny strony.`,
   };
 }
 
@@ -123,8 +130,11 @@ function checkAcceptedPayload(
   return {
     id,
     name,
-    passed: lead.quote.totalGross === expectedTotalGross,
-    details: `Oczekiwano ${expectedTotalGross} zł, serwer wyliczył ${lead.quote.totalGross} zł.`,
+    passed:
+      getQuoteSnapshotWebsiteTotalGross(lead.quote) === expectedTotalGross,
+    details: `Oczekiwano ${expectedTotalGross} zł na stronie, serwer wyliczył ${getQuoteSnapshotWebsiteTotalGross(
+      lead.quote
+    )} zł.`,
   };
 }
 

@@ -84,7 +84,7 @@ export function getConfigurationSummaryRows(
     },
     {
       label: "Wymiary",
-      value: `${configuration.width} × ${configuration.length} cm`,
+      value: `${configuration.length} × ${configuration.width} cm`,
     },
     {
       label: "Dach",

@@ -1,0 +1,6 @@
+e51bfdd371424f0a6de69fa39b04d29185c8d346ecd34e7b93a8ccc60733a066  ./README-ETAP-D6.5.3-ZMIENIARKA-VAT.md
+3c21b7b808cedbc9f0017e05e9781acd0293bcd2ad4eb0430efd4a9b75f1c39d  ./app/package.json
+da08ec94caaffff7fc9aee751ce0ee12e0637da038274688c962ce69eb0f7dbf  ./app/scripts/bitrix24-vat-changer.ts
+42b63bbbcb1cd863e4c1319de96914550bc750ac484130241f327ac70ad2d8d0  ./app/scripts/bitrix24/blueprint.ts
+fb5806847d44ee333e45bcb842728374cf35557b3857c6ba714eda8936d2ae41  ./app/src/lib/vat-changer.ts
+2de0bfc7056c49cd0768a2c89ee3cfb917758de101ef9da669ad6b652595db52  ./docs/D6.5.3-ZMIENIARKA-VAT.md

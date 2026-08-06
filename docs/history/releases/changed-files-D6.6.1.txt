@@ -1,0 +1,10 @@
+README-ETAP-D6.6.1-CENY-NETTO-I-BRUTTO.md
+docs/templates/model_cennik_uslug_wycena_strona_moonglass_2026-08-06_FIX22_v2_NETTO_BITRIX_AUDYT.xlsx
+app/package.json
+app/scripts/import-pricing-workbook.mjs
+app/scripts/verify-pricing-net.mjs
+app/src/data/pricing/glass-system/published-pricing.base.json
+app/src/data/pricing/glass-system/published-pricing.generated.json
+app/src/pricing/snapshots/PricingSnapshot.ts
+app/src/pricing/snapshots/PricingSnapshotPriceReader.ts
+app/src/pricing/snapshots/PricingSnapshotValidator.ts

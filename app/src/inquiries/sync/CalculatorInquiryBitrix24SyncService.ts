@@ -1,6 +1,16 @@
 import generatedPricingSnapshot from "@/data/pricing/glass-system/published-pricing.generated.json";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 import { getProductKind } from "@/domain/ProductConfiguration";
+import {
+  getQuoteSnapshotWebsiteTotalGross,
+  recalculateQuoteSnapshotForVat,
+  type RecalculatedQuoteFinancials,
+} from "@/lib/quote-snapshot";
+import {
+  calculatePaymentSchedule305020,
+  formatBitrixMoney,
+  PAYMENT_SCHEDULE_305020,
+} from "@/lib/payment-schedule";
 import { Bitrix24Client } from "@/integrations/bitrix24/Bitrix24Client";
 import { Bitrix24InquiryProductRowBuilder } from "@/integrations/bitrix24/Bitrix24InquiryProductRowBuilder";
 import {
@@ -51,6 +61,11 @@ const DEAL_FIELDS = {
   contactAttempts: "UF_CRM_DEAL_MG_CONTACT_ATTEMPTS",
   photosStatus: "UF_CRM_DEAL_MG_PHOTOS_STATUS",
   measurementRequired: "UF_CRM_DEAL_MG_MEASUREMENT_REQUIRED",
+  advancePercent: "UF_CRM_DEAL_MG_ADVANCE_PERCENT",
+  advanceAmount: "UF_CRM_DEAL_MG_ADVANCE_AMOUNT",
+  remainingAmount: "UF_CRM_DEAL_MG_REMAINING_AMOUNT",
+  paymentStage2Amount: "UF_CRM_DEAL_MG_PAYMENT_STAGE2_AMOUNT",
+  paymentStage3Amount: "UF_CRM_DEAL_MG_PAYMENT_STAGE3_AMOUNT",
 } as const;
 
 const CONTACT_FIELDS = {
@@ -339,6 +354,13 @@ export class CalculatorInquiryBitrix24SyncService {
     const summary = inquiry.quote.configurationSummary
       .map((row) => `${row.label}: ${row.value}`)
       .join("\n");
+    const targetFinancials = recalculateQuoteSnapshotForVat(
+      inquiry.quote,
+      this.config.vatRate
+    );
+    const bitrixTotalGross =
+      targetFinancials?.totalGross ?? inquiry.quote.totalGross;
+    const paymentSchedule = calculatePaymentSchedule305020(bitrixTotalGross);
 
     return removeUndefinedFields({
       title: createDealTitle(inquiry),
@@ -352,7 +374,7 @@ export class CalculatorInquiryBitrix24SyncService {
       currencyId: inquiry.quote.currency,
       isManualOpportunity: false,
       assignedById: this.config.assignedById,
-      comments: createDealComments(inquiry),
+      comments: createDealComments(inquiry, targetFinancials),
       [DEAL_FIELDS.webInquiryId]: inquiry.id,
       [DEAL_FIELDS.localLeadId]: inquiry.id,
       [DEAL_FIELDS.quoteVersion]: readQuoteVersion(),
@@ -400,13 +422,30 @@ export class CalculatorInquiryBitrix24SyncService {
       [DEAL_FIELDS.handles]: toBitrixBoolean(configuration.hasHandles),
       [DEAL_FIELDS.customQuote]: "N",
       [DEAL_FIELDS.configurationText]: summary,
-      [DEAL_FIELDS.serverTotalGross]: `${inquiry.quote.totalGross.toFixed(2)}|${inquiry.quote.currency}`,
+      [DEAL_FIELDS.serverTotalGross]: `${bitrixTotalGross.toFixed(2)}|${inquiry.quote.currency}`,
       [DEAL_FIELDS.vatRate]: getEnumValueId(
         metadata.dealFields,
         DEAL_FIELDS.vatRate,
         `${this.config.vatRate}%`
       ),
       [DEAL_FIELDS.discountPercent]: 0,
+      [DEAL_FIELDS.advancePercent]: PAYMENT_SCHEDULE_305020.stage1Percent,
+      [DEAL_FIELDS.advanceAmount]: formatBitrixMoney(
+        paymentSchedule.stage1Amount,
+        inquiry.quote.currency
+      ),
+      [DEAL_FIELDS.remainingAmount]: formatBitrixMoney(
+        paymentSchedule.remainingAfterStage1,
+        inquiry.quote.currency
+      ),
+      [DEAL_FIELDS.paymentStage2Amount]: formatBitrixMoney(
+        paymentSchedule.stage2Amount,
+        inquiry.quote.currency
+      ),
+      [DEAL_FIELDS.paymentStage3Amount]: formatBitrixMoney(
+        paymentSchedule.stage3Amount,
+        inquiry.quote.currency
+      ),
       [DEAL_FIELDS.contactAttempts]: 0,
       [DEAL_FIELDS.photosStatus]: getEnumValueId(
         metadata.dealFields,
@@ -523,16 +562,56 @@ function createDealTitle(inquiry: StoredCalculatorInquiryLead): string {
   }`.trim();
 }
 
-function createDealComments(inquiry: StoredCalculatorInquiryLead): string {
+function createDealComments(
+  inquiry: StoredCalculatorInquiryLead,
+  targetFinancials: RecalculatedQuoteFinancials | null
+): string {
   const configuration = inquiry.quote.configurationSummary
     .map((row) => `${row.label}: ${row.value}`)
     .join("\n");
-  const items = inquiry.quote.items
-    .map(
-      (item) =>
-        `${item.name}: ${item.totalPriceGross.toFixed(2)} ${inquiry.quote.currency}`
-    )
-    .join("\n");
+
+  const items = targetFinancials
+    ? targetFinancials.items
+        .map(
+          (item) =>
+            `${item.name}: netto ${item.totalPriceNet.toFixed(2)} ${
+              inquiry.quote.currency
+            }, VAT ${targetFinancials.vatRate}% ${item.totalTaxAmount.toFixed(
+              2
+            )} ${inquiry.quote.currency}, brutto ${item.totalPriceGross.toFixed(
+              2
+            )} ${inquiry.quote.currency}`
+        )
+        .join("\n")
+    : inquiry.quote.items
+        .map(
+          (item) =>
+            `${item.name}: ${item.totalPriceGross.toFixed(2)} ${
+              inquiry.quote.currency
+            }`
+        )
+        .join("\n");
+
+  const financialSummary = targetFinancials
+    ? [
+        `Razem netto: ${targetFinancials.totalNet.toFixed(2)} ${
+          inquiry.quote.currency
+        }`,
+        `VAT ${targetFinancials.vatRate}%: ${targetFinancials.totalTaxAmount.toFixed(
+          2
+        )} ${inquiry.quote.currency}`,
+        `Razem brutto Deala: ${targetFinancials.totalGross.toFixed(2)} ${
+          inquiry.quote.currency
+        }`,
+        `Wycena orientacyjna strony: ${getQuoteSnapshotWebsiteTotalGross(
+          inquiry.quote
+        ).toFixed(2)} ${inquiry.quote.currency}`,
+      ]
+    : [
+        `Razem: ${inquiry.quote.totalGross.toFixed(2)} ${
+          inquiry.quote.currency
+        }`,
+      ];
 
   return [
     "Źródło: Kalkulator strony MoonGlass",
@@ -550,7 +629,7 @@ function createDealComments(inquiry: StoredCalculatorInquiryLead): string {
     "Pozycje:",
     items,
     "",
-    `Razem: ${inquiry.quote.totalGross.toFixed(2)} ${inquiry.quote.currency}`,
+    ...financialSummary,
   ].join("\n");
 }
 

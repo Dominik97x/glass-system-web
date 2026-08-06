@@ -29,26 +29,47 @@ export interface PricingSnapshotValidationResult {
 }
 
 const PRICE_MATRIX_PRICE_FIELDS = [
+  "constructionNet",
   "constructionGross",
+  "wallGlassClearNet",
   "wallGlassClearGross",
+  "wallGlassMilkyNet",
   "wallGlassMilkyGross",
+  "wallGlassTintedNet",
   "wallGlassTintedGross",
+  "roofPolycarbonateClearNet",
   "roofPolycarbonateClearGross",
+  "roofPolycarbonateMilkyNet",
   "roofPolycarbonateMilkyGross",
+  "roofPolycarbonateGreyNet",
   "roofPolycarbonateGreyGross",
+  "roofPolycarbonateSmokeNet",
   "roofPolycarbonateSmokeGross",
+  "roofGlassClearNet",
   "roofGlassClearGross",
+  "roofGlassMilkyNet",
   "roofGlassMilkyGross",
+  "roofGlassTintedNet",
   "roofGlassTintedGross",
+  "zipRightNet",
   "zipRightGross",
+  "zipLeftNet",
   "zipLeftGross",
+  "zipFrontNet",
   "zipFrontGross",
+  "awningNet",
   "awningGross",
+  "levelingProfileNet",
   "levelingProfileGross",
+  "ledSpotNet",
   "ledSpotGross",
+  "ledStripNet",
   "ledStripGross",
+  "ledCobNet",
   "ledCobGross",
+  "handlesNet",
   "handlesGross",
+  "brushesNet",
   "brushesGross",
 ] as const satisfies ReadonlyArray<keyof PricingSnapshotPriceMatrixRow>;
 
@@ -155,6 +176,30 @@ function validateMetadata(
     "metadata.defaultVatRate",
     issues
   );
+
+  if (metadata.canonicalPriceMode && !isKnownPriceMode(metadata.canonicalPriceMode)) {
+    addError(
+      issues,
+      "metadata.canonicalPriceMode",
+      `Nieznany kanoniczny tryb ceny: "${metadata.canonicalPriceMode}".`
+    );
+  }
+
+  if (metadata.websiteDefaultVatRate !== undefined) {
+    validateVatRate(
+      metadata.websiteDefaultVatRate,
+      "metadata.websiteDefaultVatRate",
+      issues
+    );
+  }
+
+  if (metadata.bitrixDefaultVatRate !== undefined) {
+    validateVatRate(
+      metadata.bitrixDefaultVatRate,
+      "metadata.bitrixDefaultVatRate",
+      issues
+    );
+  }
 
   if (
     metadata.importedAt.trim().length > 0 &&

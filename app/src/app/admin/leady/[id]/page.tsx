@@ -12,7 +12,14 @@ import {
   getBitrix24ContactUrl,
   getBitrix24DealUrl,
 } from "@/integrations/bitrix24/Bitrix24PortalLinks";
-import { formatPrice } from "@/lib/format-price";
+import {
+  formatAccountingPrice,
+  formatPrice,
+} from "@/lib/format-price";
+import {
+  getQuoteSnapshotWebsiteTotalGross,
+  hasDetailedQuoteFinancials,
+} from "@/lib/quote-snapshot";
 import {
   retryBitrix24SyncAction,
   updateInquiryStatusAction,
@@ -54,6 +61,10 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
   const dealUrl = getBitrix24DealUrl(inquiry.bitrix24?.dealId);
   const retryButtonLabel = getBitrix24RetryButtonLabel(bitrix24Status);
   const synchronizationInProgress = bitrix24Status === "processing";
+  const financialQuote = hasDetailedQuoteFinancials(inquiry.quote)
+    ? inquiry.quote
+    : null;
+  const websiteTotalGross = getQuoteSnapshotWebsiteTotalGross(inquiry.quote);
 
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
@@ -241,12 +252,36 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
               <h2 className="text-xl font-semibold">Wycena</h2>
 
               <p className="mt-4 text-3xl font-bold">
-                {formatPrice(inquiry.quote.totalGross)}
+                {financialQuote
+                  ? formatAccountingPrice(inquiry.quote.totalGross)
+                  : formatPrice(inquiry.quote.totalGross)}
               </p>
 
-              <p className="mt-1 text-sm text-neutral-400">
-                Cena brutto, waluta: {inquiry.quote.currency}
-              </p>
+              {financialQuote ? (
+                <div className="mt-4 space-y-2 text-sm text-neutral-300">
+                  <p>
+                    <strong className="text-white">Netto:</strong>{" "}
+                    {formatAccountingPrice(financialQuote.totalNet)}
+                  </p>
+                  <p>
+                    <strong className="text-white">
+                      VAT {financialQuote.defaultVatRate}%:
+                    </strong>{" "}
+                    {formatAccountingPrice(financialQuote.totalTaxAmount)}
+                  </p>
+                  <p>
+                    <strong className="text-white">Brutto:</strong>{" "}
+                    {formatAccountingPrice(financialQuote.totalGross)}
+                  </p>
+                  <p className="pt-2 text-neutral-400">
+                    Orientacyjnie na stronie: {formatPrice(websiteTotalGross)}
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-1 text-sm text-neutral-400">
+                  Starszy snapshot brutto, waluta: {inquiry.quote.currency}
+                </p>
+              )}
             </section>
           </aside>
 
@@ -279,7 +314,14 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
                         Ilość
                       </th>
                       <th className="px-4 py-3 text-right font-medium">
-                        Cena
+                        Netto
+                      </th>
+                      <th className="px-4 py-3 text-right font-medium">VAT</th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Kwota VAT
+                      </th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Brutto
                       </th>
                     </tr>
                   </thead>
@@ -298,7 +340,18 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
                           {item.quantity}
                         </td>
                         <td className="px-4 py-3 text-right text-white">
-                          {formatPrice(item.totalPriceGross)}
+                          {formatOptionalPrice(item.totalPriceNet)}
+                        </td>
+                        <td className="px-4 py-3 text-right text-neutral-300">
+                          {typeof item.vatRate === "number"
+                            ? `${item.vatRate}%`
+                            : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right text-neutral-300">
+                          {formatOptionalPrice(item.totalTaxAmount)}
+                        </td>
+                        <td className="px-4 py-3 text-right text-white">
+                          {formatAccountingPrice(item.totalPriceGross)}
                         </td>
                       </tr>
                     ))}
@@ -349,3 +402,9 @@ function formatDateTime(value: string): string {
   return new Date(value).toLocaleString("pl-PL");
 }
 
+
+function formatOptionalPrice(value: number | undefined): string {
+  return typeof value === "number" && Number.isFinite(value)
+    ? formatAccountingPrice(value)
+    : "—";
+}

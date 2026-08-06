@@ -1,0 +1,6 @@
+f22d782ae9007698d3d2ccf514079dec1e465ddbc1e8e6b1c6c1d5749f2e3de4  ./README-ETAP-D6.5.2-HARMONOGRAM-30-50-20.md
+e4fb35fdebec578e62bb0633c265ce62fc3bc915cc93604ba691731d6c0647a8  ./app/package.json
+fac19ac1adb4c84b916b0c1f1395fb6ced1092a65e5448b9c1eb8ad3380a58fd  ./app/scripts/bitrix24-payment-schedule.ts
+9210aef2f2b3d99b2bda3d35c093cbf4bdbd0e4e6c5ace348e9e5807090e4d6f  ./app/scripts/bitrix24/blueprint.ts
+f51311404c2f15c6c067cb546b0ea81780214e53d2f8fbb39327bbe6e0959845  ./app/src/inquiries/sync/CalculatorInquiryBitrix24SyncService.ts
+7b73dddde4a418aeda0854c46b825540988c34eec6c6f2f7e27a5223156ea172  ./app/src/lib/payment-schedule.ts

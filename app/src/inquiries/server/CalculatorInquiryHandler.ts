@@ -1,5 +1,6 @@
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import { getQuoteSnapshotWebsiteTotalGross } from "@/lib/quote-snapshot";
 import type { CalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationService";
 import { createCalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationServiceFactory";
 import type { CalculatorInquiryRepository } from "../repositories/CalculatorInquiryRepository";
@@ -34,11 +35,15 @@ export class CalculatorInquiryHandler {
     await this.notifySafely(storedLead);
     await this.syncBitrix24Safely(storedLead.id);
 
+    const websiteTotalGross = getQuoteSnapshotWebsiteTotalGross(
+      storedLead.quote
+    );
+
     return {
       success: true,
       inquiryId: storedLead.id,
-      message: `Zapytanie zostało przyjęte. Numer zapytania: ${storedLead.id}. Zweryfikowana wartość konfiguracji: ${storedLead.quote.totalGross.toLocaleString("pl-PL")} zł.`,
-      totalGross: storedLead.quote.totalGross,
+      message: `Zapytanie zostało przyjęte. Numer zapytania: ${storedLead.id}. Zweryfikowana wartość konfiguracji: ${websiteTotalGross.toLocaleString("pl-PL")} zł.`,
+      totalGross: websiteTotalGross,
     };
   }
 

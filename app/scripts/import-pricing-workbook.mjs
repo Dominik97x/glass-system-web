@@ -4,37 +4,27 @@ import process from "node:process";
 
 import * as XLSX from "xlsx";
 
-const PRICE_FIELDS = [
-  "constructionGross",
-
-  "roofPolycarbonateClearGross",
-  "roofPolycarbonateMilkyGross",
-  "roofPolycarbonateGreyGross",
-  "roofPolycarbonateSmokeGross",
-  "roofGlassClearGross",
-  "roofGlassMilkyGross",
-  "roofGlassTintedGross",
-
-  "wallGlassClearGross",
-  "wallGlassMilkyGross",
-  "wallGlassTintedGross",
-
-  "zipRightGross",
-  "zipLeftGross",
-  "zipFrontGross",
-
-  "awningGross",
-  "levelingProfileGross",
-
-  "ledSpotGross",
-  "ledStripGross",
-  "ledCobGross",
-
-  "handlesGross",
-  "brushesGross",
-];
-
 const PRODUCT_TYPES = ["terrace_roof", "winter_garden"];
+const WEBSITE_SHEET_NAME = "10_EXPORT_STRONA";
+const BITRIX_NET_SHEET_NAME = "11_EXPORT_NETTO_BITRIX";
+
+const PRICE_FIELD_MAPPINGS = [
+  ["construction", "base_poly"],
+  ["wallGlassClear", "walls_clear"],
+  ["wallGlassTinted", "walls_tinted"],
+  ["roofPolycarbonateColored", "roof_poly_colored"],
+  ["roofGlassClear", "roof_glass_clear"],
+  ["roofGlassTinted", "roof_glass_tinted"],
+  ["zipSide", "zip_side"],
+  ["zipFront", "zip_front"],
+  ["awning", "awning"],
+  ["levelingProfile", "foundation"],
+  ["ledSpot", "led_point"],
+  ["ledStrip", "led_cct"],
+  ["brushes", "brushes"],
+  ["handles", "handles"],
+  ["carriers", "carriers"],
+];
 
 const cwd = process.cwd();
 const repoRoot = path.basename(cwd) === "app" ? path.resolve(cwd, "..") : cwd;
@@ -44,7 +34,7 @@ const workbookPath = path.join(
   repoRoot,
   "docs",
   "templates",
-  "glass-system-pricing-workbook-filled-from-cennik.xlsx"
+  "model_cennik_uslug_wycena_strona_moonglass_2026-08-06_FIX22_v2_NETTO_BITRIX_AUDYT.xlsx"
 );
 
 const baseSnapshotPath = path.join(
@@ -52,8 +42,8 @@ const baseSnapshotPath = path.join(
   "src",
   "data",
   "pricing",
-  "eg",
-  "published-pricing.example.json"
+  "glass-system",
+  "published-pricing.base.json"
 );
 
 const outputPath = path.join(
@@ -68,187 +58,274 @@ const outputPath = path.join(
 async function main() {
   const workbookBuffer = await fs.readFile(workbookPath);
   const workbook = XLSX.read(workbookBuffer, { type: "buffer" });
-  const priceMatrixSheet = workbook.Sheets.app_price_matrix;
+  const websiteSheet = workbook.Sheets[WEBSITE_SHEET_NAME];
+  const bitrixNetSheet = workbook.Sheets[BITRIX_NET_SHEET_NAME];
 
-  if (!priceMatrixSheet) {
-    throw new Error("Sheet app_price_matrix was not found in workbook.");
+  if (!websiteSheet) {
+    throw new Error(`Sheet ${WEBSITE_SHEET_NAME} was not found in workbook.`);
+  }
+  if (!bitrixNetSheet) {
+    throw new Error(`Sheet ${BITRIX_NET_SHEET_NAME} was not found in workbook.`);
   }
 
   const baseSnapshot = JSON.parse(await fs.readFile(baseSnapshotPath, "utf8"));
+  const websiteRows = XLSX.utils.sheet_to_json(websiteSheet, { defval: "" });
+  const netRows = XLSX.utils.sheet_to_json(bitrixNetSheet, { defval: "" });
 
-  const rawRows = XLSX.utils.sheet_to_json(priceMatrixSheet, {
-    defval: 0,
-  });
+  const websiteByDimension = new Map(
+    websiteRows.map((row) => [normalizeDimensionKey(row.dimension), row])
+  );
+  const netByDimension = new Map(
+    netRows.map((row) => [normalizeDimensionKey(row.dimension), row])
+  );
 
-  const priceMatrix = rawRows
-    .map(normalizePriceMatrixRow)
-    .filter((row) => PRODUCT_TYPES.includes(row.productType));
+  assertSameDimensionSet(websiteByDimension, netByDimension);
 
-  const dimensions = createDimensions(priceMatrix);
+  const sourceRows = [...netByDimension.entries()]
+    .map(([dimensionKey, netRow]) =>
+      normalizeSourceRow(dimensionKey, netRow, websiteByDimension.get(dimensionKey))
+    )
+    .sort(compareSourceRows);
 
+  const dimensions = [];
+  const priceMatrix = [];
+
+  for (const productType of PRODUCT_TYPES) {
+    for (const sourceRow of sourceRows) {
+      dimensions.push({
+        productType,
+        widthCm: sourceRow.depthCm,
+        lengthCm: sourceRow.widthCm,
+        label: sourceRow.dimensionLabel,
+        series: "PRO",
+        active: sourceRow.active,
+      });
+      priceMatrix.push(createPriceMatrixRow(productType, sourceRow));
+    }
+  }
+
+  const importedAt = new Date().toISOString();
   const snapshot = {
     ...baseSnapshot,
     metadata: {
       ...baseSnapshot.metadata,
-      pricingVersion: `generated-from-cennik-${new Date()
-        .toISOString()
-        .slice(0, 10)}`,
-      source:
-        "docs/templates/glass-system-pricing-workbook-filled-from-cennik.xlsx",
-      importedAt: new Date().toISOString(),
+      pricingVersion: `moonglass-fix22-netto-${importedAt.slice(0, 10)}`,
+      source: path.relative(repoRoot, workbookPath).replaceAll("\\", "/"),
+      importedAt,
       currency: "PLN",
-      defaultPriceMode: "gross",
+      defaultPriceMode: "net",
+      canonicalPriceMode: "net",
       defaultVatRate: 8,
+      websiteDefaultVatRate: 8,
+      bitrixDefaultVatRate: 8,
     },
-    productTypes: baseSnapshot.productTypes,
+    vatRules: baseSnapshot.vatRules.map((rule) => ({
+      ...rule,
+      vatRate: 8,
+      taxIncluded: false,
+      priceMode: "net",
+      active: true,
+    })),
     dimensions,
     priceMatrix,
   };
 
-  await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  await fs.writeFile(
-    outputPath,
-    `${JSON.stringify(snapshot, null, 2)}\n`,
-    "utf8"
-  );
+  const audit = auditSourceRows(sourceRows, snapshot.metadata.websiteDefaultVatRate);
 
-  console.log("Pricing workbook imported successfully.");
+  await fs.mkdir(path.dirname(outputPath), { recursive: true });
+  await fs.writeFile(outputPath, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
+
+  console.log("FIX22 pricing workbook imported successfully.");
   console.log(`Workbook: ${path.relative(repoRoot, workbookPath)}`);
   console.log(`Output:   ${path.relative(repoRoot, outputPath)}`);
-  console.log(`Rows:     ${priceMatrix.length}`);
-  console.log(`Dims:     ${dimensions.length}`);
-  console.log(
-    "QA correction: handlesGross and brushesGross were swapped during import."
-  );
+  console.log(`Source dimensions: ${sourceRows.length}`);
+  console.log(`Snapshot rows:     ${priceMatrix.length}`);
+  console.log(`Exact gross checks: ${audit.exact}`);
+  console.log(`Rounding <= 1 PLN:  ${audit.rounding}`);
+  console.log(`Differences > 1 PLN:${audit.mismatch}`);
+
+  if (audit.mismatch > 1) {
+    throw new Error(
+      `Unexpected number of gross/net mismatches above 1 PLN: ${audit.mismatch}.`
+    );
+  }
 }
 
-function normalizePriceMatrixRow(row) {
-  const productType = String(
-    getValue(row, "productType", "product_type")
-  ).trim();
+function normalizeSourceRow(dimensionKey, netRow, websiteRow) {
+  if (!websiteRow) {
+    throw new Error(`Missing website row for dimension ${dimensionKey}.`);
+  }
 
-  const lengthCm = toNumber(getValue(row, "lengthCm", "length_cm"));
-  const widthCm = toNumber(getValue(row, "widthCm", "width_cm"));
+  const widthCm = toNumber(netRow.width_cm);
+  const depthCm = toNumber(netRow.depth_cm);
+  const dimensionLabel = String(netRow.dimension || websiteRow.dimension).trim();
+  const vatRate = normalizeVatRate(netRow.default_vat_rate);
+  const active =
+    normalizeStatus(netRow.source_status) === "OK" &&
+    normalizeStatus(websiteRow.status) === "OK";
 
-  const normalizedRow = {
-    productType,
-    lengthCm,
+  const prices = {};
+  for (const [jsonPrefix, workbookPrefix] of PRICE_FIELD_MAPPINGS) {
+    prices[`${jsonPrefix}Net`] = toNumber(netRow[`${workbookPrefix}_net`]);
+    prices[`${jsonPrefix}Gross`] = toNumber(websiteRow[`${workbookPrefix}_gross`]);
+  }
+
+  return {
+    dimensionLabel,
     widthCm,
-    dimensionLabel:
-      String(getValue(row, "dimensionLabel", "dimension_label")).trim() ||
-      `${lengthCm} x ${widthCm} cm`,
-    active: toBoolean(getValue(row, "active")),
+    depthCm,
+    vatRate,
+    active,
+    availability: {
+      roofGlass: toBooleanPolish(websiteRow.is_glass_available),
+      ledRgb: toBooleanPolish(websiteRow.is_led_rgb_available),
+    },
+    auditStatus: String(netRow.audit_status || "").trim(),
+    prices,
   };
-
-  for (const priceField of PRICE_FIELDS) {
-    normalizedRow[priceField] = toNumber(getValue(row, priceField));
-  }
-
-  applyEgQaCorrections(normalizedRow);
-
-  return normalizedRow;
 }
 
-function applyEgQaCorrections(row) {
-  /*
-   * QA z kalkulatora EG wykazało, że wcześniejsza interpretacja kolumn
-   * dodatków była odwrócona:
-   *
-   * - uchwyty: 423 zł dla 300 x 306 cm,
-   * - szczotki: 465 zł dla 300 x 306 cm.
-   *
-   * W workbooku wartości są obecnie zapisane odwrotnie, dlatego importer
-   * zamienia je podczas generowania snapshotu.
-   *
-   * Taśma LED CCT nie jest tutaj poprawiana, bo wymaga osobnej reguły
-   * lub potwierdzenia źródła ceny.
-   */
-  swapNumericFields(row, "handlesGross", "brushesGross");
+function createPriceMatrixRow(productType, sourceRow) {
+  const p = sourceRow.prices;
+  return {
+    productType,
+    widthCm: sourceRow.depthCm,
+    lengthCm: sourceRow.widthCm,
+
+    constructionNet: p.constructionNet,
+    constructionGross: p.constructionGross,
+
+    wallGlassClearNet: p.wallGlassClearNet,
+    wallGlassClearGross: p.wallGlassClearGross,
+    wallGlassMilkyNet: 0,
+    wallGlassMilkyGross: 0,
+    wallGlassTintedNet: p.wallGlassTintedNet,
+    wallGlassTintedGross: p.wallGlassTintedGross,
+
+    roofPolycarbonateClearNet: 0,
+    roofPolycarbonateClearGross: 0,
+    roofPolycarbonateMilkyNet: p.roofPolycarbonateColoredNet,
+    roofPolycarbonateMilkyGross: p.roofPolycarbonateColoredGross,
+    roofPolycarbonateGreyNet: p.roofPolycarbonateColoredNet,
+    roofPolycarbonateGreyGross: p.roofPolycarbonateColoredGross,
+    roofPolycarbonateSmokeNet: p.roofPolycarbonateColoredNet,
+    roofPolycarbonateSmokeGross: p.roofPolycarbonateColoredGross,
+    roofGlassClearNet: p.roofGlassClearNet,
+    roofGlassClearGross: p.roofGlassClearGross,
+    roofGlassMilkyNet: 0,
+    roofGlassMilkyGross: 0,
+    roofGlassTintedNet: p.roofGlassTintedNet,
+    roofGlassTintedGross: p.roofGlassTintedGross,
+
+    zipRightNet: p.zipSideNet,
+    zipRightGross: p.zipSideGross,
+    zipLeftNet: p.zipSideNet,
+    zipLeftGross: p.zipSideGross,
+    zipFrontNet: p.zipFrontNet,
+    zipFrontGross: p.zipFrontGross,
+
+    awningNet: p.awningNet,
+    awningGross: p.awningGross,
+    levelingProfileNet: p.levelingProfileNet,
+    levelingProfileGross: p.levelingProfileGross,
+    ledSpotNet: p.ledSpotNet,
+    ledSpotGross: p.ledSpotGross,
+    ledStripNet: p.ledStripNet,
+    ledStripGross: p.ledStripGross,
+    ledCobNet: 0,
+    ledCobGross: 0,
+    handlesNet: p.handlesNet,
+    handlesGross: p.handlesGross,
+    brushesNet: p.brushesNet,
+    brushesGross: p.brushesGross,
+    carriersNet: p.carriersNet,
+    carriersGross: p.carriersGross,
+
+    active: sourceRow.active,
+    availability: sourceRow.availability,
+    sourceAuditStatus: sourceRow.auditStatus,
+  };
 }
 
-function swapNumericFields(row, firstField, secondField) {
-  const firstValue = row[firstField];
+function auditSourceRows(rows, vatRate) {
+  let exact = 0;
+  let rounding = 0;
+  let mismatch = 0;
 
-  row[firstField] = row[secondField];
-  row[secondField] = firstValue;
-}
+  for (const row of rows) {
+    if (Math.abs(row.vatRate - vatRate) > 0.0001) {
+      throw new Error(
+        `Unexpected VAT rate ${row.vatRate}% for ${row.dimensionLabel}; expected ${vatRate}%.`
+      );
+    }
 
-function createDimensions(priceMatrix) {
-  const dimensionsByKey = new Map();
-
-  for (const row of priceMatrix) {
-    const key = `${row.productType}:${row.lengthCm}x${row.widthCm}`;
-
-    if (!dimensionsByKey.has(key)) {
-      dimensionsByKey.set(key, {
-        productType: row.productType,
-        lengthCm: row.lengthCm,
-        widthCm: row.widthCm,
-        label: row.dimensionLabel,
-        active: row.active,
-      });
+    for (const [prefix] of PRICE_FIELD_MAPPINGS) {
+      const net = row.prices[`${prefix}Net`];
+      const gross = row.prices[`${prefix}Gross`];
+      if (net === 0 && gross === 0) {
+        exact += 1;
+        continue;
+      }
+      const expectedRounded = Math.round(net * (1 + vatRate / 100));
+      const difference = Math.abs(expectedRounded - gross);
+      if (difference === 0) exact += 1;
+      else if (difference <= 1) rounding += 1;
+      else mismatch += 1;
     }
   }
 
-  return Array.from(dimensionsByKey.values()).sort((a, b) => {
-    if (a.productType !== b.productType) {
-      return a.productType.localeCompare(b.productType);
-    }
-
-    if (a.lengthCm !== b.lengthCm) {
-      return a.lengthCm - b.lengthCm;
-    }
-
-    return a.widthCm - b.widthCm;
-  });
+  return { exact, rounding, mismatch };
 }
 
-function getValue(row, ...keys) {
-  for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(row, key)) {
-      return row[key];
-    }
-  }
+function assertSameDimensionSet(websiteByDimension, netByDimension) {
+  const onlyWebsite = [...websiteByDimension.keys()].filter(
+    (key) => !netByDimension.has(key)
+  );
+  const onlyNet = [...netByDimension.keys()].filter(
+    (key) => !websiteByDimension.has(key)
+  );
 
-  return undefined;
+  if (onlyWebsite.length || onlyNet.length) {
+    throw new Error(
+      `Dimension sets differ. Only website: ${onlyWebsite.join(", ") || "none"}; only net: ${
+        onlyNet.join(", ") || "none"
+      }.`
+    );
+  }
+}
+
+function normalizeDimensionKey(value) {
+  return String(value).replace(/\s/g, "").toLowerCase();
+}
+
+function normalizeStatus(value) {
+  return String(value).trim().toUpperCase();
+}
+
+function normalizeVatRate(value) {
+  const numeric = toNumber(value);
+  return numeric > 0 && numeric <= 1 ? numeric * 100 : numeric;
+}
+
+function compareSourceRows(left, right) {
+  if (left.widthCm !== right.widthCm) return left.widthCm - right.widthCm;
+  return left.depthCm - right.depthCm;
 }
 
 function toNumber(value) {
-  if (typeof value === "number") {
-    return value;
-  }
-
-  if (value === undefined || value === null || value === "") {
-    return 0;
-  }
-
-  const normalizedValue = String(value).replace(/\s/g, "").replace(",", ".");
-
-  const numberValue = Number(normalizedValue);
-
-  if (Number.isNaN(numberValue)) {
+  if (typeof value === "number") return value;
+  if (value === undefined || value === null || value === "") return 0;
+  const normalized = String(value).replace(/\s/g, "").replace(",", ".");
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed)) {
     throw new Error(`Invalid numeric value: ${value}`);
   }
-
-  return numberValue;
+  return parsed;
 }
 
-function toBoolean(value) {
-  if (typeof value === "boolean") {
-    return value;
-  }
-
-  if (typeof value === "number") {
-    return value === 1;
-  }
-
-  const normalizedValue = String(value).trim().toLowerCase();
-
-  return (
-    normalizedValue === "true" ||
-    normalizedValue === "1" ||
-    normalizedValue === "yes"
-  );
+function toBooleanPolish(value) {
+  const normalized = String(value).trim().toUpperCase();
+  return normalized === "TAK" || normalized === "YES" || normalized === "TRUE" || normalized === "1";
 }
 
 main().catch((error) => {

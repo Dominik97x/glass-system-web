@@ -52,7 +52,10 @@ export interface PricingSnapshotMetadata {
   pricingVersion: string;
   currency: PricingSnapshotCurrency;
   defaultPriceMode: PricingSnapshotPriceMode;
+  canonicalPriceMode?: PricingSnapshotPriceMode;
   defaultVatRate: number;
+  websiteDefaultVatRate?: number;
+  bitrixDefaultVatRate?: number;
   source: string;
   publishedBy: string;
   importedAt: string;
@@ -81,36 +84,64 @@ export interface PricingSnapshotPriceMatrixRow {
   widthCm: number;
   lengthCm: number;
 
+  constructionNet: number;
   constructionGross: number;
 
+  wallGlassClearNet: number;
   wallGlassClearGross: number;
+  wallGlassMilkyNet: number;
   wallGlassMilkyGross: number;
+  wallGlassTintedNet: number;
   wallGlassTintedGross: number;
 
+  roofPolycarbonateClearNet: number;
   roofPolycarbonateClearGross: number;
+  roofPolycarbonateMilkyNet: number;
   roofPolycarbonateMilkyGross: number;
+  roofPolycarbonateGreyNet: number;
   roofPolycarbonateGreyGross: number;
+  roofPolycarbonateSmokeNet: number;
   roofPolycarbonateSmokeGross: number;
+  roofGlassClearNet: number;
   roofGlassClearGross: number;
+  roofGlassMilkyNet: number;
   roofGlassMilkyGross: number;
+  roofGlassTintedNet: number;
   roofGlassTintedGross: number;
 
+  zipRightNet: number;
   zipRightGross: number;
+  zipLeftNet: number;
   zipLeftGross: number;
+  zipFrontNet: number;
   zipFrontGross: number;
 
+  awningNet: number;
   awningGross: number;
 
+  levelingProfileNet: number;
   levelingProfileGross: number;
 
+  ledSpotNet: number;
   ledSpotGross: number;
+  ledStripNet: number;
   ledStripGross: number;
+  ledCobNet: number;
   ledCobGross: number;
 
+  handlesNet: number;
   handlesGross: number;
+  brushesNet: number;
   brushesGross: number;
+  carriersNet?: number;
+  carriersGross?: number;
 
   active: boolean;
+  availability?: {
+    roofGlass: boolean;
+    ledRgb: boolean;
+  };
+  sourceAuditStatus?: string;
 }
 
 export interface PricingSnapshotVatRule {
