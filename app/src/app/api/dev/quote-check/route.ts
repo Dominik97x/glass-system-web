@@ -24,6 +24,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 13246,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width: 606,
       length: 300,
     },
@@ -34,6 +35,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 31298,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width: 606,
       length: 300,
       walls: "glass_clear",
@@ -45,6 +47,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 33132,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width: 606,
       length: 300,
       walls: "glass_tinted",
@@ -56,6 +59,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 53361,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width: 506,
       length: 450,
       walls: "glass_clear",
@@ -70,6 +74,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 89278,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width: 806,
       length: 500,
       walls: "glass_tinted",
@@ -89,6 +94,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 30249,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width: 606,
       length: 550,
     },
@@ -99,6 +105,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 69966,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width: 806,
       length: 600,
       walls: "glass_clear",
@@ -106,10 +113,11 @@ const testCases: TestCase[] = [
   },
   {
     id: "T8",
-    name: "450 x 606 cm — LED CCT",
-    expectedTotalGross: 24599,
+    name: "450 x 606 cm — LED RGB CCT",
+    expectedTotalGross: 24759,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width: 606,
       length: 450,
       hasCob: true,
@@ -117,10 +125,11 @@ const testCases: TestCase[] = [
   },
   {
     id: "T9",
-    name: "500 x 606 cm — LED CCT i markiza",
-    expectedTotalGross: 36507,
+    name: "500 x 606 cm — LED RGB CCT i markiza",
+    expectedTotalGross: 36662,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width: 606,
       length: 500,
       hasCob: true,
@@ -129,10 +138,11 @@ const testCases: TestCase[] = [
   },
   {
     id: "T10",
-    name: "600 x 806 cm — maksimum bez szkła dachowego i RGB",
-    expectedTotalGross: 109087,
+    name: "600 x 806 cm — maksimum bez szkła dachowego — LED RGB CCT",
+    expectedTotalGross: 109705,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width: 806,
       length: 600,
       walls: "glass_tinted",
@@ -152,6 +162,7 @@ const testCases: TestCase[] = [
     expectedTotalGross: 10738,
     configuration: {
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width: 306,
       length: 300,
       walls: "none",
