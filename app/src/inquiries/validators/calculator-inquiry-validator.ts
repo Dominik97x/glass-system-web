@@ -2,6 +2,7 @@ import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubm
 import type {
   Length,
   ProductConfiguration,
+  ProductKind,
   RoofOption,
   WallOption,
   Width,
@@ -28,6 +29,11 @@ const ALLOWED_WIDTHS = [
 const ALLOWED_LENGTHS = [
   300, 350, 400, 450, 500, 550, 600,
 ] as const satisfies readonly Length[];
+
+const WEBSITE_PRODUCT_TYPES = [
+  "terrace_roof",
+  "winter_garden",
+] as const satisfies readonly ProductKind[];
 
 const WEBSITE_WALL_OPTIONS = [
   "none",
@@ -175,6 +181,22 @@ function validateConfiguration(
     };
   }
 
+  let productType: ProductKind;
+  if (configuration.productType === undefined) {
+    // Legacy fallback dla zapytań zapisanych przed D4.3.
+    productType =
+      configuration.walls === "none" ? "terrace_roof" : "winter_garden";
+  } else if (
+    includesValue(WEBSITE_PRODUCT_TYPES, configuration.productType)
+  ) {
+    productType = configuration.productType;
+  } else {
+    return {
+      success: false,
+      message: "Wybrany typ produktu nie jest dostępny na stronie.",
+    };
+  }
+
   if (!includesValue(WEBSITE_ROOF_OPTIONS, configuration.roof)) {
     return {
       success: false,
@@ -192,6 +214,7 @@ function validateConfiguration(
   }
 
   const validatedConfiguration: ProductConfiguration = {
+    productType,
     width: configuration.width,
     length: configuration.length,
     walls: configuration.walls,
@@ -206,6 +229,27 @@ function validateConfiguration(
     hasBrushes: configuration.hasBrushes as boolean,
     hasLevelingProfile: configuration.hasLevelingProfile as boolean,
   };
+
+  if (
+    validatedConfiguration.productType === "terrace_roof" &&
+    validatedConfiguration.walls !== "none"
+  ) {
+    return {
+      success: false,
+      message:
+        "Zadaszenie tarasu nie może zawierać konfiguracji ścian ogrodu zimowego.",
+    };
+  }
+
+  if (
+    validatedConfiguration.productType === "winter_garden" &&
+    validatedConfiguration.walls === "none"
+  ) {
+    return {
+      success: false,
+      message: "Ogród zimowy wymaga standardowej konfiguracji ścian.",
+    };
+  }
 
   if (
     validatedConfiguration.walls === "none" &&

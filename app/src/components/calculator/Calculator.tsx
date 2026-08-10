@@ -17,6 +17,7 @@ const quoteService = new QuoteService();
 export function Calculator() {
   const [configuration, setConfiguration] = useState<ProductConfiguration>({
     ...DEFAULT_CONFIGURATION,
+    productType: "winter_garden",
     walls: "glass_clear",
     hasFrontZip: true,
     hasAwning: true,

@@ -27,6 +27,7 @@ export type RoofOption =
   | "glass_tinted";
 
 export interface ProductConfiguration {
+  productType?: ProductKind;
   width: Width;
   length: Length;
   walls: WallOption;
@@ -43,6 +44,7 @@ export interface ProductConfiguration {
 }
 
 export const DEFAULT_CONFIGURATION: ProductConfiguration = {
+  productType: "terrace_roof",
   width: 306,
   length: 300,
   walls: "none",
@@ -61,5 +63,8 @@ export const DEFAULT_CONFIGURATION: ProductConfiguration = {
 export function getProductKind(
   configuration: ProductConfiguration
 ): ProductKind {
-  return configuration.walls === "none" ? "terrace_roof" : "winter_garden";
+  return (
+    configuration.productType ??
+    (configuration.walls === "none" ? "terrace_roof" : "winter_garden")
+  );
 }

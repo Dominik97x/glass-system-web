@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 
 import { ROOF_LABELS } from "@/data/configuration-labels";
-import type {
-  Length,
-  ProductConfiguration,
-  RoofOption,
-  WallOption,
-  Width,
+import {
+  getProductKind,
+  type Length,
+  type ProductConfiguration,
+  type ProductKind,
+  type RoofOption,
+  type WallOption,
+  type Width,
 } from "@/domain/ProductConfiguration";
 
 interface Props {
@@ -26,9 +28,10 @@ const ALL_ROOF_OPTIONS: RoofOption[] = [
   "glass_clear",
   "glass_tinted",
 ];
-const WALL_OPTIONS: WallOption[] = ["none", "glass_clear", "glass_tinted"];
+const WALL_OPTIONS: WallOption[] = ["glass_clear", "glass_tinted"];
 
 export function ConfigurationForm({ configuration, onChange }: Props) {
+  const productType = getProductKind(configuration);
   const hasWalls = configuration.walls !== "none";
   const roofGlassAvailable = configuration.length <= 500;
   const roofOptions = roofGlassAvailable
@@ -43,15 +46,35 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
     onChange(next);
   }
 
+  function updateProductType(nextProductType: ProductKind) {
+    if (nextProductType === "terrace_roof") {
+      onChange({
+        ...configuration,
+        productType: nextProductType,
+        walls: "none",
+        hasLeftZip: false,
+        hasRightZip: false,
+      });
+      return;
+    }
+
+    onChange({
+      ...configuration,
+      productType: nextProductType,
+      walls:
+        configuration.walls === "none"
+          ? "glass_clear"
+          : configuration.walls,
+    });
+  }
+
   function updateWalls(walls: WallOption) {
     onChange({
       ...configuration,
       walls,
-      // Roleta przednia może być zamontowana także w samym zadaszeniu.
       hasFrontZip: configuration.hasFrontZip,
-      // Rolety boczne wymagają ścian, więc po ich usunięciu czyścimy wybór.
-      hasLeftZip: walls === "none" ? false : configuration.hasLeftZip,
-      hasRightZip: walls === "none" ? false : configuration.hasRightZip,
+      hasLeftZip: configuration.hasLeftZip,
+      hasRightZip: configuration.hasRightZip,
     });
   }
 
@@ -66,6 +89,19 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   return (
     <div className="space-y-3 text-sm">
       <CompactPanel title="Konstrukcja">
+        <div className="mb-3 grid grid-cols-2 gap-2">
+          <SmallOption
+            label="Zadaszenie tarasu"
+            active={productType === "terrace_roof"}
+            onClick={() => updateProductType("terrace_roof")}
+          />
+          <SmallOption
+            label="Ogród zimowy"
+            active={productType === "winter_garden"}
+            onClick={() => updateProductType("winter_garden")}
+          />
+        </div>
+
         <div className="grid grid-cols-2 gap-2">
           <SelectField
             label="Szerokość"
@@ -96,18 +132,20 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
         )}
       </CompactPanel>
 
-      <CompactPanel title="Ściany">
-        <div className="grid grid-cols-3 gap-2">
-          {WALL_OPTIONS.map((walls) => (
-            <SmallOption
-              key={walls}
-              label={walls === "none" ? "Brak" : walls === "glass_clear" ? "Przezr." : "Przyciem."}
-              active={configuration.walls === walls}
-              onClick={() => updateWalls(walls)}
-            />
-          ))}
-        </div>
-      </CompactPanel>
+      {productType === "winter_garden" && (
+        <CompactPanel title="Ściany">
+          <div className="grid grid-cols-2 gap-2">
+            {WALL_OPTIONS.map((walls) => (
+              <SmallOption
+                key={walls}
+                label={walls === "glass_clear" ? "Przezr." : "Przyciem."}
+                active={configuration.walls === walls}
+                onClick={() => updateWalls(walls)}
+              />
+            ))}
+          </div>
+        </CompactPanel>
+      )}
 
       <CompactPanel title="Osłony ZIP">
         <div className="grid grid-cols-3 gap-2">
