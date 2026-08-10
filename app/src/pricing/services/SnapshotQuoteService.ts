@@ -3,8 +3,6 @@ import {
   getProductKind,
   type ProductConfiguration,
   type ProductKind,
-  type RoofOption,
-  type WallOption,
 } from "@/domain/ProductConfiguration";
 import type { Quote, QuoteFinancials } from "@/domain/Quote";
 import type {
@@ -13,6 +11,11 @@ import type {
   QuoteItemFinancials,
   QuoteItemCategory,
 } from "@/domain/QuoteItem";
+import {
+  getCrmCoreProduct,
+  type CrmCoreProduct,
+  type CrmCoreProductFamily,
+} from "@/pricing/catalog/CrmCoreCatalog";
 import type { PricingSnapshot } from "@/pricing/snapshots/PricingSnapshot";
 import {
   PricingSnapshotPriceReader,
@@ -35,6 +38,7 @@ interface PricingComponent {
   id: string;
   name: string;
   category: QuoteItemCategory;
+  quantity: number;
   net: number;
   websiteGross: number;
   taxAmount: number;
@@ -87,58 +91,61 @@ export class SnapshotQuoteService {
     const websiteItems: QuoteItem[] = [];
     const financialLineItems: QuoteFinancialLineItem[] = [];
 
-    const constructionName =
-      productType === "winter_garden" ? "Ogród zimowy" : "Zadaszenie tarasu";
+    const suffix = `D${configuration.length}-W${configuration.width}`;
 
+    const completeProduct = getCrmCoreProduct(
+      getCompleteProductFamily(productType, configuration.roof),
+      configuration.length,
+      configuration.width
+    );
     this.addWebsiteGroup(websiteItems, financialLineItems, {
-      id: "construction",
-      name: "Konstrukcja z dachem poliwęglanowym",
+      id: "complete_product",
+      name: completeProduct.name,
       category: "construction",
-      components: [
-        this.getComponent(
-          criteria,
-          "construction",
-          `${constructionName} ${dimension}`,
-          "construction",
-          "constructionNet",
-          "constructionGross"
-        ),
-      ],
+      components: [this.getCatalogComponent(completeProduct, "construction")],
     });
 
-    const roofFields = getRoofPriceFields(configuration.roof);
+    const installation = getCrmCoreProduct(
+      getInstallationFamily(productType),
+      configuration.length,
+      configuration.width
+    );
     this.addWebsiteGroup(websiteItems, financialLineItems, {
-      id: "roof",
-      name: "Dopłata do wariantu dachu",
-      category: "roof",
-      components: [
-        this.getComponent(
-          criteria,
-          `roof_${configuration.roof}`,
-          `${getRoofName(configuration.roof)} ${dimension}`,
-          "roof",
-          roofFields.net,
-          roofFields.gross
-        ),
-      ],
+      id: "installation",
+      name: installation.name,
+      category: "installation",
+      components: [this.getCatalogComponent(installation, "installation")],
     });
 
-    if (configuration.walls !== "none") {
-      const wallFields = getWallPriceFields(configuration.walls);
+    const roofSurchargeFamily = getRoofSurchargeFamily(configuration.roof);
+    if (roofSurchargeFamily) {
+      const roofSurcharge = getCrmCoreProduct(
+        roofSurchargeFamily,
+        configuration.length,
+        configuration.width
+      );
       this.addWebsiteGroup(websiteItems, financialLineItems, {
-        id: "walls",
-        name: "Ściany przesuwne",
+        id: "roof_surcharge",
+        name: roofSurcharge.name,
+        category: "roof",
+        components: [this.getCatalogComponent(roofSurcharge, "roof")],
+      });
+    }
+
+    if (
+      productType === "winter_garden" &&
+      configuration.walls === "glass_tinted"
+    ) {
+      const wallSurcharge = getCrmCoreProduct(
+        "wall_glass_tint_surcharge",
+        configuration.length,
+        configuration.width
+      );
+      this.addWebsiteGroup(websiteItems, financialLineItems, {
+        id: "wall_surcharge",
+        name: wallSurcharge.name,
         category: "walls",
-        components: [
-          this.getComponent(
-            criteria,
-            `walls_${configuration.walls}`,
-            `${getWallName(configuration.walls)} ${dimension}`,
-            "walls",
-            wallFields.net,
-            wallFields.gross
-          ),
-        ],
+        components: [this.getCatalogComponent(wallSurcharge, "walls")],
       });
     }
 
@@ -147,38 +154,31 @@ export class SnapshotQuoteService {
       zipComponents.push(
         this.getComponent(
           criteria,
-          "zip_front",
-          `Roleta ZIP PRZÓD ${dimension}`,
+          `MG-ZIP-FRONT-${suffix}`,
+          `Roleta ZIP front ${dimension}`,
           "zip",
           "zipFrontNet",
           "zipFrontGross"
         )
       );
     }
-    if (configuration.walls !== "none" && configuration.hasLeftZip) {
+
+    const sideZipQuantity =
+      Number(configuration.hasLeftZip) + Number(configuration.hasRightZip);
+    if (productType === "winter_garden" && sideZipQuantity > 0) {
       zipComponents.push(
         this.getComponent(
           criteria,
-          "zip_left",
-          `Roleta ZIP LEWA ${dimension}`,
-          "zip",
-          "zipLeftNet",
-          "zipLeftGross"
-        )
-      );
-    }
-    if (configuration.walls !== "none" && configuration.hasRightZip) {
-      zipComponents.push(
-        this.getComponent(
-          criteria,
-          "zip_right",
-          `Roleta ZIP PRAWA ${dimension}`,
+          `MG-ZIP-SIDE-${suffix}`,
+          `Roleta ZIP boczna ${dimension}`,
           "zip",
           "zipRightNet",
-          "zipRightGross"
+          "zipRightGross",
+          sideZipQuantity
         )
       );
     }
+
     this.addWebsiteGroup(websiteItems, financialLineItems, {
       id: "zip",
       name: "Rolety ZIP",
@@ -194,7 +194,7 @@ export class SnapshotQuoteService {
         ? [
             this.getComponent(
               criteria,
-              "awning",
+              `MG-AWNING-${suffix}`,
               `Markiza dachowa ${dimension}`,
               "awning",
               "awningNet",
@@ -208,7 +208,7 @@ export class SnapshotQuoteService {
       ? [
           this.getComponent(
             criteria,
-            "led_point",
+            `MG-LED-POINT-${suffix}`,
             `Oświetlenie LED punktowe ${dimension}`,
             "lighting",
             "ledSpotNet",
@@ -217,20 +217,20 @@ export class SnapshotQuoteService {
         ]
       : configuration.hasCob
         ? [
-            this.getComponent(
-              criteria,
-              "led_cct",
-              `Oświetlenie LED CCT ${dimension}`,
-              "lighting",
-              "ledStripNet",
-              "ledStripGross"
+            this.getCatalogComponent(
+              getCrmCoreProduct(
+                "led_rgb_cct",
+                configuration.length,
+                configuration.width
+              ),
+              "lighting"
             ),
           ]
         : [];
     this.addWebsiteGroup(websiteItems, financialLineItems, {
       id: "led",
       name: configuration.hasCob
-        ? "Oświetlenie LED CCT"
+        ? "Oświetlenie LED RGB CCT"
         : "Oświetlenie LED punktowe",
       category: "lighting",
       components: lightingComponents,
@@ -241,8 +241,8 @@ export class SnapshotQuoteService {
       accessoryComponents.push(
         this.getComponent(
           criteria,
-          "leveling_profile",
-          `Profil poziomujący / przygotowanie fundamentu ${dimension}`,
+          `MG-FOUNDATION-${suffix}`,
+          `Fundament / profil poziomujący ${dimension}`,
           "accessory",
           "levelingProfileNet",
           "levelingProfileGross"
@@ -253,7 +253,7 @@ export class SnapshotQuoteService {
       accessoryComponents.push(
         this.getComponent(
           criteria,
-          "brushes",
+          `MG-BRUSHES-${suffix}`,
           `Zestaw szczotek przeciwkurzowych ${dimension}`,
           "accessory",
           "brushesNet",
@@ -265,7 +265,7 @@ export class SnapshotQuoteService {
       accessoryComponents.push(
         this.getComponent(
           criteria,
-          "handles",
+          `MG-HANDLES-${suffix}`,
           `Zestaw uchwytów ${dimension}`,
           "accessory",
           "handlesNet",
@@ -328,17 +328,22 @@ export class SnapshotQuoteService {
       taxIncluded: false,
       vatRate: this.vatRate,
       unitPriceNet: roundMoney(
-        activeComponents.reduce((sum, component) => sum + component.net, 0)
+        activeComponents.reduce(
+          (sum, component) => sum + component.net * component.quantity,
+          0
+        )
       ),
       unitTaxAmount: roundMoney(
         activeComponents.reduce(
-          (sum, component) => sum + component.taxAmount,
+          (sum, component) =>
+            sum + component.taxAmount * component.quantity,
           0
         )
       ),
       unitPriceGross: roundMoney(
         activeComponents.reduce(
-          (sum, component) => sum + component.accountingGross,
+          (sum, component) =>
+            sum + component.accountingGross * component.quantity,
           0
         )
       ),
@@ -353,7 +358,8 @@ export class SnapshotQuoteService {
 
     const websiteGross = roundMoney(
       activeComponents.reduce(
-        (sum, component) => sum + component.websiteGross,
+        (sum, component) =>
+          sum + component.websiteGross * component.quantity,
         0
       )
     );
@@ -375,7 +381,8 @@ export class SnapshotQuoteService {
     name: string,
     category: QuoteItemCategory,
     netField: PricingSnapshotNetPriceField,
-    grossField: PricingSnapshotGrossPriceField
+    grossField: PricingSnapshotGrossPriceField,
+    quantity = 1
   ): PricingComponent {
     const net = roundMoney(this.reader.getPrice(criteria, netField));
     const websiteGross = roundMoney(
@@ -387,6 +394,7 @@ export class SnapshotQuoteService {
         id,
         name,
         category,
+        quantity,
         net: 0,
         websiteGross: 0,
         taxAmount: 0,
@@ -400,8 +408,30 @@ export class SnapshotQuoteService {
       id,
       name,
       category,
+      quantity,
       net,
       websiteGross,
+      taxAmount: calculation.taxAmount,
+      accountingGross: calculation.gross,
+    };
+  }
+
+  private getCatalogComponent(
+    product: CrmCoreProduct,
+    category: QuoteItemCategory,
+    quantity = 1
+  ): PricingComponent {
+    const net = roundMoney(product.priceNet);
+    const calculation = calculateTaxFromNet(net, this.vatRate);
+
+    return {
+      id: product.sku,
+      name: product.name,
+      category,
+      quantity,
+      net,
+      // Strona pokazuje orientacyjne pełne złote, księgowo zachowujemy grosze.
+      websiteGross: Math.round(calculation.gross),
       taxAmount: calculation.taxAmount,
       accountingGross: calculation.gross,
     };
@@ -416,18 +446,22 @@ function createFinancialLineItem(
     id: component.id,
     name: component.name,
     category: component.category,
-    quantity: 1,
+    quantity: component.quantity,
     priceMode: "net",
     taxIncluded: false,
     vatRate,
     unitPriceNet: component.net,
     unitTaxAmount: component.taxAmount,
     unitPriceGross: component.accountingGross,
-    totalPriceNet: component.net,
-    totalTaxAmount: component.taxAmount,
-    totalPriceGross: component.accountingGross,
+    totalPriceNet: roundMoney(component.net * component.quantity),
+    totalTaxAmount: roundMoney(component.taxAmount * component.quantity),
+    totalPriceGross: roundMoney(
+      component.accountingGross * component.quantity
+    ),
     websiteUnitPriceGross: component.websiteGross,
-    websiteTotalPriceGross: component.websiteGross,
+    websiteTotalPriceGross: roundMoney(
+      component.websiteGross * component.quantity
+    ),
   };
 }
 
@@ -467,8 +501,16 @@ function assertPriceableConfiguration(
 ): void {
   if (configuration.hasLed && configuration.hasCob) {
     throw new Error(
-      "LED punktowe i LED CCT nie mogą być wybrane jednocześnie."
+      "LED punktowe i LED RGB CCT nie mogą być wybrane jednocześnie."
     );
+  }
+
+  const productType = getProductKind(configuration);
+  if (productType === "terrace_roof" && configuration.walls !== "none") {
+    throw new Error("Zadaszenie tarasu nie może zawierać ścian ogrodu zimowego.");
+  }
+  if (productType === "winter_garden" && configuration.walls === "none") {
+    throw new Error("Ogród zimowy wymaga standardowych ścian przesuwnych.");
   }
 
   if (
@@ -492,78 +534,37 @@ function assertPriceableConfiguration(
   }
 }
 
-function getRoofPriceFields(roof: RoofOption): {
-  net: PricingSnapshotNetPriceField;
-  gross: PricingSnapshotGrossPriceField;
-} {
-  if (roof === "polycarbonate_clear") {
-    return {
-      net: "roofPolycarbonateClearNet",
-      gross: "roofPolycarbonateClearGross",
-    };
+function getCompleteProductFamily(
+  productType: ProductKind,
+  roof: ProductConfiguration["roof"]
+): CrmCoreProductFamily {
+  const glassRoof = roof.startsWith("glass_");
+
+  if (productType === "winter_garden") {
+    return glassRoof ? "winter_garden_glass" : "winter_garden_poly";
   }
-  if (roof === "polycarbonate_milky") {
-    return {
-      net: "roofPolycarbonateMilkyNet",
-      gross: "roofPolycarbonateMilkyGross",
-    };
-  }
-  if (roof === "polycarbonate_grey") {
-    return {
-      net: "roofPolycarbonateGreyNet",
-      gross: "roofPolycarbonateGreyGross",
-    };
-  }
-  if (roof === "polycarbonate_smoke") {
-    return {
-      net: "roofPolycarbonateSmokeNet",
-      gross: "roofPolycarbonateSmokeGross",
-    };
-  }
-  if (roof === "glass_clear") {
-    return { net: "roofGlassClearNet", gross: "roofGlassClearGross" };
-  }
-  if (roof === "glass_milky") {
-    return { net: "roofGlassMilkyNet", gross: "roofGlassMilkyGross" };
-  }
-  return { net: "roofGlassTintedNet", gross: "roofGlassTintedGross" };
+
+  return glassRoof ? "terrace_roof_glass" : "terrace_roof_poly";
 }
 
-function getWallPriceFields(walls: Exclude<WallOption, "none">): {
-  net: PricingSnapshotNetPriceField;
-  gross: PricingSnapshotGrossPriceField;
-} {
-  if (walls === "glass_clear") {
-    return { net: "wallGlassClearNet", gross: "wallGlassClearGross" };
-  }
-  if (walls === "glass_milky") {
-    return { net: "wallGlassMilkyNet", gross: "wallGlassMilkyGross" };
-  }
-  return { net: "wallGlassTintedNet", gross: "wallGlassTintedGross" };
+function getInstallationFamily(
+  productType: ProductKind
+): CrmCoreProductFamily {
+  return productType === "winter_garden"
+    ? "installation_winter_garden"
+    : "installation_terrace_roof";
 }
 
-function getRoofName(roof: RoofOption): string {
-  const names: Record<RoofOption, string> = {
-    polycarbonate_clear: "Poliwęglan bezbarwny",
-    polycarbonate_milky: "Poliwęglan mleczny",
-    polycarbonate_grey: "Poliwęglan szary",
-    polycarbonate_smoke: "Poliwęglan dymiony",
-    glass_clear: "Szkło dachowe bezbarwne",
-    glass_milky: "Szkło dachowe mleczne",
-    glass_tinted: "Szkło dachowe przyciemniane",
-  };
+function getRoofSurchargeFamily(
+  roof: ProductConfiguration["roof"]
+): CrmCoreProductFamily | null {
+  if (roof === "polycarbonate_clear" || roof === "glass_clear") {
+    return null;
+  }
 
-  return names[roof];
-}
-
-function getWallName(walls: Exclude<WallOption, "none">): string {
-  const names: Record<Exclude<WallOption, "none">, string> = {
-    glass_clear: "Ściany przesuwne bezbarwne",
-    glass_milky: "Ściany przesuwne mleczne",
-    glass_tinted: "Ściany przesuwne przyciemniane",
-  };
-
-  return names[walls];
+  return roof.startsWith("glass_")
+    ? "roof_glass_color_surcharge"
+    : "roof_poly_color_surcharge";
 }
 
 function assertValidVatRate(value: number): void {

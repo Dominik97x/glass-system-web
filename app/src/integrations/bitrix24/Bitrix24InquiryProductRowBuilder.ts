@@ -455,8 +455,12 @@ function buildPreparedRowsFromFinancialSnapshot(
       `${item.name} — ilość`
     );
 
+    const sku = item.id.startsWith("MG-")
+      ? item.id
+      : `MG-${getSnapshotSkuPart(item, productType)}-${suffix}`;
+
     return {
-      sku: `MG-${getSnapshotSkuPart(item, productType)}-${suffix}`,
+      sku,
       productName: item.name,
       priceNet,
       websiteGross: roundMoney(websiteGross * quantity),

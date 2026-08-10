@@ -46,7 +46,7 @@ function getLightingSummary(configuration: ProductConfiguration): string {
   }
 
   if (configuration.hasCob) {
-    selectedLighting.push("LED CCT");
+    selectedLighting.push("LED RGB CCT");
   }
 
   return selectedLighting.length > 0

@@ -59,7 +59,7 @@ function getLightingLabel(quote: Quote): string {
   }
 
   if (quote.configuration.hasCob) {
-    return "LED CCT";
+    return "LED RGB CCT";
   }
 
   return "Brak";
@@ -73,6 +73,29 @@ function getAccessoriesLabel(quote: Quote): string {
   ].filter(Boolean);
 
   return selected.length > 0 ? selected.join(", ") : "Brak";
+}
+
+function getDisplayedItemQuantity(
+  quote: Quote,
+  item: QuoteItem
+): number {
+  if (item.category === "zip") {
+    return (
+      Number(quote.configuration.hasFrontZip) +
+      Number(quote.configuration.hasLeftZip) +
+      Number(quote.configuration.hasRightZip)
+    );
+  }
+
+  if (item.category === "accessory") {
+    return (
+      Number(quote.configuration.hasHandles) +
+      Number(quote.configuration.hasBrushes) +
+      Number(quote.configuration.hasLevelingProfile)
+    );
+  }
+
+  return item.quantity;
 }
 
 export function PriceSidebar({ quote }: Props) {
@@ -151,7 +174,7 @@ export function PriceSidebar({ quote }: Props) {
                       {item.name}
                     </p>
                     <p className="mt-0.5 text-xs text-neutral-500">
-                      Ilość: {item.quantity}
+                      Ilość: {getDisplayedItemQuantity(quote, item)}
                     </p>
                   </div>
                   <p className="text-right text-sm font-black text-neutral-950">

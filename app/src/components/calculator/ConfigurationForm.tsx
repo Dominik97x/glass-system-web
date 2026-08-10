@@ -168,7 +168,7 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
           <OptionToggle label="Markiza" checked={configuration.hasAwning}
             onChange={(checked) => updateConfiguration({ hasAwning: checked })} />
           <OptionToggle label="LED punkt." checked={configuration.hasLed} onChange={updateSpotLed} />
-          <OptionToggle label="LED CCT" checked={configuration.hasCob} onChange={updateCctLed} />
+          <OptionToggle label="LED RGB CCT" checked={configuration.hasCob} onChange={updateCctLed} />
           <OptionToggle label="Uchwyty" checked={configuration.hasHandles}
             onChange={(checked) => updateConfiguration({ hasHandles: checked })} />
           <OptionToggle label="Szczotki" checked={configuration.hasBrushes}
