@@ -6,27 +6,28 @@ interface PricingRow {
   productType: "terrace_roof" | "winter_garden";
   widthCm: number;
   lengthCm: number;
-  constructionGross: number;
-  wallGlassClearGross: number;
-  wallGlassMilkyGross?: number;
-  wallGlassTintedGross: number;
-  roofPolycarbonateClearGross: number;
-  roofPolycarbonateMilkyGross: number;
-  roofPolycarbonateGreyGross: number;
-  roofPolycarbonateSmokeGross: number;
-  roofGlassClearGross: number;
-  roofGlassMilkyGross?: number;
-  roofGlassTintedGross: number;
-  zipRightGross: number;
-  zipLeftGross: number;
-  zipFrontGross: number;
-  awningGross: number;
-  levelingProfileGross: number;
-  ledSpotGross: number;
-  ledStripGross: number;
-  ledCobGross?: number;
-  handlesGross: number;
-  brushesGross: number;
+  constructionNet: number;
+  wallGlassClearNet: number;
+  wallGlassMilkyNet?: number;
+  wallGlassTintedNet: number;
+  roofPolycarbonateClearNet: number;
+  roofPolycarbonateMilkyNet: number;
+  roofPolycarbonateGreyNet: number;
+  roofPolycarbonateSmokeNet: number;
+  roofGlassClearNet: number;
+  roofGlassMilkyNet?: number;
+  roofGlassTintedNet: number;
+  zipRightNet: number;
+  zipLeftNet: number;
+  zipFrontNet: number;
+  awningNet: number;
+  levelingProfileNet: number;
+  ledSpotNet: number;
+  ledStripNet: number;
+  ledCobNet?: number;
+  handlesNet: number;
+  brushesNet: number;
+  carriersNet?: number;
   active: boolean;
   availability?: { roofGlass?: boolean; ledRgb?: boolean };
 }
@@ -41,6 +42,53 @@ interface PricingSnapshot {
   priceMatrix: PricingRow[];
 }
 
+interface CrmCoreProduct {
+  sku: string;
+  name: string;
+  sectionKey: string;
+  family: string;
+  dimensionKey: string;
+  priceNet: number;
+  currency: string;
+  sort: number;
+  source?: string;
+  supplierNet?: number;
+  supplierGross?: number;
+  notes?: string;
+}
+
+interface CrmCoreProductSnapshot {
+  metadata?: {
+    version?: string;
+    currency?: string;
+    priceMode?: string;
+  };
+  products: CrmCoreProduct[];
+}
+
+interface CrmCatalogAddon {
+  sku: string;
+  name: string;
+  sectionKey: string;
+  family: string;
+  priceNet: number;
+  currency: string;
+  sort: number;
+  source?: string;
+  sourceNet?: number;
+  markup?: number;
+  notes?: string;
+}
+
+interface CrmCatalogAddonSnapshot {
+  metadata?: {
+    version?: string;
+    currency?: string;
+    priceMode?: string;
+  };
+  products: CrmCatalogAddon[];
+}
+
 interface ProductVariantDefinition {
   family: string;
   familySort: number;
@@ -48,7 +96,6 @@ interface ProductVariantDefinition {
   skuPart: string;
   name: string;
   sectionKey: string;
-  available?: (row: PricingRow) => boolean;
 }
 
 export interface CatalogProductBuildOptions {
@@ -63,6 +110,8 @@ export interface CatalogProductSummary {
   activeRows: number;
   dimensions: number;
   products: number;
+  crmCoreProducts: number;
+  crmAddonProducts: number;
   families: Record<string, number>;
   excludedRoofGlassDimensions: number;
   duplicateSkus: string[];
@@ -74,24 +123,74 @@ export interface CatalogProductBuildResult {
   summary: CatalogProductSummary;
 }
 
+// D4.2: tylko prawdziwe dodatki operacyjne.
+// Nie generujemy już pełnych "ścian" ani dopłat konwertujących bazę z poliwęglanu
+// na szkło, bo zadaszenie i ogród są pełnymi produktami ZP/ZS/OP/OS.
 const variants: ProductVariantDefinition[] = [
-  { family: "walls_clear", familySort: 300, field: "wallGlassClearGross", skuPart: "WALL-CLEAR", name: "Ściany przesuwne bezbarwne", sectionKey: "walls" },
-  { family: "walls_tinted", familySort: 310, field: "wallGlassTintedGross", skuPart: "WALL-TINTED", name: "Ściany przesuwne przyciemniane", sectionKey: "walls" },
-  { family: "roof_poly_clear", familySort: 200, field: "roofPolycarbonateClearGross", skuPart: "ROOF-POLY-CLEAR", name: "Poliwęglan bezbarwny", sectionKey: "roof_poly" },
-  { family: "roof_poly_milky", familySort: 210, field: "roofPolycarbonateMilkyGross", skuPart: "ROOF-POLY-MILKY", name: "Poliwęglan mleczny", sectionKey: "roof_poly" },
-  { family: "roof_poly_grey", familySort: 220, field: "roofPolycarbonateGreyGross", skuPart: "ROOF-POLY-GREY", name: "Poliwęglan szary", sectionKey: "roof_poly" },
-  { family: "roof_poly_smoke", familySort: 230, field: "roofPolycarbonateSmokeGross", skuPart: "ROOF-POLY-SMOKE", name: "Poliwęglan dymiony", sectionKey: "roof_poly" },
-  { family: "roof_glass_clear", familySort: 240, field: "roofGlassClearGross", skuPart: "ROOF-GLASS-CLEAR", name: "Szkło dachowe bezbarwne", sectionKey: "roof_glass", available: (row) => row.availability?.roofGlass !== false },
-  { family: "roof_glass_tinted", familySort: 250, field: "roofGlassTintedGross", skuPart: "ROOF-GLASS-TINTED", name: "Szkło dachowe przyciemniane", sectionKey: "roof_glass", available: (row) => row.availability?.roofGlass !== false },
-  { family: "zip_left", familySort: 400, field: "zipLeftGross", skuPart: "ZIP-LEFT", name: "Roleta ZIP LEWA", sectionKey: "zip" },
-  { family: "zip_right", familySort: 410, field: "zipRightGross", skuPart: "ZIP-RIGHT", name: "Roleta ZIP PRAWA", sectionKey: "zip" },
-  { family: "zip_front", familySort: 420, field: "zipFrontGross", skuPart: "ZIP-FRONT", name: "Roleta ZIP PRZÓD", sectionKey: "zip" },
-  { family: "awning", familySort: 500, field: "awningGross", skuPart: "AWNING", name: "Markiza dachowa", sectionKey: "awning" },
-  { family: "foundation", familySort: 700, field: "levelingProfileGross", skuPart: "FOUNDATION", name: "Profil poziomujący / przygotowanie fundamentu", sectionKey: "foundation" },
-  { family: "led_point", familySort: 600, field: "ledSpotGross", skuPart: "LED-POINT", name: "Oświetlenie LED punktowe", sectionKey: "lighting" },
-  { family: "led_cct", familySort: 610, field: "ledStripGross", skuPart: "LED-CCT", name: "Oświetlenie LED CCT", sectionKey: "lighting" },
-  { family: "brushes", familySort: 800, field: "brushesGross", skuPart: "BRUSHES", name: "Zestaw szczotek przeciwkurzowych", sectionKey: "accessories" },
-  { family: "handles", familySort: 810, field: "handlesGross", skuPart: "HANDLES", name: "Zestaw uchwytów", sectionKey: "accessories" },
+  {
+    family: "zip_side",
+    familySort: 400,
+    field: "zipRightNet",
+    skuPart: "ZIP-SIDE",
+    name: "Roleta ZIP boczna",
+    sectionKey: "zip",
+  },
+  {
+    family: "zip_front",
+    familySort: 420,
+    field: "zipFrontNet",
+    skuPart: "ZIP-FRONT",
+    name: "Roleta ZIP front",
+    sectionKey: "zip",
+  },
+  {
+    family: "awning",
+    familySort: 500,
+    field: "awningNet",
+    skuPart: "AWNING",
+    name: "Markiza dachowa",
+    sectionKey: "awning",
+  },
+  {
+    family: "foundation",
+    familySort: 700,
+    field: "levelingProfileNet",
+    skuPart: "FOUNDATION",
+    name: "Fundament / profil poziomujący",
+    sectionKey: "foundation",
+  },
+  {
+    family: "led_point",
+    familySort: 600,
+    field: "ledSpotNet",
+    skuPart: "LED-POINT",
+    name: "Oświetlenie LED punktowe",
+    sectionKey: "lighting",
+  },
+  {
+    family: "brushes",
+    familySort: 800,
+    field: "brushesNet",
+    skuPart: "BRUSHES",
+    name: "Zestaw szczotek przeciwkurzowych",
+    sectionKey: "accessories",
+  },
+  {
+    family: "handles",
+    familySort: 810,
+    field: "handlesNet",
+    skuPart: "HANDLES",
+    name: "Zestaw uchwytów",
+    sectionKey: "accessories",
+  },
+  {
+    family: "carriers",
+    familySort: 820,
+    field: "carriersNet",
+    skuPart: "CARRIERS",
+    name: "Zabieraki do ścian przesuwnych",
+    sectionKey: "accessories",
+  },
 ];
 
 export function buildPublishedCatalogProducts(
@@ -128,6 +227,9 @@ export function buildPublishedCatalogProducts(
       return a.productType.localeCompare(b.productType);
     });
 
+  // Dodatki z published-pricing są współdzielone przez zadaszenie i ogród.
+  // Pętla przejdzie przez dwa rekordy tego samego wymiaru, a addProduct bezpiecznie
+  // zredukuje identyczne definicje do jednego SKU.
   for (const row of rows) {
     const dimensionKey = `${row.lengthCm}x${row.widthCm}`;
     if (wanted && !wanted.has(dimensionKey)) continue;
@@ -137,39 +239,65 @@ export function buildPublishedCatalogProducts(
       excludedRoofGlassDimensions += 1;
     }
 
-    const productPrefix = row.productType === "winter_garden" ? "WG" : "TR";
-    const productLabel = row.productType === "winter_garden" ? "Ogród zimowy" : "Zadaszenie tarasu";
-    const constructionSection = row.productType === "winter_garden" ? "winter_gardens" : "terrace_roofs";
-    const family = row.productType === "winter_garden" ? "winter_garden_base" : "terrace_roof_base";
-    const familySort = row.productType === "winter_garden" ? 110 : 100;
     const suffix = `D${row.lengthCm}-W${row.widthCm}`;
-
-    addProduct(products, duplicateSkus, invalidPrices, {
-      sku: `MG-${productPrefix}-BASE-${suffix}`,
-      name: `${productLabel} ${row.lengthCm}×${row.widthCm} cm`,
-      sectionKey: constructionSection,
-      priceGross: row.constructionGross,
-      currency,
-      description: buildDescription(descriptionPrefix, pricingVersion, family),
-      family,
-      sort: buildStableSort(familySort, row.lengthCm, row.widthCm),
-    });
-
     for (const variant of variants) {
-      if (variant.available && !variant.available(row)) continue;
       const value = row[variant.field];
       if (typeof value !== "number" || value <= 0) continue;
       addProduct(products, duplicateSkus, invalidPrices, {
         sku: `MG-${variant.skuPart}-${suffix}`,
-        name: `${variant.name} ${row.lengthCm}×${row.widthCm} cm`,
+        name: `${variant.name} — ${row.lengthCm}×${row.widthCm} cm`,
         sectionKey: variant.sectionKey,
         priceGross: value,
         currency,
-        description: buildDescription(descriptionPrefix, pricingVersion, variant.family),
+        description: buildDescription(
+          descriptionPrefix,
+          pricingVersion,
+          variant.family
+        ),
         family: variant.family,
-        sort: buildStableSort(variant.familySort, row.lengthCm, row.widthCm),
+        sort: buildStableSort(
+          variant.familySort,
+          row.lengthCm,
+          row.widthCm
+        ),
       });
     }
+  }
+
+  // D4.2: właściwe produkty handlowe Bitrixa pochodzą z 03_Cennik_uslug_nowy.
+  // ZP / ZS / OP / OS są niezależnymi pełnymi produktami, a montaż jest osobno.
+  const crmCoreProducts = readCrmCoreProducts(cwd).filter(
+    (product) => !wanted || wanted.has(normalizeDimension(product.dimensionKey))
+  );
+  for (const core of crmCoreProducts) {
+    addProduct(products, duplicateSkus, invalidPrices, {
+      sku: core.sku,
+      name: core.name,
+      sectionKey: core.sectionKey,
+      // ProductBlueprint.priceGross to historyczna nazwa pola w importerze D4.
+      // W katalogu D4.2 przechowujemy tutaj kanoniczną cenę NETTO.
+      priceGross: core.priceNet,
+      currency: core.currency || currency,
+      description: buildCrmCoreDescription(core),
+      family: core.family,
+      sort: core.sort,
+    });
+  }
+
+  const crmAddons = wanted ? [] : readCrmCatalogAddons(cwd);
+  for (const addon of crmAddons) {
+    addProduct(products, duplicateSkus, invalidPrices, {
+      sku: addon.sku,
+      name: addon.name,
+      sectionKey: addon.sectionKey,
+      // ProductBlueprint.priceGross to historyczna nazwa pola w importerze D4.
+      // Od D4.1 przechowujemy tutaj kanoniczną cenę katalogową NETTO.
+      priceGross: addon.priceNet,
+      currency: addon.currency || currency,
+      description: buildCrmAddonDescription(addon),
+      family: addon.family,
+      sort: addon.sort,
+    });
   }
 
   const productList = [...products.values()].sort((a, b) => {
@@ -189,11 +317,12 @@ export function buildPublishedCatalogProducts(
     activeRows: rows.length,
     dimensions: activeDimensions.size,
     products: productList.length,
+    crmCoreProducts: crmCoreProducts.length,
+    crmAddonProducts: crmAddons.length,
     families: Object.fromEntries(
       Object.entries(families).sort(([a], [b]) => a.localeCompare(b))
     ),
-    // Każdy niedostępny wymiar występuje w dwóch wierszach snapshotu
-    // (zadaszenie i ogród zimowy), ale produkt dachu jest współdzielony.
+    // Każdy niedostępny wymiar występuje w dwóch wierszach snapshotu.
     excludedRoofGlassDimensions: Math.round(excludedRoofGlassDimensions / 2),
     duplicateSkus: [...duplicateSkus].sort(),
     invalidPrices,
@@ -216,6 +345,69 @@ export function buildPublishedCatalogProducts(
   return { products: productList, summary };
 }
 
+function readCrmCoreProducts(cwd: string): CrmCoreProduct[] {
+  const filePath = path.join(
+    cwd,
+    "src/data/pricing/glass-system/crm-core-products.generated.json"
+  );
+  if (!fs.existsSync(filePath)) {
+    throw new Error(
+      "Brakuje crm-core-products.generated.json. Nie generuj katalogu D4.2 ze starego modelu zadaszenie + ściany."
+    );
+  }
+
+  const snapshot = JSON.parse(
+    fs.readFileSync(filePath, "utf8")
+  ) as CrmCoreProductSnapshot;
+  if (!Array.isArray(snapshot.products)) {
+    throw new Error("crm-core-products.generated.json nie zawiera tablicy products.");
+  }
+
+  return snapshot.products;
+}
+
+function readCrmCatalogAddons(cwd: string): CrmCatalogAddon[] {
+  const filePath = path.join(
+    cwd,
+    "src/data/pricing/glass-system/crm-catalog-addons.generated.json"
+  );
+  if (!fs.existsSync(filePath)) return [];
+
+  const snapshot = JSON.parse(
+    fs.readFileSync(filePath, "utf8")
+  ) as CrmCatalogAddonSnapshot;
+  if (!Array.isArray(snapshot.products)) {
+    throw new Error("crm-catalog-addons.generated.json nie zawiera tablicy products.");
+  }
+
+  return snapshot.products;
+}
+
+function buildCrmCoreDescription(product: CrmCoreProduct): string {
+  return [
+    "Pełny katalog MoonGlass — D4.2",
+    "Cena katalogowa: NETTO. VAT jest ustalany na poziomie Deala.",
+    product.notes ? `Zakres: ${product.notes}` : "",
+    product.source ? `Źródło: ${product.source}` : "",
+    "Zarządzane automatycznie — nie zmieniaj kodu SKU ręcznie.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function buildCrmAddonDescription(addon: CrmCatalogAddon): string {
+  return [
+    "Pełny katalog MoonGlass — D4.2",
+    "Zakres: crm_only / konstrukcje niestandardowe",
+    "Cena katalogowa: NETTO. VAT jest ustalany na poziomie Deala.",
+    "Nie dodawaj tej pozycji do standardowego ogrodu, jeśli element jest już zawarty w kompletnym produkcie OP/OS.",
+    addon.notes ? `Uwagi: ${addon.notes}` : "",
+    "Zarządzane automatycznie — nie zmieniaj kodu SKU ręcznie.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function addProduct(
   products: Map<string, ProductBlueprint>,
   duplicateSkus: Set<string>,
@@ -228,8 +420,6 @@ function addProduct(
   }
   const existing = products.get(product.sku);
   if (existing) {
-    // Warianty dodatków są identyczne dla zadaszenia i ogrodu zimowego.
-    // Identyczna druga definicja jest prawidłowym deduplikowaniem.
     if (
       existing.name !== product.name ||
       existing.sectionKey !== product.sectionKey ||
@@ -252,7 +442,8 @@ function buildDescription(
     prefix,
     `Cennik: ${pricingVersion}`,
     `Rodzina: ${family}`,
-    "Zakres: website+crm",
+    "Zakres: dodatek operacyjny website+crm",
+    "Cena katalogowa: NETTO. VAT jest ustalany na poziomie Deala.",
     "Zarządzane automatycznie — nie zmieniaj kodu SKU ręcznie.",
   ].join("\n");
 }
