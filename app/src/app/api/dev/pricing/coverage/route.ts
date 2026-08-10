@@ -107,7 +107,7 @@ const scenarios: PricingCoverageScenario[] = [
   },
   {
     id: "terrace_roof_poly_color",
-    label: "Zadaszenie tarasu - doplata do poliw?glanu kolorowego",
+    label: "Zadaszenie tarasu - dopłata do poliwęglanu kolorowego",
     expectedCategories: ["construction", "installation", "roof"],
     createConfiguration: (width, length) => ({
       ...DEFAULT_CONFIGURATION,
@@ -151,7 +151,7 @@ const scenarios: PricingCoverageScenario[] = [
   },
   {
     id: "winter_garden_base",
-    label: "Ogrod zimowy - baza",
+    label: "Ogród zimowy - baza",
     expectedCategories: ["construction", "installation"],
     createConfiguration: (width, length) => ({
       ...DEFAULT_CONFIGURATION,
@@ -173,7 +173,7 @@ const scenarios: PricingCoverageScenario[] = [
   },
   {
     id: "winter_garden_tinted_glass",
-    label: "Ogrod zimowy - szklo dachowe i sciany przyciemniane",
+    label: "Ogród zimowy - szkło dachowe i ściany przyciemniane",
     expectedCategories: [
       "construction",
       "installation",
@@ -200,7 +200,7 @@ const scenarios: PricingCoverageScenario[] = [
   },
   {
     id: "winter_garden_full",
-    label: "Ogrod zimowy - trzy ZIP, markiza, LED punktowe i dodatki",
+    label: "Ogród zimowy - trzy ZIP, markiza, LED punktowe i dodatki",
     expectedCategories: [
       "construction",
       "installation",
@@ -227,7 +227,7 @@ const scenarios: PricingCoverageScenario[] = [
       hasLevelingProfile: true,
     }),
   },
-]
+];
 
 const quoteService = new QuoteService();
 
@@ -284,7 +284,7 @@ export async function GET(request: NextRequest) {
             width,
             length,
             dimensionLabel: `${length} x ${width} cm`,
-            message: "Pricing Engine threw an error for this configuration.",
+            message: "QuoteService threw an error for this configuration.",
             details:
               error instanceof Error
                 ? {
@@ -396,15 +396,15 @@ function createCoverageResponse(
     problemGroups: groupProblems(problems),
     successfulDimensions: getSuccessfulDimensions(records),
     recommendedNextSteps: [
-      "Utrzymywac QuoteService jako kanoniczny punkt wejscia do wyceny kalkulatora.",
-      "Produkty kompletne i montaz pobierac z katalogu D4.2.",
-      "Dodatki nadal pobierac z opublikowanego snapshotu cenowego.",
-      "Wyceny indywidualne traktowac jako poprawny wynik biznesowy, a nie blad coverage.",
+      "Utrzymywać QuoteService jako kanoniczny punkt wejścia do wyceny kalkulatora.",
+      "Produkty kompletne i montaż pobierać z katalogu D4.2.",
+      "Dodatki nadal pobierać z opublikowanego snapshotu cenowego.",
+      "Wyceny indywidualne traktować jako poprawny wynik biznesowy, a nie błąd coverage.",
     ],
     notes: [
       "Endpoint sprawdza aktualny tor produkcyjny kalkulatora przez QuoteService.",
       "successfulQuoteChecks obejmuje wyceny automatyczne oraz oczekiwane wyceny indywidualne.",
-      "pricedQuoteChecks oznacza konfiguracje, dla ktorych kalkulator zwrocil cene.",
+      "pricedQuoteChecks oznacza konfiguracje, dla których kalkulator zwrócił cenę.",
       "expectedIndividualQuoteChecks oznacza konfiguracje celowo przekazane do wyceny indywidualnej.",
     ],
     scenarios: scenarios.map((scenario) => ({
@@ -431,17 +431,17 @@ function createConclusions(
 ): string[] {
   if (problems.length === 0) {
     return [
-      "Obecny TypeScript Pricing Engine ma pełne pokrycie dla sprawdzanych scenariuszy.",
+      "Aktualny QuoteService poprawnie obsługuje wszystkie sprawdzane scenariusze.",
     ];
   }
 
   return [
-    `Obecny TypeScript Pricing Engine nie ma pełnego pokrycia cen: ${problems.length} problemów.`,
-    `Silnik poprawnie policzył tylko ${records.length} konfiguracji spośród ${
+    `Aktualny QuoteService ma ${problems.length} nieoczekiwanych problemów coverage.`,
+    `Automatyczną cenę zwrócono dla ${records.length} konfiguracji spośród ${
       WIDTH_OPTIONS.length * LENGTH_OPTIONS.length * scenarios.length
-    } sprawdzonych przypadków.`,
-    "Najczęstszy problem to brak ceny konstrukcji dla wielu wymiarów.",
-    "To potwierdza, że docelowym źródłem powinien być Excel/snapshot, a nie ręczne pliki TypeScript.",
+    } sprawdzonych przypadków; oczekiwane wyceny indywidualne są liczone osobno.`,
+    "Należy przeanalizować problemGroups i usunąć nieoczekiwane błędy konfiguracji lub danych.",
+    "Wyceny indywidualne powinny być klasyfikowane osobno od rzeczywistych błędów coverage.",
   ];
 }
 
