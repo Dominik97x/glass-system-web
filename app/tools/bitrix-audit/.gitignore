@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+bitrix_audit/
+.env
+.venv/
+bitrix_audit/
+card_cleanup_backups/
+card_cleanup_dry_run/
+payment_plan_305020_results/
+*.docx
+*.pdf
+__pycache__/
+*.pyc

@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MoonGlass — Bitrix24 payment schedule webhook v1
 
-## Getting Started
+Dodaje handler HTTP dla istniejącej polityki 30/50/20.
 
-First, run the development server:
+## Pliki
 
-```bash
+Skopiuj do folderu `app`:
+
+- `src/integrations/bitrix24/Bitrix24PaymentScheduleSyncService.ts`
+- `src/app/api/bitrix24/payment-schedule-sync/route.ts`
+
+Wymagany jest już istniejący:
+- `src/lib/payment-schedule-sync-policy.ts`
+- `src/lib/payment-schedule.ts`
+
+## Lokalny test
+
+Uruchom aplikację:
+
+```powershell
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+W drugim terminalu, z folderu `app`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```powershell
+Invoke-RestMethod `
+  -Method Post `
+  -Uri "http://localhost:3000/api/bitrix24/payment-schedule-sync" `
+  -ContentType "application/json" `
+  -Body '{"dealId":25}'
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Lokalny test ZAWSZE działa jako dry-run i niczego nie zapisuje.
 
-## Learn More
+Dla aktualnego Deala #25 na etapie `Nowe zapytanie` oczekiwane:
+- `success: true`
+- `source: local_test`
+- `result.applied: false`
+- `result.decision.action: before_trigger_stage`
 
-To learn more about Next.js, take a look at the following resources:
+## Później — outgoing webhook
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Po lokalnym teście:
+1. wystawimy endpoint publicznie,
+2. utworzymy w Bitrix24 outgoing webhook dla `ONCRMDEALUPDATE`,
+3. wygenerowany Application Token wpiszemy lokalnie/na serwerze jako:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+BITRIX24_OUTGOING_WEBHOOK_TOKEN=
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Nie należy publikować tego tokena w repozytorium.
