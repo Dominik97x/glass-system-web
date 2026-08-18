@@ -104,7 +104,58 @@ Warunki połączone operatorem `I`:
 Akcja:
 `Projekt opłacony = Tak`
 
-## 4. Automatyzacje — etap `Zamknięty projekt`
+### Robot 4 — brak opisu usterek blokuje przejście
+
+Typ:
+`Zmień etap`
+
+Ustawienia:
+- Wykonanie: `Po odczekaniu`
+- Czas: `Natychmiast`
+
+Warunki połączone operatorem `I`:
+- `Wynik odbioru = Odbiór z uwagami / usterkami`
+- `Usterki / uwagi = pusty`
+
+Nowy etap:
+`Montaż skończony — nieopłacone`
+
+### Robot 5 — brak terminu usunięcia usterek blokuje przejście
+
+Typ:
+`Zmień etap`
+
+Ustawienia:
+- Wykonanie: `Po odczekaniu`
+- Czas: `Natychmiast`
+
+Warunki połączone operatorem `I`:
+- `Wynik odbioru = Odbiór z uwagami / usterkami`
+- `Termin usunięcia usterek = pusty`
+
+Nowy etap:
+`Montaż skończony — nieopłacone`
+
+## 4. Pole statusu usterek
+
+### `Status usunięcia usterek`
+
+Kod:
+`UF_CRM_DEAL_MG_ACCEPTANCE_DEFECTS_STATUS`
+
+Typ:
+`enumeration`
+
+Wartości:
+- `Nie dotyczy`
+- `Do usunięcia`
+- `W trakcie`
+- `Usunięte`
+
+Pole jest wyświetlane w sekcji:
+`06 — ODBIÓR / III RATA`
+
+## 5. Automatyzacje — etap `Zamknięty projekt`
 
 ### Robot 1 — ponownie przelicz saldo
 
@@ -152,7 +203,23 @@ Warunki połączone operatorem `LUB`:
 Nowy etap:
 `Projekt opłacony`
 
-## 5. Potwierdzone scenariusze testowe
+### Robot 4 — nierozwiązane usterki blokują zamknięcie
+
+Typ:
+`Zmień etap`
+
+Ustawienia:
+- Wykonanie: `Po odczekaniu`
+- Czas: `Natychmiast`
+
+Warunki połączone operatorem `I`:
+- `Wynik odbioru = Odbiór z uwagami / usterkami`
+- `Status usunięcia usterek != Usunięte`
+
+Nowy etap:
+`Projekt opłacony`
+
+## 6. Potwierdzone scenariusze testowe
 
 ### Niedopłata
 - wartość deala: 40 068,00 PLN,
@@ -180,21 +247,56 @@ Wynik:
 Wynik:
 - deal pozostaje na `Zamknięty projekt`.
 
-## 6. Kolejne planowane prace
+### Odbiór z usterkami — brak opisu
+- `Wynik odbioru = Odbiór z uwagami / usterkami`,
+- `Usterki / uwagi = puste`,
+- termin może być ustawiony.
 
-1. Walidacja odbioru z usterkami:
-   - jeżeli `Wynik odbioru = Odbiór z uwagami / usterkami`,
-   - wymagane biznesowo:
-     - `Usterki / uwagi`,
-     - `Termin usunięcia usterek`.
+Wynik:
+- deal wraca do `Montaż skończony — nieopłacone`.
 
-2. Uporządkowanie etapów materiałowych w `02 Realizacja`:
+### Odbiór z usterkami — brak terminu
+- `Wynik odbioru = Odbiór z uwagami / usterkami`,
+- opis usterek jest wypełniony,
+- `Termin usunięcia usterek = pusty`.
+
+Wynik:
+- deal wraca do `Montaż skończony — nieopłacone`.
+
+### Odbiór z usterkami — komplet danych
+- opis usterek wypełniony,
+- termin usunięcia usterek wypełniony.
+
+Wynik:
+- deal może pozostać na `Projekt opłacony`.
+
+### Zamknięcie przy otwartych usterkach
+- `Wynik odbioru = Odbiór z uwagami / usterkami`,
+- `Status usunięcia usterek = Do usunięcia`.
+
+Wynik:
+- próba `Zamknięty projekt` kończy się powrotem do `Projekt opłacony`.
+
+### Zamknięcie po usunięciu usterek
+- `Wynik odbioru = Odbiór z uwagami / usterkami`,
+- `Status usunięcia usterek = Usunięte`,
+- pozostałe warunki zamknięcia spełnione.
+
+Wynik:
+- deal pozostaje na `Zamknięty projekt`.
+
+## 7. Kolejne planowane prace
+
+1. Uporządkowanie etapów materiałowych w `02 Realizacja`:
    - `Status materiału`,
-   - możliwa automatyczna synchronizacja pola z etapem.
+   - zasady przejść między `Szkło na wymiar`, `Wysłać materiał na wycenę`, `Materiał na wycenie`, `Wycena materiału zaakceptowana`, `Zamówienie materiału`, `Materiał zamówiony`, `Materiał opłacony`,
+   - decyzja, czy synchronizować `Status materiału` automatycznie z etapem.
 
-3. Finalny przegląd dokumentów:
+2. Finalny przegląd dokumentów:
    - Umowa Firma,
    - Protokół Odbioru,
-   - spójność numeracji i pól.
+   - spójność numeracji, pól i warunków wygenerowania.
+
+3. Przegląd całego procesu end-to-end na świeżym testowym dealu.
 
 4. Porządek danych testowych i starych szablonów dopiero po pełnej akceptacji konfiguracji produkcyjnej.
