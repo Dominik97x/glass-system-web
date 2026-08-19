@@ -2,31 +2,35 @@ import Image from "next/image";
 
 import { ROOF_LABELS, WALL_LABELS } from "@/data/configuration-labels";
 import {
-  getFrameColor,
   getFrameColorLabel,
   type ProductConfiguration,
 } from "@/domain/ProductConfiguration";
 import {
-  getVisualizerAsset,
   getVisualizerAssetByKey,
   VISUALIZER_TILES,
   type VisualizerTileId,
 } from "./visualizer/visualizer-assets";
+import { resolveVisualizerScene } from "./visualizer/visualizer-asset-resolver";
+import {
+  createVisualizerState,
+  hasAnyVisualizerZip,
+  hasVisualizerWalls,
+  type VisualizerState,
+} from "./visualizer/visualizer-state";
 
 interface Props {
   configuration: ProductConfiguration;
 }
 
 export function VisualizationPanel({ configuration }: Props) {
-  const hasWalls = configuration.walls !== "none";
-  const frameColor = getFrameColor(configuration);
-  const hasAnyZip =
-    configuration.hasFrontZip ||
-    configuration.hasLeftZip ||
-    configuration.hasRightZip;
-  const hasLight = configuration.hasLed || configuration.hasCob;
+  const visualizerState = createVisualizerState(configuration);
+  const resolvedScene = resolveVisualizerScene(visualizerState);
+  const hasWalls = hasVisualizerWalls(visualizerState);
+  const frameColor = visualizerState.frameColor;
+  const hasAnyZip = hasAnyVisualizerZip(visualizerState);
+  const hasLight = visualizerState.lighting !== "none";
   const selectedExtras = getSelectedExtras(configuration);
-  const activeAsset = getVisualizerAsset(configuration);
+  const activeAsset = resolvedScene.primaryAsset;
   const isEveningView = activeAsset.mode === "evening";
 
   return (
@@ -135,7 +139,7 @@ export function VisualizationPanel({ configuration }: Props) {
               <VariantTile
                 key={tile.id}
                 label={tile.label}
-                active={isTileActive(tile.id, configuration)}
+                active={isTileActive(tile.id, visualizerState)}
                 image={tileAsset.thumbnailSrc}
               />
             );
@@ -219,27 +223,21 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 
 function isTileActive(
   tileId: VisualizerTileId,
-  configuration: ProductConfiguration
+  state: VisualizerState
 ): boolean {
-  const hasWalls = configuration.walls !== "none";
-  const hasAnyZip =
-    configuration.hasFrontZip ||
-    configuration.hasLeftZip ||
-    configuration.hasRightZip;
-
   switch (tileId) {
     case "terrace_roof":
-      return !hasWalls;
+      return !hasVisualizerWalls(state);
     case "glass_clear":
-      return configuration.walls === "glass_clear";
+      return state.walls === "glass_clear";
     case "glass_milky":
-      return configuration.walls === "glass_milky";
+      return state.walls === "glass_milky";
     case "zip":
-      return hasAnyZip;
+      return hasAnyVisualizerZip(state);
     case "awning":
-      return configuration.hasAwning;
+      return state.awning;
     case "lighting":
-      return configuration.hasLed || configuration.hasCob;
+      return state.lighting !== "none";
   }
 }
 

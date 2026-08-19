@@ -1,5 +1,3 @@
-import type { ProductConfiguration } from "@/domain/ProductConfiguration";
-
 export type VisualizerAssetKey =
   | "terrace_roof_day"
   | "terrace_roof_evening_led"
@@ -183,59 +181,6 @@ export const VISUALIZER_TILES = [
 ] as const;
 
 export type VisualizerTileId = (typeof VISUALIZER_TILES)[number]["id"];
-
-export function getVisualizerAsset(
-  configuration: ProductConfiguration
-): VisualizerAsset {
-  const hasWalls = configuration.walls !== "none";
-  const hasAnyZip =
-    configuration.hasFrontZip ||
-    configuration.hasLeftZip ||
-    configuration.hasRightZip;
-  const hasFullZip =
-    hasWalls &&
-    configuration.hasFrontZip &&
-    configuration.hasLeftZip &&
-    configuration.hasRightZip;
-
-  if (!hasWalls) {
-    if (configuration.hasLed || configuration.hasCob) {
-      return VISUALIZER_ASSETS.terrace_roof_evening_led;
-    }
-
-    return VISUALIZER_ASSETS.terrace_roof_day;
-  }
-
-  if (configuration.hasCob) {
-    return VISUALIZER_ASSETS.winter_garden_led_strip;
-  }
-
-  if (configuration.hasLed) {
-    return VISUALIZER_ASSETS.winter_garden_led_spot;
-  }
-
-  if (configuration.hasAwning) {
-    return VISUALIZER_ASSETS.winter_garden_awning;
-  }
-
-  if (hasFullZip) {
-    return VISUALIZER_ASSETS.winter_garden_zip_full;
-  }
-
-  if (hasAnyZip) {
-    return VISUALIZER_ASSETS.winter_garden_zip_front;
-  }
-
-  if (configuration.walls === "glass_milky") {
-    return VISUALIZER_ASSETS.winter_garden_milky;
-  }
-
-  if (configuration.walls === "glass_tinted") {
-    return VISUALIZER_ASSETS.winter_garden_tinted;
-  }
-
-  return VISUALIZER_ASSETS.winter_garden_clear;
-}
 
 export function getVisualizerAssetByKey(
   key: VisualizerAssetKey
