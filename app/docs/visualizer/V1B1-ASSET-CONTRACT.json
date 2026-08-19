@@ -1,0 +1,92 @@
+{
+  "version": "V1B.1",
+  "scene": {
+    "id": "scene01",
+    "name": "Terrace / winter garden master scene",
+    "camera": "Camera_Master",
+    "aspectRatio": "4:3",
+    "workingResolution": [
+      1600,
+      1200
+    ],
+    "finalResolution": [
+      2400,
+      1800
+    ],
+    "cameraLockedAfterPOC01": true
+  },
+  "productScope": [
+    "terrace_roof",
+    "winter_garden"
+  ],
+  "frameColors": {
+    "anthracite": "RAL 7016",
+    "white": "white",
+    "brown": "brown"
+  },
+  "resolverLayerKeys": [
+    "frame:anthracite",
+    "frame:white",
+    "frame:brown",
+    "roof:<roof-option>",
+    "walls:glass_clear",
+    "walls:glass_milky",
+    "walls:glass_tinted",
+    "zip:front",
+    "zip:left",
+    "zip:right",
+    "awning",
+    "lighting:spot",
+    "lighting:cct"
+  ],
+  "pocRenders": [
+    {
+      "id": "POC-01",
+      "file": "mg_scene01_day_open_anthracite.webp",
+      "mode": "full",
+      "purpose": "master scene acceptance"
+    },
+    {
+      "id": "POC-02",
+      "file": "mg_scene01_day_closed-clear_anthracite.webp",
+      "mode": "full",
+      "purpose": "glass enclosure"
+    },
+    {
+      "id": "POC-03",
+      "file": "mg_scene01_evening_open_anthracite_led-cct.webp",
+      "mode": "full",
+      "purpose": "evening / LED"
+    },
+    {
+      "id": "POC-04",
+      "file": "mg_scene01_day_open_white.webp",
+      "mode": "full",
+      "purpose": "white frame"
+    },
+    {
+      "id": "POC-05",
+      "file": "mg_scene01_day_open_brown.webp",
+      "mode": "full",
+      "purpose": "brown frame"
+    },
+    {
+      "id": "POC-06",
+      "file": "mg_scene01_day_closed-tinted_anthracite.webp",
+      "mode": "full",
+      "purpose": "tinted enclosure"
+    },
+    {
+      "id": "POC-07",
+      "file": "mg_scene01_overlay_zip-front.png",
+      "mode": "overlay",
+      "purpose": "overlay feasibility test"
+    },
+    {
+      "id": "POC-08",
+      "file": "mg_scene01_overlay_awning.png",
+      "mode": "overlay",
+      "purpose": "overlay feasibility test"
+    }
+  ]
+}
