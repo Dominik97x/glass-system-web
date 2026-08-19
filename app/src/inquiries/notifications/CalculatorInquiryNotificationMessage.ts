@@ -1,4 +1,6 @@
 import {
+  getFrameColor,
+  getFrameColorLabel,
   getProductKind,
   type ProductConfiguration,
 } from "@/domain/ProductConfiguration";
@@ -170,6 +172,7 @@ function createConfigurationLines(
 
   return [
     `Wymiary: ${configuration.length} x ${configuration.width} cm`,
+    `Kolor konstrukcji: ${getFrameColorLabel(getFrameColor(configuration))}`,
     `Dach: ${formatRoof(configuration.roof)}`,
     `Ściany: ${formatWalls(configuration.walls)}`,
     `ZIP przód: ${formatBoolean(configuration.hasFrontZip)}`,
@@ -209,6 +212,7 @@ function createHtmlConfigurationSection(
 
   return createHtmlSection("Konfiguracja", [
     ["Wymiary", `${configuration.length} x ${configuration.width} cm`],
+    ["Kolor konstrukcji", getFrameColorLabel(getFrameColor(configuration))],
     ["Dach", formatRoof(configuration.roof)],
     ["Ściany", formatWalls(configuration.walls)],
     ["ZIP przód", formatBoolean(configuration.hasFrontZip)],
@@ -395,7 +399,7 @@ function formatRoof(roof: ProductConfiguration["roof"]): string {
   const labels: Record<ProductConfiguration["roof"], string> = {
     polycarbonate_clear: "Poliwęglan bezbarwny",
     polycarbonate_milky: "Poliwęglan mleczny",
-    polycarbonate_grey: "Poliwęglan grafitowy",
+    polycarbonate_grey: "Poliwęglan szary",
     polycarbonate_smoke: "Poliwęglan dymiony",
     glass_clear: "Szkło przezroczyste",
     glass_milky: "Szkło mleczne",

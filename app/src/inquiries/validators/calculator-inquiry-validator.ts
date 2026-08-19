@@ -1,5 +1,6 @@
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type {
+  FrameColor,
   Length,
   ProductConfiguration,
   ProductKind,
@@ -29,6 +30,14 @@ const ALLOWED_WIDTHS = [
 const ALLOWED_LENGTHS = [
   300, 350, 400, 450, 500, 550, 600,
 ] as const satisfies readonly Length[];
+
+
+
+const WEBSITE_FRAME_COLORS = [
+  "anthracite",
+  "white",
+  "brown",
+] as const satisfies readonly FrameColor[];
 
 const WEBSITE_PRODUCT_TYPES = [
   "terrace_roof",
@@ -197,6 +206,19 @@ function validateConfiguration(
     };
   }
 
+  let frameColor: FrameColor;
+  if (configuration.frameColor === undefined) {
+    // Legacy fallback dla zapytań zapisanych przed V1A.1.
+    frameColor = "anthracite";
+  } else if (includesValue(WEBSITE_FRAME_COLORS, configuration.frameColor)) {
+    frameColor = configuration.frameColor;
+  } else {
+    return {
+      success: false,
+      message: "Wybrany kolor konstrukcji nie jest dostępny na stronie.",
+    };
+  }
+
   if (!includesValue(WEBSITE_ROOF_OPTIONS, configuration.roof)) {
     return {
       success: false,
@@ -215,6 +237,7 @@ function validateConfiguration(
 
   const validatedConfiguration: ProductConfiguration = {
     productType,
+    frameColor,
     width: configuration.width,
     length: configuration.length,
     walls: configuration.walls,

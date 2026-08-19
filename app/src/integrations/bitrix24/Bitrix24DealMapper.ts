@@ -1,5 +1,9 @@
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 import {
+  getFrameColor,
+  getFrameColorLabel,
+} from "@/domain/ProductConfiguration";
+import {
   getQuoteSnapshotWebsiteTotalGross,
   recalculateQuoteSnapshotForVat,
   type RecalculatedQuoteFinancials,
@@ -20,6 +24,7 @@ export function mapInquiryToBitrix24DealPayload(
 
   return {
     entityTypeId: config.dealEntityTypeId,
+    useOriginalUfNames: "Y",
     fields: removeUndefinedFields({
       title: createDealTitle(inquiry),
       // Kwota Deala musi odpowiadać stawce VAT użytej w jego pozycjach.
@@ -30,6 +35,9 @@ export function mapInquiryToBitrix24DealPayload(
       assignedById: config.assignedById,
       sourceId: config.sourceId,
       comments: createDealDescription(inquiry, targetFinancials),
+      UF_CRM_DEAL_MG_CONSTRUCTION_COLOR:
+        getFrameColorLabel(getFrameColor(inquiry.quote.configuration)),
+      UF_CRM_DEAL_MG_CUSTOM_QUOTE: "N",
     }),
   };
 }

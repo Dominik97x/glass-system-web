@@ -19,7 +19,6 @@ import {
 import type { PricingSnapshot } from "@/pricing/snapshots/PricingSnapshot";
 import {
   PricingSnapshotPriceReader,
-  type PricingSnapshotGrossPriceField,
   type PricingSnapshotNetPriceField,
 } from "@/pricing/snapshots/PricingSnapshotPriceReader";
 import {
@@ -157,8 +156,7 @@ export class SnapshotQuoteService {
           `MG-ZIP-FRONT-${suffix}`,
           `Roleta ZIP front ${dimension}`,
           "zip",
-          "zipFrontNet",
-          "zipFrontGross"
+          "zipFrontNet"
         )
       );
     }
@@ -173,7 +171,6 @@ export class SnapshotQuoteService {
           `Roleta ZIP boczna ${dimension}`,
           "zip",
           "zipRightNet",
-          "zipRightGross",
           sideZipQuantity
         )
       );
@@ -197,8 +194,7 @@ export class SnapshotQuoteService {
               `MG-AWNING-${suffix}`,
               `Markiza dachowa ${dimension}`,
               "awning",
-              "awningNet",
-              "awningGross"
+              "awningNet"
             ),
           ]
         : [],
@@ -211,8 +207,7 @@ export class SnapshotQuoteService {
             `MG-LED-POINT-${suffix}`,
             `Oświetlenie LED punktowe ${dimension}`,
             "lighting",
-            "ledSpotNet",
-            "ledSpotGross"
+            "ledSpotNet"
           ),
         ]
       : configuration.hasCob
@@ -244,8 +239,7 @@ export class SnapshotQuoteService {
           `MG-FOUNDATION-${suffix}`,
           `Fundament / profil poziomujący ${dimension}`,
           "accessory",
-          "levelingProfileNet",
-          "levelingProfileGross"
+          "levelingProfileNet"
         )
       );
     }
@@ -256,8 +250,7 @@ export class SnapshotQuoteService {
           `MG-BRUSHES-${suffix}`,
           `Zestaw szczotek przeciwkurzowych ${dimension}`,
           "accessory",
-          "brushesNet",
-          "brushesGross"
+          "brushesNet"
         )
       );
     }
@@ -268,8 +261,7 @@ export class SnapshotQuoteService {
           `MG-HANDLES-${suffix}`,
           `Zestaw uchwytów ${dimension}`,
           "accessory",
-          "handlesNet",
-          "handlesGross"
+          "handlesNet"
         )
       );
     }
@@ -287,6 +279,12 @@ export class SnapshotQuoteService {
       financialLineItems,
       this.vatRate
     );
+
+    if (websiteTotalGross !== financials.totalGross) {
+      throw new Error(
+        `Niespójna suma brutto: strona ${websiteTotalGross}, finanse ${financials.totalGross}.`
+      );
+    }
 
     return {
       configuration,
@@ -381,13 +379,11 @@ export class SnapshotQuoteService {
     name: string,
     category: QuoteItemCategory,
     netField: PricingSnapshotNetPriceField,
-    grossField: PricingSnapshotGrossPriceField,
     quantity = 1
   ): PricingComponent {
     const net = roundMoney(this.reader.getPrice(criteria, netField));
-    const websiteGross = roundMoney(
-      this.reader.getPrice(criteria, grossField)
-    );
+    const calculation = calculateTaxFromNet(net, this.vatRate);
+    const websiteGross = calculation.gross;
 
     if (net <= 0 && websiteGross <= 0) {
       return {
@@ -401,8 +397,6 @@ export class SnapshotQuoteService {
         accountingGross: 0,
       };
     }
-
-    const calculation = calculateTaxFromNet(net, this.vatRate);
 
     return {
       id,
@@ -430,8 +424,8 @@ export class SnapshotQuoteService {
       category,
       quantity,
       net,
-      // Strona pokazuje orientacyjne pełne złote, księgowo zachowujemy grosze.
-      websiteGross: Math.round(calculation.gross),
+      // Widok klienta korzysta z tej samej kwoty brutto co finanse i Bitrix24.
+      websiteGross: calculation.gross,
       taxAmount: calculation.taxAmount,
       accountingGross: calculation.gross,
     };

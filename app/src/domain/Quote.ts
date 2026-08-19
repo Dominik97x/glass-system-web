@@ -3,7 +3,8 @@ import type { QuoteFinancialLineItem, QuoteItem } from "./QuoteItem";
 
 /**
  * Dokładne podsumowanie księgowe wyceny.
- * `Quote.totalGross` pozostaje orientacyjną sumą brutto prezentowaną na stronie.
+ * `Quote.totalGross` ma pozostawać zgodne z `QuoteFinancials.totalGross`, aby
+ * klient, zapis zapytania i Bitrix24 widziały tę samą kwotę brutto.
  */
 export interface QuoteFinancials {
   priceMode: "net";
@@ -19,7 +20,7 @@ export interface Quote {
   configuration: ProductConfiguration;
   items: QuoteItem[];
 
-  /** Orientacyjna suma brutto prezentowana klientowi na stronie. */
+  /** Suma brutto prezentowana klientowi na stronie; zgodna z finansami wyceny. */
   totalGross: number;
 
   /** Dokładne wartości netto / VAT / brutto do zapisu w snapshotcie. */

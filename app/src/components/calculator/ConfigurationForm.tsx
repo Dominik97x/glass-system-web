@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 
 import { ROOF_LABELS } from "@/data/configuration-labels";
 import {
+  getFrameColor,
   getProductKind,
+  type FrameColor,
   type Length,
   type ProductConfiguration,
   type ProductKind,
@@ -15,6 +17,32 @@ interface Props {
   configuration: ProductConfiguration;
   onChange(configuration: ProductConfiguration): void;
 }
+
+const FRAME_COLOR_OPTIONS: Array<{
+  value: FrameColor;
+  label: string;
+  swatchClass: string;
+  checkClass: string;
+}> = [
+  {
+    value: "anthracite",
+    label: "Antracyt",
+    swatchClass: "bg-[#383e42]",
+    checkClass: "text-white",
+  },
+  {
+    value: "white",
+    label: "Biały",
+    swatchClass: "bg-[#f8f8f5]",
+    checkClass: "text-neutral-900",
+  },
+  {
+    value: "brown",
+    label: "Brązowy",
+    swatchClass: "bg-[#4a3028]",
+    checkClass: "text-white",
+  },
+];
 
 const WIDTH_OPTIONS: Width[] = [
   306, 406, 506, 606, 706, 806, 906, 1006, 1106, 1206,
@@ -32,6 +60,7 @@ const WALL_OPTIONS: WallOption[] = ["glass_clear", "glass_tinted"];
 
 export function ConfigurationForm({ configuration, onChange }: Props) {
   const productType = getProductKind(configuration);
+  const frameColor = getFrameColor(configuration);
   const hasWalls = configuration.walls !== "none";
   const roofGlassAvailable = configuration.length <= 500;
   const roofOptions = roofGlassAvailable
@@ -100,6 +129,26 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             active={productType === "winter_garden"}
             onClick={() => updateProductType("winter_garden")}
           />
+        </div>
+
+        <div className="mb-3">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-500">
+            Kolor konstrukcji
+          </p>
+          <div className="grid max-w-sm grid-cols-3 gap-3">
+            {FRAME_COLOR_OPTIONS.map((option) => (
+              <ColorSwatch
+                key={option.value}
+                label={option.label}
+                swatchClass={option.swatchClass}
+                checkClass={option.checkClass}
+                active={frameColor === option.value}
+                onClick={() =>
+                  updateConfiguration({ frameColor: option.value })
+                }
+              />
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
@@ -178,6 +227,59 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
         </div>
       </CompactPanel>
     </div>
+  );
+}
+
+
+function ColorSwatch({
+  label,
+  swatchClass,
+  checkClass,
+  active,
+  onClick,
+}: {
+  label: string;
+  swatchClass: string;
+  checkClass: string;
+  active: boolean;
+  onClick(): void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={`Kolor konstrukcji: ${label}`}
+      aria-pressed={active}
+      title={label}
+      onClick={onClick}
+      className="group flex min-h-16 flex-col items-center justify-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-neutral-50"
+    >
+      <span
+        className={[
+          "flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition",
+          swatchClass,
+          active
+            ? "border-emerald-500 ring-2 ring-emerald-200 ring-offset-2"
+            : "border-neutral-300 group-hover:border-neutral-400",
+        ].join(" ")}
+      >
+        {active && (
+          <span
+            aria-hidden="true"
+            className={`${checkClass} text-sm font-black`}
+          >
+            ✓
+          </span>
+        )}
+      </span>
+      <span
+        className={[
+          "text-[10px] font-black leading-none transition",
+          active ? "text-emerald-800" : "text-neutral-600",
+        ].join(" ")}
+      >
+        {label}
+      </span>
+    </button>
   );
 }
 

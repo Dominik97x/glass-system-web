@@ -1,7 +1,11 @@
 import Image from "next/image";
 
 import { ROOF_LABELS, WALL_LABELS } from "@/data/configuration-labels";
-import type { ProductConfiguration } from "@/domain/ProductConfiguration";
+import {
+  getFrameColor,
+  getFrameColorLabel,
+  type ProductConfiguration,
+} from "@/domain/ProductConfiguration";
 import {
   getVisualizerAsset,
   getVisualizerAssetByKey,
@@ -15,6 +19,7 @@ interface Props {
 
 export function VisualizationPanel({ configuration }: Props) {
   const hasWalls = configuration.walls !== "none";
+  const frameColor = getFrameColor(configuration);
   const hasAnyZip =
     configuration.hasFrontZip ||
     configuration.hasLeftZip ||
@@ -91,6 +96,7 @@ export function VisualizationPanel({ configuration }: Props) {
 
           <div className="absolute left-4 top-4 flex flex-wrap gap-2">
             <VisualBadge label={hasWalls ? "Ogród zimowy" : "Zadaszenie"} />
+            <VisualBadge label={getFrameColorLabel(frameColor)} />
             <VisualBadge label={ROOF_LABELS[configuration.roof]} />
             {hasAnyZip && <VisualBadge label="Rolety ZIP" />}
             {configuration.hasAwning && <VisualBadge label="Markiza" />}
@@ -110,6 +116,7 @@ export function VisualizationPanel({ configuration }: Props) {
                 {activeAsset.label}
               </p>
               <p className="mt-2 text-sm leading-6 text-white/75">
+                {getFrameColorLabel(frameColor)} ·{" "}
                 {ROOF_LABELS[configuration.roof]} ·{" "}
                 {WALL_LABELS[configuration.walls]} ·{" "}
                 {selectedExtras.length > 0
@@ -135,7 +142,8 @@ export function VisualizationPanel({ configuration }: Props) {
           })}
         </div>
 
-        <div className="mt-3 grid gap-2 md:grid-cols-3">
+        <div className="mt-3 grid gap-2 md:grid-cols-4">
+          <InfoCard label="Kolor" value={getFrameColorLabel(frameColor)} />
           <InfoCard label="Dach" value={ROOF_LABELS[configuration.roof]} />
           <InfoCard label="Ściany" value={WALL_LABELS[configuration.walls]} />
           <InfoCard

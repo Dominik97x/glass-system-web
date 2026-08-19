@@ -1,6 +1,10 @@
 import generatedPricingSnapshot from "@/data/pricing/glass-system/published-pricing.generated.json";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
-import { getProductKind } from "@/domain/ProductConfiguration";
+import {
+  getFrameColor,
+  getFrameColorLabel,
+  getProductKind,
+} from "@/domain/ProductConfiguration";
 import {
   getQuoteSnapshotWebsiteTotalGross,
   recalculateQuoteSnapshotForVat,
@@ -44,6 +48,7 @@ const DEAL_FIELDS = {
   widthCm: "UF_CRM_DEAL_MG_WIDTH_CM",
   roofType: "UF_CRM_DEAL_MG_ROOF_TYPE",
   wallType: "UF_CRM_DEAL_MG_WALL_TYPE",
+  constructionColor: "UF_CRM_DEAL_MG_CONSTRUCTION_COLOR",
   zipFront: "UF_CRM_DEAL_MG_ZIP_FRONT",
   zipLeft: "UF_CRM_DEAL_MG_ZIP_LEFT",
   zipRight: "UF_CRM_DEAL_MG_ZIP_RIGHT",
@@ -409,6 +414,8 @@ export class CalculatorInquiryBitrix24SyncService {
         DEAL_FIELDS.wallType,
         mapWallType(configuration.walls)
       ),
+      [DEAL_FIELDS.constructionColor]:
+        getFrameColorLabel(getFrameColor(configuration)),
       [DEAL_FIELDS.zipFront]: toBitrixBoolean(configuration.hasFrontZip),
       [DEAL_FIELDS.zipLeft]: toBitrixBoolean(configuration.hasLeftZip),
       [DEAL_FIELDS.zipRight]: toBitrixBoolean(configuration.hasRightZip),

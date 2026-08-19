@@ -1,4 +1,6 @@
 import {
+  getFrameColor,
+  getFrameColorLabel,
   getProductKind,
   type ProductConfiguration,
 } from "@/domain/ProductConfiguration";
@@ -85,6 +87,10 @@ export function getConfigurationSummaryRows(
     {
       label: "Wymiary",
       value: `${configuration.length} × ${configuration.width} cm`,
+    },
+    {
+      label: "Kolor konstrukcji",
+      value: getFrameColorLabel(getFrameColor(configuration)),
     },
     {
       label: "Dach",

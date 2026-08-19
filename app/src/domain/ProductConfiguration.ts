@@ -1,5 +1,7 @@
 export type ProductKind = "terrace_roof" | "winter_garden";
 
+export type FrameColor = "anthracite" | "white" | "brown";
+
 export type Width =
   | 306 | 406 | 506 | 606 | 706
   | 806 | 906 | 1006 | 1106 | 1206;
@@ -28,6 +30,14 @@ export type RoofOption =
 
 export interface ProductConfiguration {
   productType?: ProductKind;
+
+  /**
+   * Kolor konstrukcji jest opcją wizualno-ofertową.
+   *
+   * Pole jest opcjonalne wyłącznie dla zgodności ze starszymi snapshotami
+   * zapytań zapisanymi przed etapem V1A.1. Brak wartości oznacza antracyt.
+   */
+  frameColor?: FrameColor;
   width: Width;
   length: Length;
   walls: WallOption;
@@ -45,6 +55,7 @@ export interface ProductConfiguration {
 
 export const DEFAULT_CONFIGURATION: ProductConfiguration = {
   productType: "terrace_roof",
+  frameColor: "anthracite",
   width: 306,
   length: 300,
   walls: "none",
@@ -67,4 +78,21 @@ export function getProductKind(
     configuration.productType ??
     (configuration.walls === "none" ? "terrace_roof" : "winter_garden")
   );
+}
+
+
+export function getFrameColor(
+  configuration: ProductConfiguration
+): FrameColor {
+  return configuration.frameColor ?? "anthracite";
+}
+
+export function getFrameColorLabel(color: FrameColor): string {
+  const labels: Record<FrameColor, string> = {
+    anthracite: "Antracyt RAL 7016",
+    white: "Biały",
+    brown: "Brązowy",
+  };
+
+  return labels[color];
 }
