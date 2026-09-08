@@ -121,7 +121,7 @@ function validateBitrixEvent(
   parsed: ParsedRequest,
   webhookUrl: string
 ): string | null {
-  if (parsed.event.toUpperCase() !== "ONCRMDEALUPDATE") {
+  if ((parsed.event ?? "").toUpperCase() !== "ONCRMDEALUPDATE") {
     return `Nieobsługiwane zdarzenie: ${parsed.event || "[puste]"}.`;
   }
 
