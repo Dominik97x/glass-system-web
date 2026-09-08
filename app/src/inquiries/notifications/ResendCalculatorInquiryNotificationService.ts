@@ -1,4 +1,5 @@
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import { createCalculatorInquiryQuotePdf } from "@/inquiries/pdf/CalculatorInquiryQuotePdf";
 import {
   createCalculatorInquiryCustomerMessage,
   createCalculatorInquiryNotificationMessage,
@@ -19,10 +20,17 @@ interface ResendEmailResponse {
   statusCode?: number;
 }
 
+interface ResendEmailAttachment {
+  filename: string;
+  content: string;
+  content_type?: string;
+}
+
 interface ResendEmailPayload {
   to: string[];
   message: CalculatorInquiryNotificationMessage;
   replyTo?: string;
+  attachments?: ResendEmailAttachment[];
 }
 
 export class ResendCalculatorInquiryNotificationService
@@ -40,30 +48,27 @@ export class ResendCalculatorInquiryNotificationService
     const customerMessage = createCalculatorInquiryCustomerMessage(lead);
     const businessReplyTo = this.config.to[0];
 
+    const internalEmailPromise = this.sendEmail({
+      to: this.config.to,
+      message: internalMessage,
+      replyTo: lead.customer.email,
+    }).then((responseId) => {
+      console.log("Calculator inquiry internal email sent:", {
+        inquiryId: lead.id,
+        provider: "resend",
+        responseId,
+      });
+    });
+
+    const customerEmailPromise = this.sendCustomerEmailWithPdf(
+      lead,
+      customerMessage,
+      businessReplyTo
+    );
+
     const results = await Promise.allSettled([
-      this.sendEmail({
-        to: this.config.to,
-        message: internalMessage,
-        replyTo: lead.customer.email,
-      }).then((responseId) => {
-        console.log("Calculator inquiry internal email sent:", {
-          inquiryId: lead.id,
-          provider: "resend",
-          responseId,
-        });
-      }),
-      this.sendEmail({
-        to: [lead.customer.email],
-        message: customerMessage,
-        replyTo: businessReplyTo,
-      }).then((responseId) => {
-        console.log("Calculator inquiry customer email sent:", {
-          inquiryId: lead.id,
-          customerEmail: lead.customer.email,
-          provider: "resend",
-          responseId,
-        });
-      }),
+      internalEmailPromise,
+      customerEmailPromise,
     ]);
 
     const errors = results
@@ -78,6 +83,36 @@ export class ResendCalculatorInquiryNotificationService
         `One or more calculator inquiry emails failed: ${errors.join(" | ")}`
       );
     }
+  }
+
+  private async sendCustomerEmailWithPdf(
+    lead: StoredCalculatorInquiryLead,
+    message: CalculatorInquiryNotificationMessage,
+    replyTo: string | undefined
+  ): Promise<void> {
+    const pdf = await createCalculatorInquiryQuotePdf(lead);
+
+    const responseId = await this.sendEmail({
+      to: [lead.customer.email],
+      message,
+      replyTo,
+      attachments: [
+        {
+          filename: pdf.filename,
+          content: Buffer.from(pdf.bytes).toString("base64"),
+          content_type: "application/pdf",
+        },
+      ],
+    });
+
+    console.log("Calculator inquiry customer email sent:", {
+      inquiryId: lead.id,
+      customerEmail: lead.customer.email,
+      provider: "resend",
+      responseId,
+      attachment: pdf.filename,
+      documentNumber: pdf.documentNumber,
+    });
   }
 
   private validateConfig(): void {
@@ -112,6 +147,9 @@ export class ResendCalculatorInquiryNotificationService
         text: payload.message.text,
         html: payload.message.html,
         ...(payload.replyTo ? { reply_to: payload.replyTo } : {}),
+        ...(payload.attachments && payload.attachments.length > 0
+          ? { attachments: payload.attachments }
+          : {}),
       }),
     });
 
