@@ -25,38 +25,6 @@ export interface CalculatorInquiryNotificationMessage {
   html: string;
 }
 
-export function createCalculatorInquiryNotificationMessage(
-  lead: StoredCalculatorInquiryLead
-): CalculatorInquiryNotificationMessage {
-  const quote = lead.quote as QuoteSnapshotForNotification;
-  const configuration = quote.configuration;
-  const productKind = configuration ? getProductKind(configuration) : null;
-  const totalGross = quote.totalGross ?? lead.quote.totalGross;
-  const items = normalizeQuoteItems(quote.items ?? []);
-
-  const subject = `Nowe zapytanie z kalkulatora: ${
-    lead.customer.name
-  } - ${formatOptionalMoney(totalGross)}`;
-
-  return {
-    subject,
-    text: createTextMessage({
-      lead,
-      configuration,
-      productKind,
-      totalGross,
-      items,
-    }),
-    html: createHtmlMessage({
-      lead,
-      configuration,
-      productKind,
-      totalGross,
-      items,
-    }),
-  };
-}
-
 interface MessageData {
   lead: StoredCalculatorInquiryLead;
   configuration: ProductConfiguration | undefined;
@@ -65,7 +33,52 @@ interface MessageData {
   items: NormalizedQuoteItem[];
 }
 
-function createTextMessage(data: MessageData): string {
+export function createCalculatorInquiryNotificationMessage(
+  lead: StoredCalculatorInquiryLead
+): CalculatorInquiryNotificationMessage {
+  const data = createMessageData(lead);
+
+  const subject = `Nowe zapytanie z kalkulatora: ${
+    lead.customer.name
+  } - ${formatOptionalMoney(data.totalGross)}`;
+
+  return {
+    subject,
+    text: createInternalTextMessage(data),
+    html: createInternalHtmlMessage(data),
+  };
+}
+
+export function createCalculatorInquiryCustomerMessage(
+  lead: StoredCalculatorInquiryLead
+): CalculatorInquiryNotificationMessage {
+  const data = createMessageData(lead);
+  const productLabel = formatProductKind(data.productKind);
+
+  return {
+    subject: `MoonGlass — podsumowanie konfiguracji: ${productLabel}`,
+    text: createCustomerTextMessage(data),
+    html: createCustomerHtmlMessage(data),
+  };
+}
+
+function createMessageData(lead: StoredCalculatorInquiryLead): MessageData {
+  const quote = lead.quote as QuoteSnapshotForNotification;
+  const configuration = quote.configuration;
+  const productKind = configuration ? getProductKind(configuration) : null;
+  const totalGross = quote.totalGross ?? lead.quote.totalGross;
+  const items = normalizeQuoteItems(quote.items ?? []);
+
+  return {
+    lead,
+    configuration,
+    productKind,
+    totalGross,
+    items,
+  };
+}
+
+function createInternalTextMessage(data: MessageData): string {
   return [
     "Nowe zapytanie z kalkulatora",
     "",
@@ -98,7 +111,7 @@ function createTextMessage(data: MessageData): string {
   ].join("\n");
 }
 
-function createHtmlMessage(data: MessageData): string {
+function createInternalHtmlMessage(data: MessageData): string {
   return `<!doctype html>
 <html lang="pl">
   <head>
@@ -163,6 +176,117 @@ function createHtmlMessage(data: MessageData): string {
 </html>`;
 }
 
+function createCustomerTextMessage(data: MessageData): string {
+  return [
+    `Dzień dobry ${data.lead.customer.name},`,
+    "",
+    "dziękujemy za przygotowanie konfiguracji w kalkulatorze MoonGlass.",
+    "Poniżej przesyłamy automatyczne podsumowanie zgłoszenia.",
+    "",
+    `Typ produktu: ${formatProductKind(data.productKind)}`,
+    `Szacunkowa wycena brutto: ${formatOptionalMoney(data.totalGross)}`,
+    "",
+    "Wybrana konfiguracja",
+    "--------------------",
+    ...createCustomerConfigurationLines(data.configuration),
+    "",
+    "Podsumowanie wyceny",
+    "-------------------",
+    ...createQuoteItemLines(data.items),
+    "",
+    "Co dalej?",
+    "Sprawdzimy konfigurację pod kątem technicznym i skontaktujemy się z Tobą, aby potwierdzić szczegóły realizacji.",
+    "",
+    "Podana kwota jest automatyczną wyceną kalkulatora i wymaga potwierdzenia po weryfikacji technicznej. Nie stanowi wiążącej oferty handlowej.",
+    "",
+    "W razie pytań odpowiedz bezpośrednio na tę wiadomość.",
+    "",
+    "MoonGlass",
+  ].join("\n");
+}
+
+function createCustomerHtmlMessage(data: MessageData): string {
+  const customerName = escapeHtml(data.lead.customer.name);
+  const productKind = escapeHtml(formatProductKind(data.productKind));
+  const totalGross = escapeHtml(formatOptionalMoney(data.totalGross));
+  return `<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Podsumowanie konfiguracji MoonGlass</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f0e7;font-family:Arial,Helvetica,sans-serif;color:#1c2925;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%;background:#f4f0e7;padding:28px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="width:680px;max-width:100%;background:#fffdf8;border:1px solid #ded8c9;border-radius:18px;overflow:hidden;">
+            <tr>
+              <td style="padding:32px 34px;background:#173d34;color:#ffffff;">
+                <div style="font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#d6bf86;">
+                  MoonGlass
+                </div>
+                <h1 style="margin:10px 0 0;font-size:27px;line-height:1.25;font-weight:600;">
+                  Dziękujemy za Twoją konfigurację
+                </h1>
+                <p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:#e8efec;">
+                  Dzień dobry ${customerName}. Otrzymaliśmy Twoje zapytanie i zapisaliśmy jego konfigurację.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:30px 34px 14px;">
+                <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8a7547;">
+                  Szacunkowa wycena brutto
+                </div>
+                <div style="margin-top:8px;font-size:32px;line-height:1.15;font-weight:700;color:#173d34;">
+                  ${totalGross}
+                </div>
+                <div style="margin-top:8px;font-size:14px;color:#68756f;">
+                  ${productKind}
+                </div>
+              </td>
+            </tr>
+
+            ${createCustomerHtmlConfigurationSection(data.configuration)}
+
+            ${createCustomerHtmlQuoteItemsSection(data.items)}
+
+            <tr>
+              <td style="padding:24px 34px;border-top:1px solid #ebe5d9;">
+                <h2 style="margin:0 0 10px;font-size:18px;color:#173d34;">Co dalej?</h2>
+                <p style="margin:0;font-size:14px;line-height:1.7;color:#43524c;">
+                  Sprawdzimy konfigurację pod kątem technicznym i skontaktujemy się z Tobą,
+                  aby potwierdzić szczegóły realizacji.
+                </p>
+                <p style="margin:14px 0 0;font-size:14px;line-height:1.7;color:#43524c;">
+                  Jeśli chcesz coś doprecyzować, po prostu odpowiedz na tę wiadomość.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:20px 34px;background:#f0eadf;color:#6d746f;font-size:12px;line-height:1.6;">
+                Podana kwota jest automatyczną wyceną kalkulatora i wymaga potwierdzenia po weryfikacji technicznej.
+                Nie stanowi wiążącej oferty handlowej.
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:22px 34px;background:#173d34;color:#dfe9e5;font-size:13px;line-height:1.6;">
+                <strong style="color:#ffffff;">MoonGlass</strong><br />
+                Nowoczesne zadaszenia tarasowe i ogrody zimowe.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
 function createConfigurationLines(
   configuration: ProductConfiguration | undefined
 ): string[] {
@@ -185,6 +309,48 @@ function createConfigurationLines(
     `Szczotki: ${formatBoolean(configuration.hasBrushes)}`,
     `Profil wyrównujący: ${formatBoolean(configuration.hasLevelingProfile)}`,
   ];
+}
+
+
+function createCustomerConfigurationLines(
+  configuration: ProductConfiguration | undefined
+): string[] {
+  if (!configuration) {
+    return ["Brak konfiguracji w zapytaniu."];
+  }
+
+  const lines = [
+    `Wymiary: ${configuration.length} x ${configuration.width} cm`,
+    `Kolor konstrukcji: ${getFrameColorLabel(getFrameColor(configuration))}`,
+    `Dach: ${formatRoof(configuration.roof)}`,
+    `Ściany: ${formatWalls(configuration.walls)}`,
+  ];
+
+  const selectedExtras = createSelectedExtras(configuration);
+
+  if (selectedExtras.length > 0) {
+    lines.push(`Wybrane dodatki: ${selectedExtras.join(", ")}`);
+  }
+
+  return lines;
+}
+
+function createSelectedExtras(
+  configuration: ProductConfiguration
+): string[] {
+  const extras: string[] = [];
+
+  if (configuration.hasFrontZip) extras.push("ZIP przód");
+  if (configuration.hasLeftZip) extras.push("ZIP lewy");
+  if (configuration.hasRightZip) extras.push("ZIP prawy");
+  if (configuration.hasAwning) extras.push("Markiza");
+  if (configuration.hasLed) extras.push("LED");
+  if (configuration.hasCob) extras.push("LED CCT");
+  if (configuration.hasHandles) extras.push("Uchwyty");
+  if (configuration.hasBrushes) extras.push("Szczotki");
+  if (configuration.hasLevelingProfile) extras.push("Profil wyrównujący");
+
+  return extras;
 }
 
 function createQuoteItemLines(items: NormalizedQuoteItem[]): string[] {
@@ -225,6 +391,31 @@ function createHtmlConfigurationSection(
     ["Szczotki", formatBoolean(configuration.hasBrushes)],
     ["Profil wyrównujący", formatBoolean(configuration.hasLevelingProfile)],
   ]);
+}
+
+function createCustomerHtmlConfigurationSection(
+  configuration: ProductConfiguration | undefined
+): string {
+  if (!configuration) {
+    return createCustomerHtmlRowsSection("Wybrana konfiguracja", [
+      ["Konfiguracja", "Brak konfiguracji w zapytaniu."],
+    ]);
+  }
+
+  const rows: Array<[label: string, value: string]> = [
+    ["Wymiary", `${configuration.length} × ${configuration.width} cm`],
+    ["Kolor konstrukcji", getFrameColorLabel(getFrameColor(configuration))],
+    ["Dach", formatRoof(configuration.roof)],
+    ["Ściany", formatWalls(configuration.walls)],
+  ];
+
+  const selectedExtras = createSelectedExtras(configuration);
+
+  if (selectedExtras.length > 0) {
+    rows.push(["Wybrane dodatki", selectedExtras.join(", ")]);
+  }
+
+  return createCustomerHtmlRowsSection("Wybrana konfiguracja", rows);
 }
 
 function createHtmlQuoteItemsSection(items: NormalizedQuoteItem[]): string {
@@ -275,6 +466,38 @@ function createHtmlQuoteItemsSection(items: NormalizedQuoteItem[]): string {
     </tr>`;
 }
 
+function createCustomerHtmlQuoteItemsSection(
+  items: NormalizedQuoteItem[]
+): string {
+  if (items.length === 0) {
+    return "";
+  }
+
+  const rows = items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid #ebe5d9;color:#273b34;">
+            ${escapeHtml(item.name)}
+          </td>
+          <td align="right" style="padding:10px 0;border-bottom:1px solid #ebe5d9;color:#173d34;font-weight:700;white-space:nowrap;">
+            ${escapeHtml(formatOptionalMoney(item.totalGross))}
+          </td>
+        </tr>`
+    )
+    .join("");
+
+  return `
+    <tr>
+      <td style="padding:24px 34px;border-top:1px solid #ebe5d9;">
+        <h2 style="margin:0 0 12px;font-size:18px;color:#173d34;">Podsumowanie wyceny</h2>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
+          <tbody>${rows}</tbody>
+        </table>
+      </td>
+    </tr>`;
+}
+
 function createHtmlSection(
   title: string,
   rows: Array<[label: string, value: string]>
@@ -299,6 +522,37 @@ function createHtmlSection(
         <h2 style="margin:0 0 12px;font-size:18px;color:#111827;">${escapeHtml(
           title
         )}</h2>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="font-size:14px;">
+          ${htmlRows}
+        </table>
+      </td>
+    </tr>`;
+}
+
+function createCustomerHtmlRowsSection(
+  title: string,
+  rows: Array<[label: string, value: string]>
+): string {
+  const htmlRows = rows
+    .map(
+      ([label, value]) => `
+        <tr>
+          <td style="padding:7px 0;color:#7b837f;width:210px;vertical-align:top;">
+            ${escapeHtml(label)}
+          </td>
+          <td style="padding:7px 0;color:#273b34;font-weight:600;">
+            ${escapeHtml(value)}
+          </td>
+        </tr>`
+    )
+    .join("");
+
+  return `
+    <tr>
+      <td style="padding:24px 34px;border-top:1px solid #ebe5d9;">
+        <h2 style="margin:0 0 12px;font-size:18px;color:#173d34;">
+          ${escapeHtml(title)}
+        </h2>
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="font-size:14px;">
           ${htmlRows}
         </table>
@@ -392,7 +646,7 @@ function formatProductKind(productKind: string | null): string {
     return "Ogród zimowy";
   }
 
-  return "Nieznany";
+  return "Konfiguracja MoonGlass";
 }
 
 function formatRoof(roof: ProductConfiguration["roof"]): string {
