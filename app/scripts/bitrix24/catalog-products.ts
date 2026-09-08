@@ -133,7 +133,7 @@ const variants: ProductVariantDefinition[] = [
     field: "zipRightNet",
     skuPart: "ZIP-SIDE",
     name: "Roleta ZIP boczna",
-    sectionKey: "zip",
+    sectionKey: "zip_side",
   },
   {
     family: "zip_front",
@@ -141,7 +141,7 @@ const variants: ProductVariantDefinition[] = [
     field: "zipFrontNet",
     skuPart: "ZIP-FRONT",
     name: "Roleta ZIP front",
-    sectionKey: "zip",
+    sectionKey: "zip_front",
   },
   {
     family: "awning",
@@ -157,7 +157,7 @@ const variants: ProductVariantDefinition[] = [
     field: "levelingProfileNet",
     skuPart: "FOUNDATION",
     name: "Fundament / profil poziomujący",
-    sectionKey: "foundation",
+    sectionKey: "foundation_profiles",
   },
   {
     family: "led_point",
@@ -165,7 +165,7 @@ const variants: ProductVariantDefinition[] = [
     field: "ledSpotNet",
     skuPart: "LED-POINT",
     name: "Oświetlenie LED punktowe",
-    sectionKey: "lighting",
+    sectionKey: "lighting_point",
   },
   {
     family: "brushes",
@@ -173,7 +173,7 @@ const variants: ProductVariantDefinition[] = [
     field: "brushesNet",
     skuPart: "BRUSHES",
     name: "Zestaw szczotek przeciwkurzowych",
-    sectionKey: "accessories",
+    sectionKey: "accessories_brushes",
   },
   {
     family: "handles",
@@ -181,7 +181,7 @@ const variants: ProductVariantDefinition[] = [
     field: "handlesNet",
     skuPart: "HANDLES",
     name: "Zestaw uchwytów",
-    sectionKey: "accessories",
+    sectionKey: "accessories_handles",
   },
   {
     family: "carriers",
@@ -189,7 +189,7 @@ const variants: ProductVariantDefinition[] = [
     field: "carriersNet",
     skuPart: "CARRIERS",
     name: "Zabieraki do ścian przesuwnych",
-    sectionKey: "accessories",
+    sectionKey: "accessories_carriers",
   },
 ];
 
@@ -273,7 +273,7 @@ export function buildPublishedCatalogProducts(
     addProduct(products, duplicateSkus, invalidPrices, {
       sku: core.sku,
       name: core.name,
-      sectionKey: core.sectionKey,
+      sectionKey: resolveGeneratedSectionKey(core.sectionKey, core.family),
       // ProductBlueprint.priceGross to historyczna nazwa pola w importerze D4.
       // W katalogu D4.2 przechowujemy tutaj kanoniczną cenę NETTO.
       priceGross: core.priceNet,
@@ -289,7 +289,7 @@ export function buildPublishedCatalogProducts(
     addProduct(products, duplicateSkus, invalidPrices, {
       sku: addon.sku,
       name: addon.name,
-      sectionKey: addon.sectionKey,
+      sectionKey: resolveGeneratedSectionKey(addon.sectionKey, addon.family),
       // ProductBlueprint.priceGross to historyczna nazwa pola w importerze D4.
       // Od D4.1 przechowujemy tutaj kanoniczną cenę katalogową NETTO.
       priceGross: addon.priceNet,
@@ -406,6 +406,40 @@ function buildCrmAddonDescription(addon: CrmCatalogAddon): string {
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+
+function resolveGeneratedSectionKey(sectionKey: string, family: string): string {
+  const byFamily: Record<string, string> = {
+    terrace_roof_poly: "terrace_roofs_poly",
+    terrace_roof_glass: "terrace_roofs_glass",
+    winter_garden_poly: "winter_gardens_poly",
+    winter_garden_glass: "winter_gardens_glass",
+    installation_terrace_roof: "terrace_roofs_installation",
+    installation_winter_garden: "winter_gardens_installation",
+    roof_poly_color_surcharge: "roof_poly_colored",
+    roof_glass_color_surcharge: "roof_glass_colored",
+    wall_glass_tint_surcharge: "walls_tinted",
+    led_rgb_cct: "lighting_rgb_cct",
+
+    crm_foundation: "foundation",
+    crm_sliding_clear: "sliding_complete",
+    crm_sliding_milky_surcharge: "sliding_surcharges",
+    crm_sliding_tinted_surcharge: "sliding_surcharges",
+    crm_triangle_material: "side_triangles",
+    crm_triangle_h_profile: "side_triangles",
+    crm_rafter_poly: "service_elements_general",
+    crm_rafter_glass: "service_elements_general",
+    crm_post: "service_elements_general",
+    crm_accessory: "service_elements_general",
+  };
+
+  const resolved = byFamily[family];
+  if (resolved) return resolved;
+
+  // Zachowujemy kompatybilność z przyszłymi rekordami, ale nie maskujemy
+  // znanych rodzin przez nieprecyzyjny sectionKey.
+  return sectionKey;
 }
 
 function addProduct(

@@ -314,10 +314,19 @@ export class Bitrix24Provisioner {
         message: "Nie znaleziono katalogu handlowego. Sekcje i produkty nie zostaną utworzone, dopóki katalog CRM nie będzie dostępny.",
       });
     } else {
+      const sectionByKey = new Map<string, BitrixCatalogSection>();
+
       for (const section of MOONGLASS_BLUEPRINT.catalogSections) {
-        const existing = currentAudit.sections.find(
-          (item) => item.xmlId === section.xmlId || item.code === section.code
+        const existing = findCatalogSection(
+          currentAudit.sections,
+          section,
+          sectionByKey
         );
+
+        if (existing) {
+          sectionByKey.set(section.key, existing);
+        }
+
         if (!existing) {
           actions.push({
             kind: "create",
@@ -385,8 +394,10 @@ export class Bitrix24Provisioner {
 
     const sectionMap = new Map<string, BitrixCatalogSection>();
     for (const desired of MOONGLASS_BLUEPRINT.catalogSections) {
-      const existing = audit.sections.find(
-        (item) => item.xmlId === desired.xmlId || item.code === desired.code
+      const existing = findCatalogSection(
+        audit.sections,
+        desired,
+        sectionMap
       );
       if (existing) sectionMap.set(desired.key, existing);
     }
@@ -756,8 +767,10 @@ export class Bitrix24Provisioner {
         throw new Error(`Nie znaleziono sekcji nadrzędnej ${desired.parentKey}.`);
       }
 
-      let existing = existingSections.find(
-        (item) => item.xmlId === desired.xmlId || item.code === desired.code
+      let existing = findCatalogSection(
+        existingSections,
+        desired,
+        sectionByKey
       );
       if (existing) {
         if (
@@ -1275,6 +1288,41 @@ function chooseCatalogIblockId(catalogs: BitrixCatalog[]): number | undefined {
   return undefined;
 }
 
+function findCatalogSection(
+  sections: BitrixCatalogSection[],
+  desired: (typeof MOONGLASS_BLUEPRINT.catalogSections)[number],
+  sectionByKey: Map<string, BitrixCatalogSection>
+): BitrixCatalogSection | undefined {
+  const parentId = desired.parentKey
+    ? sectionByKey.get(desired.parentKey)?.id
+    : undefined;
+
+  if (desired.parentKey && !parentId) {
+    return undefined;
+  }
+
+  return sections.find((item) => {
+    // XML_ID jest docelowym, stabilnym identyfikatorem zarządzanych sekcji.
+    // Jeżeli istnieje i pasuje, traktujemy sekcję jako tę samą niezależnie
+    // od bieżącej nazwy lub kodu.
+    if (item.xmlId && item.xmlId === desired.xmlId) {
+      return true;
+    }
+
+    // Aktualny katalog MoonGlass ma wiele sekcji z tym samym code, np.
+    // „poliweglan”, „szklo” i „montaz” w różnych gałęziach. Dlatego
+    // dopasowanie po code musi dodatkowo uwzględniać sekcję nadrzędną.
+    if (item.code !== desired.code) {
+      return false;
+    }
+
+    const actualParentId = Number(item.iblockSectionId ?? 0);
+    const expectedParentId = Number(parentId ?? 0);
+
+    return actualParentId === expectedParentId;
+  });
+}
+
 function buildMapping(
   audit: PortalAudit,
   knownCategories: Record<string, BitrixCategory> = {}
@@ -1341,11 +1389,17 @@ function buildMapping(
   const iblockId = chooseCatalogIblockId(audit.catalogs);
   if (iblockId) {
     mapping.catalog = { iblockId, sections: {}, products: {} };
+    const sectionByKey = new Map<string, BitrixCatalogSection>();
+
     for (const desired of MOONGLASS_BLUEPRINT.catalogSections) {
-      const found = audit.sections.find(
-        (item) => item.xmlId === desired.xmlId || item.code === desired.code
+      const found = findCatalogSection(
+        audit.sections,
+        desired,
+        sectionByKey
       );
+
       if (found) {
+        sectionByKey.set(desired.key, found);
         mapping.catalog.sections[desired.key] = {
           id: found.id,
           name: found.name,

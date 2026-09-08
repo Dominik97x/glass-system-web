@@ -367,24 +367,67 @@ const userFields: UserFieldBlueprint[] = [
 ];
 
 const catalogSections: CatalogSectionBlueprint[] = [
-  { key: "construction", name: "01 Konstrukcje", code: "mg-construction", xmlId: "MOONGLASS_SECTION_CONSTRUCTION", sort: 100 },
-  { key: "winter_gardens", name: "Ogrody zimowe", code: "mg-winter-gardens", xmlId: "MOONGLASS_SECTION_WINTER_GARDENS", sort: 110, parentKey: "construction" },
-  { key: "terrace_roofs", name: "Zadaszenia tarasowe", code: "mg-terrace-roofs", xmlId: "MOONGLASS_SECTION_TERRACE_ROOFS", sort: 120, parentKey: "construction" },
-  { key: "roof", name: "02 Pokrycia dachu", code: "mg-roof", xmlId: "MOONGLASS_SECTION_ROOF", sort: 200 },
-  { key: "roof_poly", name: "Poliwęglan", code: "mg-roof-poly", xmlId: "MOONGLASS_SECTION_ROOF_POLY", sort: 210, parentKey: "roof" },
-  { key: "roof_glass", name: "Szkło dachowe", code: "mg-roof-glass", xmlId: "MOONGLASS_SECTION_ROOF_GLASS", sort: 220, parentKey: "roof" },
-  { key: "walls", name: "03 Ściany i systemy przesuwne", code: "mg-walls", xmlId: "MOONGLASS_SECTION_WALLS", sort: 300 },
-  { key: "zip", name: "04 Rolety ZIP", code: "mg-zip", xmlId: "MOONGLASS_SECTION_ZIP", sort: 400 },
-  { key: "awning", name: "05 Markizy", code: "mg-awning", xmlId: "MOONGLASS_SECTION_AWNING", sort: 500 },
-  { key: "lighting", name: "06 Oświetlenie", code: "mg-lighting", xmlId: "MOONGLASS_SECTION_LIGHTING", sort: 600 },
-  { key: "foundation", name: "07 Fundamenty i profile", code: "mg-foundation", xmlId: "MOONGLASS_SECTION_FOUNDATION", sort: 700 },
-  { key: "accessories", name: "08 Akcesoria", code: "mg-accessories", xmlId: "MOONGLASS_SECTION_ACCESSORIES", sort: 800 },
-  { key: "services", name: "09 Montaż i usługi", code: "mg-services", xmlId: "MOONGLASS_SECTION_SERVICES", sort: 900 },
-  { key: "custom", name: "99 Wyceny indywidualne", code: "mg-custom", xmlId: "MOONGLASS_SECTION_CUSTOM", sort: 9900 },
+  // Główne gałęzie aktualnego katalogu Bitrix24.
+  { key: "crm_custom_service", name: "CRM — NIETYPOWE / SERWIS", code: "crm-nietypowe-serwis", xmlId: "MOONGLASS_SECTION_CRM_CUSTOM_SERVICE", sort: 100 },
+  { key: "terrace_roofs", name: "ZADASZENIA", code: "zadaszenia", xmlId: "MOONGLASS_SECTION_TERRACE_ROOFS", sort: 200 },
+  { key: "winter_gardens", name: "OGRODY ZIMOWE", code: "ogrody-zimowe", xmlId: "MOONGLASS_SECTION_WINTER_GARDENS", sort: 300 },
+  { key: "addons", name: "DODATKI", code: "dodatki", xmlId: "MOONGLASS_SECTION_ADDONS", sort: 400 },
+
+  // ZADASZENIA
+  { key: "terrace_roofs_poly", name: "Poliwęglan", code: "poliweglan", xmlId: "MOONGLASS_SECTION_TERRACE_ROOFS_POLY", sort: 100, parentKey: "terrace_roofs" },
+  { key: "terrace_roofs_glass", name: "Szkło", code: "szklo", xmlId: "MOONGLASS_SECTION_TERRACE_ROOFS_GLASS", sort: 200, parentKey: "terrace_roofs" },
+  { key: "terrace_roofs_installation", name: "Montaż", code: "montaz", xmlId: "MOONGLASS_SECTION_TERRACE_ROOFS_INSTALLATION", sort: 300, parentKey: "terrace_roofs" },
+
+  // OGRODY ZIMOWE
+  { key: "winter_gardens_poly", name: "Poliwęglan", code: "poliweglan", xmlId: "MOONGLASS_SECTION_WINTER_GARDENS_POLY", sort: 100, parentKey: "winter_gardens" },
+  { key: "winter_gardens_glass", name: "Szkło", code: "szklo", xmlId: "MOONGLASS_SECTION_WINTER_GARDENS_GLASS", sort: 200, parentKey: "winter_gardens" },
+  { key: "winter_gardens_installation", name: "Montaż", code: "montaz", xmlId: "MOONGLASS_SECTION_WINTER_GARDENS_INSTALLATION", sort: 300, parentKey: "winter_gardens" },
+
+  // DODATKI / Pokrycie dachu
+  { key: "roof", name: "Pokrycie dachu", code: "pokrycie-dachu", xmlId: "MOONGLASS_SECTION_ROOF", sort: 100, parentKey: "addons" },
+  { key: "roof_poly_colored", name: "Poliwęglan barwiony", code: "poliweglan-barwiony", xmlId: "MOONGLASS_SECTION_ROOF_POLY_COLORED", sort: 100, parentKey: "roof" },
+  { key: "roof_glass_colored", name: "Szkło barwione-mleczne", code: "szklo-barwione-mleczne", xmlId: "MOONGLASS_SECTION_ROOF_GLASS_COLORED", sort: 200, parentKey: "roof" },
+
+  // DODATKI / Ściany
+  { key: "walls", name: "Ściany", code: "sciany", xmlId: "MOONGLASS_SECTION_WALLS", sort: 200, parentKey: "addons" },
+  { key: "walls_tinted", name: "Szkło przyciemniane", code: "szklo-przyciemniane", xmlId: "MOONGLASS_SECTION_WALLS_TINTED", sort: 100, parentKey: "walls" },
+
+  // DODATKI / Rolety ZIP
+  { key: "zip", name: "Rolety ZIP", code: "rolety-zip", xmlId: "MOONGLASS_SECTION_ZIP", sort: 300, parentKey: "addons" },
+  { key: "zip_side", name: "Boczna", code: "boczna", xmlId: "MOONGLASS_SECTION_ZIP_SIDE", sort: 100, parentKey: "zip" },
+  { key: "zip_front", name: "Przednia", code: "przednia", xmlId: "MOONGLASS_SECTION_ZIP_FRONT", sort: 200, parentKey: "zip" },
+
+  // DODATKI / Markizy
+  { key: "awning", name: "Markizy", code: "markizy", xmlId: "MOONGLASS_SECTION_AWNING", sort: 400, parentKey: "addons" },
+
+  // DODATKI / Fundamenty
+  { key: "foundation", name: "Fundamenty", code: "fundamenty", xmlId: "MOONGLASS_SECTION_FOUNDATION", sort: 500, parentKey: "addons" },
+  { key: "foundation_profiles", name: "Profile", code: "profile", xmlId: "MOONGLASS_SECTION_FOUNDATION_PROFILES", sort: 100, parentKey: "foundation" },
+
+  // DODATKI / Oświetlenie
+  { key: "lighting", name: "Oświetlenie", code: "oswietlenie", xmlId: "MOONGLASS_SECTION_LIGHTING", sort: 600, parentKey: "addons" },
+  { key: "lighting_point", name: "LED punktowe", code: "led-punktowe", xmlId: "MOONGLASS_SECTION_LIGHTING_POINT", sort: 100, parentKey: "lighting" },
+  { key: "lighting_rgb_cct", name: "LED RGB CCT", code: "led-rgb-cct", xmlId: "MOONGLASS_SECTION_LIGHTING_RGB_CCT", sort: 200, parentKey: "lighting" },
+  { key: "lighting_cct", name: "LED CCT", code: "led-cct", xmlId: "MOONGLASS_SECTION_LIGHTING_CCT", sort: 300, parentKey: "lighting" },
+
+  // DODATKI / Akcesoria
+  { key: "accessories", name: "Akcesoria", code: "akcesoria", xmlId: "MOONGLASS_SECTION_ACCESSORIES", sort: 700, parentKey: "addons" },
+  { key: "accessories_brushes", name: "Szczotki", code: "szczotki", xmlId: "MOONGLASS_SECTION_ACCESSORIES_BRUSHES", sort: 100, parentKey: "accessories" },
+  { key: "accessories_handles", name: "Uchwyty", code: "uchwyty", xmlId: "MOONGLASS_SECTION_ACCESSORIES_HANDLES", sort: 200, parentKey: "accessories" },
+  { key: "accessories_carriers", name: "Zabieraki", code: "zabieraki", xmlId: "MOONGLASS_SECTION_ACCESSORIES_CARRIERS", sort: 300, parentKey: "accessories" },
+
+  // CRM — NIETYPOWE / SERWIS
+  { key: "sliding_systems", name: "Systemy przesuwne", code: "systemy-przesuwne", xmlId: "MOONGLASS_SECTION_SLIDING_SYSTEMS", sort: 100, parentKey: "crm_custom_service" },
+  { key: "sliding_complete", name: "Komplet ze szkłem", code: "komplet-ze-szklem", xmlId: "MOONGLASS_SECTION_SLIDING_COMPLETE", sort: 100, parentKey: "sliding_systems" },
+  { key: "sliding_surcharges", name: "Dopłaty szkła", code: "doplaty-szkla", xmlId: "MOONGLASS_SECTION_SLIDING_SURCHARGES", sort: 200, parentKey: "sliding_systems" },
+  { key: "side_triangles", name: "Trójkąty boczne", code: "trojkaty-boczne", xmlId: "MOONGLASS_SECTION_SIDE_TRIANGLES", sort: 200, parentKey: "crm_custom_service" },
+  { key: "service_parts", name: "Części i elementy serwisowe", code: "czesci-i-elementy-serwisowe", xmlId: "MOONGLASS_SECTION_SERVICE_PARTS", sort: 300, parentKey: "crm_custom_service" },
+  { key: "service_elements_general", name: "Elementy ogólne", code: "elementy-ogolne", xmlId: "MOONGLASS_SECTION_SERVICE_ELEMENTS_GENERAL", sort: 100, parentKey: "service_parts" },
+  { key: "service_installation_surcharges", name: "Dopłaty montażowe / dojazd", code: "doplaty-montazowe-dojazd", xmlId: "MOONGLASS_SECTION_SERVICE_INSTALLATION_SURCHARGES", sort: 400, parentKey: "crm_custom_service" },
 ];
 
 export const MOONGLASS_BLUEPRINT: ProvisioningBlueprint = {
-  version: "2026-08-05.4",
+  version: "2026-09-08.1",
   portalLabel: "MoonGlass",
   dealEntityTypeId: 2,
   pipelines: [salesPipeline, realizationPipeline, complaintsPipeline],
