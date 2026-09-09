@@ -5,6 +5,7 @@ export interface SubmitCalculatorInquiryResult {
   message: string;
   inquiryId?: string;
   totalGross?: number;
+  customerEmailSent?: boolean;
 }
 
 export class CalculatorInquiryService {

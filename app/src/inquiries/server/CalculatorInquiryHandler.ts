@@ -1,7 +1,10 @@
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 import { getQuoteSnapshotWebsiteTotalGross } from "@/lib/quote-snapshot";
-import type { CalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationService";
+import type {
+  CalculatorInquiryNotificationResult,
+  CalculatorInquiryNotificationService,
+} from "../notifications/CalculatorInquiryNotificationService";
 import { createCalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationServiceFactory";
 import type { CalculatorInquiryRepository } from "../repositories/CalculatorInquiryRepository";
 import { CalculatorInquiryBitrix24SyncService } from "../sync/CalculatorInquiryBitrix24SyncService";
@@ -12,6 +15,7 @@ export interface CalculatorInquiryHandlerResult {
   inquiryId: string;
   message: string;
   totalGross: number;
+  customerEmailSent: boolean;
 }
 
 export class CalculatorInquiryHandler {
@@ -32,7 +36,9 @@ export class CalculatorInquiryHandler {
     const storedLead = createStoredCalculatorInquiryLead(trustedLead);
 
     await this.repository.save(storedLead);
-    await this.notifySafely(storedLead);
+
+    const notificationResult = await this.notifySafely(storedLead);
+
     await this.syncBitrix24Safely(storedLead.id);
 
     const websiteTotalGross = getQuoteSnapshotWebsiteTotalGross(
@@ -44,6 +50,7 @@ export class CalculatorInquiryHandler {
       inquiryId: storedLead.id,
       message: `Zapytanie zostało przyjęte. Numer zapytania: ${storedLead.id}. Zweryfikowana wartość konfiguracji: ${websiteTotalGross.toLocaleString("pl-PL")} zł.`,
       totalGross: websiteTotalGross,
+      customerEmailSent: notificationResult.customerEmailSent,
     };
   }
 
@@ -60,14 +67,19 @@ export class CalculatorInquiryHandler {
 
   private async notifySafely(
     lead: StoredCalculatorInquiryLead
-  ): Promise<void> {
+  ): Promise<CalculatorInquiryNotificationResult> {
     try {
-      await this.notificationService.notify(lead);
+      return await this.notificationService.notify(lead);
     } catch (error) {
       console.error("Calculator inquiry notification failed:", {
         inquiryId: lead.id,
         error,
       });
+
+      return {
+        internalEmailSent: false,
+        customerEmailSent: false,
+      };
     }
   }
 }

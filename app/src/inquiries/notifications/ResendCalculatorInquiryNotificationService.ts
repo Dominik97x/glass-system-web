@@ -5,7 +5,10 @@ import {
   createCalculatorInquiryNotificationMessage,
   type CalculatorInquiryNotificationMessage,
 } from "./CalculatorInquiryNotificationMessage";
-import type { CalculatorInquiryNotificationService } from "./CalculatorInquiryNotificationService";
+import type {
+  CalculatorInquiryNotificationResult,
+  CalculatorInquiryNotificationService,
+} from "./CalculatorInquiryNotificationService";
 
 interface ResendCalculatorInquiryNotificationConfig {
   apiKey?: string;
@@ -41,7 +44,9 @@ export class ResendCalculatorInquiryNotificationService
       getResendCalculatorInquiryNotificationConfig()
   ) {}
 
-  async notify(lead: StoredCalculatorInquiryLead): Promise<void> {
+  async notify(
+    lead: StoredCalculatorInquiryLead
+  ): Promise<CalculatorInquiryNotificationResult> {
     this.validateConfig();
 
     const internalMessage = createCalculatorInquiryNotificationMessage(lead);
@@ -66,23 +71,30 @@ export class ResendCalculatorInquiryNotificationService
       businessReplyTo
     );
 
-    const results = await Promise.allSettled([
+    const [internalResult, customerResult] = await Promise.allSettled([
       internalEmailPromise,
       customerEmailPromise,
     ]);
 
-    const errors = results
-      .filter(
-        (result): result is PromiseRejectedResult =>
-          result.status === "rejected"
-      )
-      .map((result) => formatUnknownError(result.reason));
-
-    if (errors.length > 0) {
-      throw new Error(
-        `One or more calculator inquiry emails failed: ${errors.join(" | ")}`
-      );
+    if (internalResult.status === "rejected") {
+      console.error("Calculator inquiry internal email failed:", {
+        inquiryId: lead.id,
+        error: internalResult.reason,
+      });
     }
+
+    if (customerResult.status === "rejected") {
+      console.error("Calculator inquiry customer email failed:", {
+        inquiryId: lead.id,
+        customerEmail: lead.customer.email,
+        error: customerResult.reason,
+      });
+    }
+
+    return {
+      internalEmailSent: internalResult.status === "fulfilled",
+      customerEmailSent: customerResult.status === "fulfilled",
+    };
   }
 
   private async sendCustomerEmailWithPdf(
@@ -133,7 +145,9 @@ export class ResendCalculatorInquiryNotificationService
     }
   }
 
-  private async sendEmail(payload: ResendEmailPayload): Promise<string | undefined> {
+  private async sendEmail(
+    payload: ResendEmailPayload
+  ): Promise<string | undefined> {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -203,8 +217,4 @@ function createResendErrorMessage(
   const message = data.message ?? "No error message returned by Resend.";
 
   return `Resend email notification failed. HTTP status: ${status}. Error: ${name}. Message: ${message}`;
-}
-
-function formatUnknownError(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
 }

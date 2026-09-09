@@ -9,6 +9,7 @@ interface SubmitCalculatorInquiryResponse {
   message: string;
   inquiryId?: string;
   totalGross?: number;
+  customerEmailSent?: boolean;
 }
 
 export const runtime = "nodejs";

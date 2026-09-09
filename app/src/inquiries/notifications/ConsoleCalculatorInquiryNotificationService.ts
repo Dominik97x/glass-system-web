@@ -3,12 +3,17 @@ import {
   createCalculatorInquiryCustomerMessage,
   createCalculatorInquiryNotificationMessage,
 } from "./CalculatorInquiryNotificationMessage";
-import type { CalculatorInquiryNotificationService } from "./CalculatorInquiryNotificationService";
+import type {
+  CalculatorInquiryNotificationResult,
+  CalculatorInquiryNotificationService,
+} from "./CalculatorInquiryNotificationService";
 
 export class ConsoleCalculatorInquiryNotificationService
   implements CalculatorInquiryNotificationService
 {
-  async notify(lead: StoredCalculatorInquiryLead): Promise<void> {
+  async notify(
+    lead: StoredCalculatorInquiryLead
+  ): Promise<CalculatorInquiryNotificationResult> {
     const internalMessage = createCalculatorInquiryNotificationMessage(lead);
     const customerMessage = createCalculatorInquiryCustomerMessage(lead);
 
@@ -23,5 +28,10 @@ export class ConsoleCalculatorInquiryNotificationService
     console.log("Customer subject:", customerMessage.subject);
     console.log("");
     console.log(customerMessage.text);
+
+    return {
+      internalEmailSent: false,
+      customerEmailSent: false,
+    };
   }
 }

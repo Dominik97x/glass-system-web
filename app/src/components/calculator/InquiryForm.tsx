@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { Quote } from "@/domain/Quote";
@@ -31,6 +31,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customerEmailSent, setCustomerEmailSent] = useState(false);
 
   function updateField(field: keyof InquiryFormState, value: string) {
     setForm((currentForm) => ({
@@ -39,11 +40,14 @@ export function InquiryForm({ quote, onCancel }: Props) {
     }));
 
     setSubmitMessage(null);
-    setIsSubmitted(false);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (isSubmitting || isSubmitted) {
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitMessage(null);
@@ -61,16 +65,32 @@ export function InquiryForm({ quote, onCancel }: Props) {
     try {
       const result = await inquiryService.submit(submission);
 
+      if (result.success) {
+        setCustomerEmailSent(result.customerEmailSent === true);
+        setIsSubmitted(true);
+        return;
+      }
+
       setSubmitMessage(result.message);
-      setIsSubmitted(result.success);
     } catch {
       setSubmitMessage(
         "Nie udało się przygotować zapytania. Spróbuj ponownie później."
       );
-      setIsSubmitted(false);
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (isSubmitted) {
+    return (
+      <InquirySuccess
+        name={form.name}
+        email={form.email}
+        totalGross={quote.totalGross}
+        customerEmailSent={customerEmailSent}
+        onBack={onCancel}
+      />
+    );
   }
 
   return (
@@ -142,28 +162,32 @@ export function InquiryForm({ quote, onCancel }: Props) {
 
       {submitMessage ? (
         <div
-          className={[
-            "rounded-2xl border px-4 py-3 text-sm leading-6",
-            isSubmitted
-              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-              : "border-red-200 bg-red-50 text-red-900",
-          ].join(" ")}
+          role="alert"
+          className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-900"
         >
-          {submitMessage}
+          <div className="font-bold">Nie udało się wysłać zapytania.</div>
+          <div className="mt-1">{submitMessage}</div>
         </div>
       ) : null}
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <button
           type="submit"
-          disabled={isSubmitting || isSubmitted}
-          className="rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500 disabled:shadow-none"
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+          className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500 disabled:shadow-none"
         >
-          {isSubmitting
-            ? "Wysyłanie..."
-            : isSubmitted
-              ? "Wysłano"
-              : "Wyślij zapytanie"}
+          {isSubmitting ? (
+            <>
+              <span
+                aria-hidden="true"
+                className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-500 border-t-transparent"
+              />
+              Wysyłanie...
+            </>
+          ) : (
+            "Wyślij zapytanie"
+          )}
         </button>
 
         <button
@@ -177,18 +201,102 @@ export function InquiryForm({ quote, onCancel }: Props) {
       </div>
 
       <div className="rounded-2xl bg-white/70 p-4 text-xs leading-5 text-emerald-900/70 ring-1 ring-emerald-100">
-        Zapytanie zostanie zapisane w aktywnym repozytorium leadów. W zależności
-        od konfiguracji może to być lokalny plik, baza danych Postgres/Neon albo
-        integracja CRM.
+        Po wysłaniu zapytania zapiszemy Twoją konfigurację. Na podany adres
+        e-mail wyślemy podsumowanie wraz z dokumentem PDF, jeśli automatyczna
+        wysyłka przebiegnie poprawnie.
       </div>
     </form>
+  );
+}
+
+interface InquirySuccessProps {
+  name: string;
+  email: string;
+  totalGross: number;
+  customerEmailSent: boolean;
+  onBack(): void;
+}
+
+function InquirySuccess({
+  name,
+  email,
+  totalGross,
+  customerEmailSent,
+  onBack,
+}: InquirySuccessProps) {
+  return (
+    <div className="overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl shadow-emerald-950/5">
+      <div className="bg-[#173d34] px-6 py-7 text-white sm:px-8">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#d6bf86] text-2xl font-black text-[#173d34]">
+          ✓
+        </div>
+
+        <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#d6bf86]">
+          MoonGlass
+        </p>
+
+        <h5 className="mt-2 text-2xl font-semibold">
+          Zapytanie zostało wysłane
+        </h5>
+
+        <p className="mt-3 max-w-xl text-sm leading-6 text-emerald-50/80">
+          Dziękujemy{name.trim() ? `, ${name.trim()}` : ""}. Otrzymaliśmy Twoją
+          konfigurację o wartości szacunkowej{" "}
+          <strong className="text-white">
+            {totalGross.toLocaleString("pl-PL")} zł
+          </strong>
+          .
+        </p>
+      </div>
+
+      <div className="space-y-5 p-6 sm:p-8">
+        {customerEmailSent ? (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-emerald-700">
+              Podsumowanie wysłane
+            </p>
+            <p className="mt-2 text-sm leading-6 text-emerald-950">
+              Na adres <strong className="break-all">{email}</strong> wysłaliśmy
+              podsumowanie konfiguracji oraz dokument PDF z wyceną.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">
+              Zgłoszenie jest zapisane
+            </p>
+            <p className="mt-2 text-sm leading-6 text-amber-950">
+              Nie udało się potwierdzić automatycznej wysyłki podsumowania na
+              adres <strong className="break-all">{email}</strong>. Twoje
+              zapytanie zostało jednak przyjęte i nasz zespół nadal je otrzymał.
+            </p>
+          </div>
+        )}
+
+        <div className="rounded-2xl bg-[#f4f0e7] p-5 text-sm leading-6 text-[#43524c]">
+          <p className="font-bold text-[#173d34]">Co dalej?</p>
+          <p className="mt-1">
+            Sprawdzimy konfigurację pod kątem technicznym i skontaktujemy się z
+            Tobą, aby potwierdzić szczegóły realizacji.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-full rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-950 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+        >
+          Wróć do kalkulatora
+        </button>
+      </div>
+    </div>
   );
 }
 
 interface FormFieldProps {
   label: string;
   required?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 function FormField({ label, required = false, children }: FormFieldProps) {
