@@ -54,14 +54,8 @@ function getZipLabel(quote: Quote): string {
 }
 
 function getLightingLabel(quote: Quote): string {
-  if (quote.configuration.hasLed) {
-    return "LED punktowe";
-  }
-
-  if (quote.configuration.hasCob) {
-    return "LED RGB CCT";
-  }
-
+  if (quote.configuration.hasLed) return "LED punktowe";
+  if (quote.configuration.hasCob) return "LED RGB CCT";
   return "Brak";
 }
 
@@ -75,10 +69,7 @@ function getAccessoriesLabel(quote: Quote): string {
   return selected.length > 0 ? selected.join(", ") : "Brak";
 }
 
-function getDisplayedItemQuantity(
-  quote: Quote,
-  item: QuoteItem
-): number {
+function getDisplayedItemQuantity(quote: Quote, item: QuoteItem): number {
   if (item.category === "zip") {
     return (
       Number(quote.configuration.hasFrontZip) +
@@ -100,32 +91,51 @@ function getDisplayedItemQuantity(
 
 export function PriceSidebar({ quote }: Props) {
   return (
-    <aside className="border-l border-neutral-200 bg-white xl:sticky xl:top-0 xl:h-screen xl:max-h-screen xl:overflow-y-auto">
-      <div className="space-y-3 p-3">
-        <div className="rounded-2xl bg-neutral-950 p-5 text-white">
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-300">
+    <aside className="border-l border-[#d5ccbc] bg-[#f6f1e7] xl:sticky xl:top-0 xl:h-screen xl:max-h-screen xl:overflow-y-auto">
+      <div className="space-y-3 p-3 sm:p-4">
+        <section className="bg-[#062c25] p-5 text-[#f6f1e7]">
+          <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#dfbd78]">
             Wycena orientacyjna
           </p>
-          <p className="mt-3 text-sm text-white/70">Razem brutto</p>
-          <p className="mt-1 text-4xl font-black tracking-tight">
-            {formatPrice(quote.totalGross)}
-          </p>
-          <p className="mt-4 text-sm leading-6 text-white/70">
-            Cena poglądowa. Finalna oferta zostanie potwierdzona po kontakcie z
-            doradcą.
-          </p>
-        </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700">
-            Podsumowanie
-          </p>
+          <div className="mt-3 flex items-end justify-between gap-3">
+            <div>
+              <p className="text-sm text-[#f6f1e7]/62">Razem brutto</p>
+              <p className="mt-1 font-serif text-4xl font-medium tracking-tight">
+                {formatPrice(quote.totalGross)}
+              </p>
+            </div>
 
-          <div className="mt-3 space-y-1">
+            <div className="pb-1 text-right">
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#dfbd78]/80">
+                {getProductLabel(quote)}
+              </p>
+              <p className="mt-1 text-xs text-[#f6f1e7]/65">
+                {quote.configuration.length} × {quote.configuration.width} cm
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 border-t border-[#f6f1e7]/12 pt-5">
+            <QuoteActions quote={quote} />
+          </div>
+        </section>
+
+        <section className="border border-[#ded7ca] bg-[#fffdf8] p-4">
+          <div className="mb-3">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
+              Twoja konfiguracja
+            </p>
+            <h3 className="mt-1 font-serif text-lg font-medium text-[#062c25]">
+              Najważniejsze parametry
+            </h3>
+          </div>
+
+          <div className="space-y-1">
             <SummaryRow label="Typ" value={getProductLabel(quote)} />
             <SummaryRow
               label="Wymiar"
-              value={`${quote.configuration.length} x ${quote.configuration.width} cm`}
+              value={`${quote.configuration.length} × ${quote.configuration.width} cm`}
             />
             <SummaryRow
               label="Dach"
@@ -143,63 +153,59 @@ export function PriceSidebar({ quote }: Props) {
             <SummaryRow label="LED" value={getLightingLabel(quote)} />
             <SummaryRow label="Dodatki" value={getAccessoriesLabel(quote)} />
           </div>
-        </div>
+        </section>
 
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
+        <details className="group border border-[#ded7ca] bg-[#fffdf8]">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700">
-                Pozycje
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
+                Szczegóły wyceny
               </p>
-              <h3 className="mt-1 text-lg font-semibold text-neutral-950">
-                Składniki
-              </h3>
+              <p className="mt-1 text-sm font-bold text-[#24312d]">
+                {quote.items.length} pozycji
+              </p>
             </div>
-            <p className="rounded-full bg-white px-3 py-1 text-xs font-black text-neutral-500">
-              {quote.items.length}
-            </p>
-          </div>
 
-          <div className="space-y-2">
+            <span className="flex h-8 w-8 items-center justify-center border border-[#ded7ca] bg-[#f8f4ec] text-lg text-[#062c25] transition group-open:rotate-180">
+              ↓
+            </span>
+          </summary>
+
+          <div className="border-t border-[#ded7ca] px-4 pb-3">
             {quote.items.map((item, index) => {
               const itemTotalGross = getItemTotalGross(item);
 
               return (
                 <div
                   key={`${item.name}-${index}`}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2"
+                  className="flex items-start justify-between gap-3 border-b border-[#ded7ca] py-3 last:border-b-0"
                 >
                   <div>
-                    <p className="text-sm font-black leading-5 text-neutral-950">
+                    <p className="text-sm font-bold leading-5 text-[#24312d]">
                       {item.name}
                     </p>
-                    <p className="mt-0.5 text-xs text-neutral-500">
+                    <p className="mt-1 text-[11px] text-[#68706c]">
                       Ilość: {getDisplayedItemQuantity(quote, item)}
                     </p>
                   </div>
-                  <p className="text-right text-sm font-black text-neutral-950">
+
+                  <p className="shrink-0 text-right text-sm font-black text-[#062c25]">
                     {formatPrice(itemTotalGross)}
                   </p>
                 </div>
               );
             })}
           </div>
-        </div>
+        </details>
 
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-800">
-            Następny krok
+        <div className="border border-[#d7c9ab] bg-[#f4ead5]/55 px-4 py-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#9a722e]">
+            Co otrzymasz?
           </p>
-          <p className="mt-2 text-lg font-semibold leading-tight text-emerald-950">
-            Wyślij konfigurację do doradcy.
+          <p className="mt-2 text-xs leading-5 text-[#4f5854]">
+            Podsumowanie konfiguracji i dokument PDF na e-mail. Doradca MoonGlass
+            otrzyma komplet danych do dalszej weryfikacji.
           </p>
-          <p className="mt-2 text-sm leading-6 text-emerald-900/75">
-            Zapytanie zapisze dane kontaktowe, opcje i cenę orientacyjną.
-          </p>
-
-          <div className="mt-4">
-            <QuoteActions quote={quote} />
-          </div>
         </div>
       </div>
     </aside>
@@ -213,9 +219,9 @@ interface SummaryRowProps {
 
 function SummaryRow({ label, value }: SummaryRowProps) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-neutral-200 py-2 last:border-b-0">
-      <p className="text-sm text-neutral-500">{label}</p>
-      <p className="max-w-[62%] text-right text-sm font-black leading-5 text-neutral-950">
+    <div className="flex items-start justify-between gap-4 border-b border-[#ded7ca] py-2 last:border-b-0">
+      <p className="text-sm text-[#68706c]">{label}</p>
+      <p className="max-w-[62%] text-right text-sm font-bold leading-5 text-[#24312d]">
         {value}
       </p>
     </div>

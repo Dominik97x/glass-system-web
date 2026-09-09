@@ -10,6 +10,7 @@ import {
 import { QuoteService } from "@/pricing/services/QuoteService";
 import { ConfiguratorPanel } from "./ConfiguratorPanel";
 import { PriceSidebar } from "./PriceSidebar";
+import { QuoteActions } from "./QuoteActions";
 import { VisualizationPanel } from "./VisualizationPanel";
 
 const quoteService = new QuoteService();
@@ -37,36 +38,39 @@ export function Calculator() {
     productKind === "winter_garden" ? "Ogród zimowy" : "Zadaszenie tarasu";
 
   return (
-    <div className="w-full overflow-hidden rounded-[1.75rem] border border-neutral-200 bg-white shadow-2xl shadow-neutral-950/10">
-      <header className="flex flex-col gap-4 border-b border-neutral-200 bg-white px-4 py-4 sm:px-5 lg:flex-row lg:items-center lg:justify-between xl:px-6">
+    <div className="relative w-full border border-[#d5ccbc] bg-[#f9f6ef] shadow-2xl shadow-[#031d18]/10">
+      <header className="border-b border-[#d5ccbc] bg-[#fffdf8] px-4 py-5 sm:px-6 lg:flex lg:items-center lg:justify-between lg:gap-8">
         <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.26em] text-emerald-700">
-            Konfigurator Glass System
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#9a722e]">
+            Konfigurator MoonGlass
           </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-neutral-950 sm:text-3xl">
-            Kalkulator wyceny
+          <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-[#062c25] sm:text-3xl">
+            Skonfiguruj swoją przestrzeń
           </h2>
-          <p className="mt-1 max-w-3xl text-sm leading-6 text-neutral-600">
-            Wybierz parametry, zobacz wizualizację i wyślij zapytanie z pełną
-            konfiguracją.
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#202421]/60">
+            Dobierz podstawowe parametry. Cena oraz podsumowanie aktualizują się
+            wraz z każdą zmianą.
           </p>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[470px]">
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-0 lg:min-w-[470px]">
           <HeaderStat label="Typ" value={productLabel} />
           <HeaderStat
             label="Wymiar"
-            value={`${configuration.length} x ${configuration.width} cm`}
+            value={`${configuration.length} × ${configuration.width} cm`}
           />
-          <HeaderStat
-            label="Razem"
-            value={`${quote.totalGross.toLocaleString("pl-PL")} zł`}
-            highlight
-          />
+
+          <div className="hidden sm:block">
+            <HeaderStat
+              label="Razem brutto"
+              value={`${quote.totalGross.toLocaleString("pl-PL")} zł`}
+              highlight
+            />
+          </div>
         </div>
       </header>
 
-      <div className="grid items-stretch gap-0 bg-neutral-100 xl:grid-cols-[270px_minmax(0,1fr)_315px] 2xl:grid-cols-[285px_minmax(0,1fr)_330px]">
+      <div className="grid items-stretch bg-[#eee7dc] xl:grid-cols-[290px_minmax(0,1fr)_340px] 2xl:grid-cols-[305px_minmax(0,1fr)_360px]">
         <ConfiguratorPanel
           configuration={configuration}
           onChange={setConfiguration}
@@ -75,6 +79,23 @@ export function Calculator() {
         <VisualizationPanel configuration={configuration} />
 
         <PriceSidebar quote={quote} />
+      </div>
+
+      <div className="sticky bottom-0 z-40 border-t border-[#c79a46]/35 bg-[#062c25]/96 px-3 pt-3 shadow-[0_-8px_30px_rgba(3,29,24,0.22)] backdrop-blur [padding-bottom:calc(0.75rem+env(safe-area-inset-bottom))] xl:hidden">
+        <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
+          <div className="min-w-0 text-[#f6f1e7]">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#dfbd78]">
+              Razem brutto
+            </p>
+            <p className="mt-0.5 truncate font-serif text-2xl font-medium">
+              {quote.totalGross.toLocaleString("pl-PL")} zł
+            </p>
+          </div>
+
+          <div className="w-[132px] shrink-0">
+            <QuoteActions quote={quote} variant="compact" />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -90,14 +111,16 @@ function HeaderStat({ label, value, highlight = false }: HeaderStatProps) {
   return (
     <div
       className={[
-        "rounded-2xl px-4 py-3",
-        highlight ? "bg-emerald-50" : "bg-neutral-100",
+        "border px-4 py-3",
+        highlight
+          ? "border-[#c79a46]/45 bg-[#f4ead5]"
+          : "border-[#ded7ca] bg-[#f8f4ec]",
       ].join(" ")}
     >
       <p
         className={[
-          "text-[10px] font-black uppercase tracking-[0.2em]",
-          highlight ? "text-emerald-700" : "text-neutral-500",
+          "text-[9px] font-black uppercase tracking-[0.18em]",
+          highlight ? "text-[#9a722e]" : "text-[#68706c]",
         ].join(" ")}
       >
         {label}
@@ -105,7 +128,7 @@ function HeaderStat({ label, value, highlight = false }: HeaderStatProps) {
       <p
         className={[
           "mt-1 text-sm font-black leading-tight",
-          highlight ? "text-emerald-800" : "text-neutral-950",
+          highlight ? "text-[#062c25]" : "text-[#24312d]",
         ].join(" ")}
       >
         {value}

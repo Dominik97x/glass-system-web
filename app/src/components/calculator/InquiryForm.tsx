@@ -94,19 +94,19 @@ export function InquiryForm({ quote, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-        <div className="mb-4 flex items-start justify-between gap-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="border border-[#d5ccbc] bg-[#fffdf8] p-4 sm:p-5">
+        <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
-              Formularz
+            <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#9a722e]">
+              Dane kontaktowe
             </p>
-            <h5 className="mt-2 text-base font-semibold text-neutral-950">
-              Dane do kontaktu
-            </h5>
+            <h4 className="mt-2 font-serif text-xl font-medium text-[#062c25]">
+              Uzupełnij formularz
+            </h4>
           </div>
 
-          <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800">
+          <div className="border border-[#d7c9ab] bg-[#f4ead5] px-3 py-2 text-xs font-black text-[#062c25]">
             {quote.totalGross.toLocaleString("pl-PL")} zł
           </div>
         </div>
@@ -120,7 +120,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
               required
               autoComplete="name"
               placeholder="Jan Kowalski"
-              className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+              className="mt-2 h-12 w-full border border-[#d5ccbc] bg-white px-4 text-sm font-semibold text-[#24312d] outline-none transition placeholder:text-[#9aa09d] focus:border-[#c79a46] focus:ring-2 focus:ring-[#dfbd78]/25"
             />
           </FormField>
 
@@ -132,7 +132,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
               required
               autoComplete="email"
               placeholder="jan@example.com"
-              className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+              className="mt-2 h-12 w-full border border-[#d5ccbc] bg-white px-4 text-sm font-semibold text-[#24312d] outline-none transition placeholder:text-[#9aa09d] focus:border-[#c79a46] focus:ring-2 focus:ring-[#dfbd78]/25"
             />
           </FormField>
 
@@ -144,7 +144,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
               required
               autoComplete="tel"
               placeholder="500 600 700"
-              className="mt-2 h-12 w-full rounded-2xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+              className="mt-2 h-12 w-full border border-[#d5ccbc] bg-white px-4 text-sm font-semibold text-[#24312d] outline-none transition placeholder:text-[#9aa09d] focus:border-[#c79a46] focus:ring-2 focus:ring-[#dfbd78]/25"
             />
           </FormField>
 
@@ -153,7 +153,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
               value={form.message}
               onChange={(event) => updateField("message", event.target.value)}
               rows={4}
-              className="mt-2 w-full resize-none rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+              className="mt-2 w-full resize-none border border-[#d5ccbc] bg-white px-4 py-3 text-sm font-semibold text-[#24312d] outline-none transition placeholder:text-[#9aa09d] focus:border-[#c79a46] focus:ring-2 focus:ring-[#dfbd78]/25"
               placeholder="Opcjonalna wiadomość do doradcy"
             />
           </FormField>
@@ -163,7 +163,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
       {submitMessage ? (
         <div
           role="alert"
-          className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-900"
+          className="border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-900"
         >
           <div className="font-bold">Nie udało się wysłać zapytania.</div>
           <div className="mt-1">{submitMessage}</div>
@@ -175,13 +175,13 @@ export function InquiryForm({ quote, onCancel }: Props) {
           type="submit"
           disabled={isSubmitting}
           aria-busy={isSubmitting}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500 disabled:shadow-none"
+          className="flex items-center justify-center gap-2 bg-[#c79a46] px-5 py-4 text-[11px] font-black uppercase tracking-[0.14em] text-[#031d18] transition hover:bg-[#dfbd78] disabled:cursor-not-allowed disabled:bg-[#d7d2c8] disabled:text-[#777d79]"
         >
           {isSubmitting ? (
             <>
               <span
                 aria-hidden="true"
-                className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-500 border-t-transparent"
+                className="h-4 w-4 animate-spin rounded-full border-2 border-[#4c514e] border-t-transparent"
               />
               Wysyłanie...
             </>
@@ -194,17 +194,16 @@ export function InquiryForm({ quote, onCancel }: Props) {
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="rounded-2xl border border-neutral-300 bg-white px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-700 transition hover:border-neutral-950 hover:text-neutral-950 disabled:cursor-not-allowed disabled:opacity-50"
+          className="border border-[#d5ccbc] bg-[#fffdf8] px-5 py-4 text-[11px] font-black uppercase tracking-[0.12em] text-[#4f5854] transition hover:border-[#9a722e] hover:text-[#062c25] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Anuluj
         </button>
       </div>
 
-      <div className="rounded-2xl bg-white/70 p-4 text-xs leading-5 text-emerald-900/70 ring-1 ring-emerald-100">
-        Po wysłaniu zapytania zapiszemy Twoją konfigurację. Na podany adres
-        e-mail wyślemy podsumowanie wraz z dokumentem PDF, jeśli automatyczna
-        wysyłka przebiegnie poprawnie.
-      </div>
+      <p className="text-[11px] leading-5 text-[#68706c]">
+        Po wysłaniu zapiszemy Twoją konfigurację. Jeśli automatyczna wysyłka
+        przebiegnie poprawnie, na podany adres e-mail otrzymasz podsumowanie i PDF.
+      </p>
     </form>
   );
 }
@@ -225,21 +224,21 @@ function InquirySuccess({
   onBack,
 }: InquirySuccessProps) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl shadow-emerald-950/5">
-      <div className="bg-[#173d34] px-6 py-7 text-white sm:px-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#d6bf86] text-2xl font-black text-[#173d34]">
+    <div className="overflow-hidden border border-[#d5ccbc] bg-[#fffdf8]">
+      <div className="bg-[#062c25] px-6 py-7 text-[#f6f1e7] sm:px-8">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#c79a46] text-2xl font-black text-[#031d18]">
           ✓
         </div>
 
-        <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#d6bf86]">
+        <p className="mt-6 text-[9px] font-black uppercase tracking-[0.22em] text-[#dfbd78]">
           MoonGlass
         </p>
 
-        <h5 className="mt-2 text-2xl font-semibold">
+        <h4 className="mt-2 font-serif text-2xl font-medium">
           Zapytanie zostało wysłane
-        </h5>
+        </h4>
 
-        <p className="mt-3 max-w-xl text-sm leading-6 text-emerald-50/80">
+        <p className="mt-3 max-w-xl text-sm leading-6 text-[#f6f1e7]/72">
           Dziękujemy{name.trim() ? `, ${name.trim()}` : ""}. Otrzymaliśmy Twoją
           konfigurację o wartości szacunkowej{" "}
           <strong className="text-white">
@@ -251,30 +250,30 @@ function InquirySuccess({
 
       <div className="space-y-5 p-6 sm:p-8">
         {customerEmailSent ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-emerald-700">
+          <div className="border border-[#c7b27c] bg-[#f4ead5] p-5">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#9a722e]">
               Podsumowanie wysłane
             </p>
-            <p className="mt-2 text-sm leading-6 text-emerald-950">
+            <p className="mt-2 text-sm leading-6 text-[#24312d]">
               Na adres <strong className="break-all">{email}</strong> wysłaliśmy
               podsumowanie konfiguracji oraz dokument PDF z wyceną.
             </p>
           </div>
         ) : (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-800">
+          <div className="border border-amber-200 bg-amber-50 p-5">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-800">
               Zgłoszenie jest zapisane
             </p>
             <p className="mt-2 text-sm leading-6 text-amber-950">
               Nie udało się potwierdzić automatycznej wysyłki podsumowania na
               adres <strong className="break-all">{email}</strong>. Twoje
-              zapytanie zostało jednak przyjęte i nasz zespół nadal je otrzymał.
+              zapytanie zostało jednak przyjęte.
             </p>
           </div>
         )}
 
-        <div className="rounded-2xl bg-[#f4f0e7] p-5 text-sm leading-6 text-[#43524c]">
-          <p className="font-bold text-[#173d34]">Co dalej?</p>
+        <div className="bg-[#f4f0e7] p-5 text-sm leading-6 text-[#43524c]">
+          <p className="font-bold text-[#062c25]">Co dalej?</p>
           <p className="mt-1">
             Sprawdzimy konfigurację pod kątem technicznym i skontaktujemy się z
             Tobą, aby potwierdzić szczegóły realizacji.
@@ -284,7 +283,7 @@ function InquirySuccess({
         <button
           type="button"
           onClick={onBack}
-          className="w-full rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black uppercase tracking-[0.08em] text-neutral-950 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+          className="w-full bg-[#c79a46] px-5 py-4 text-[11px] font-black uppercase tracking-[0.14em] text-[#031d18] transition hover:bg-[#dfbd78]"
         >
           Wróć do kalkulatora
         </button>
@@ -302,10 +301,10 @@ interface FormFieldProps {
 function FormField({ label, required = false, children }: FormFieldProps) {
   return (
     <label className="block text-sm">
-      <span className="flex items-center gap-2 font-bold text-neutral-950">
+      <span className="flex items-center gap-2 font-bold text-[#24312d]">
         {label}
         {required ? (
-          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
+          <span className="bg-[#f4ead5] px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#9a722e]">
             wymagane
           </span>
         ) : null}

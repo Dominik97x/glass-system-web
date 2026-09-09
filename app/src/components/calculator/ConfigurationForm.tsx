@@ -69,9 +69,11 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
 
   function updateConfiguration(partial: Partial<ProductConfiguration>) {
     const next = { ...configuration, ...partial };
+
     if (next.length >= 550 && next.roof.startsWith("glass_")) {
       next.roof = "polycarbonate_clear";
     }
+
     onChange(next);
   }
 
@@ -108,11 +110,19 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   }
 
   function updateSpotLed(checked: boolean) {
-    onChange({ ...configuration, hasLed: checked, hasCob: checked ? false : configuration.hasCob });
+    onChange({
+      ...configuration,
+      hasLed: checked,
+      hasCob: checked ? false : configuration.hasCob,
+    });
   }
 
   function updateCctLed(checked: boolean) {
-    onChange({ ...configuration, hasCob: checked, hasLed: checked ? false : configuration.hasLed });
+    onChange({
+      ...configuration,
+      hasCob: checked,
+      hasLed: checked ? false : configuration.hasLed,
+    });
   }
 
   return (
@@ -132,9 +142,10 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
         </div>
 
         <div className="mb-3">
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-500">
+          <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
             Kolor konstrukcji
           </p>
+
           <div className="grid max-w-sm grid-cols-3 gap-3">
             {FRAME_COLOR_OPTIONS.map((option) => (
               <ColorSwatch
@@ -155,14 +166,24 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
           <SelectField
             label="Szerokość"
             value={configuration.width}
-            onChange={(value) => updateConfiguration({ width: Number(value) as Width })}
-            options={WIDTH_OPTIONS.map((value) => ({ value: String(value), label: `${value} cm` }))}
+            onChange={(value) =>
+              updateConfiguration({ width: Number(value) as Width })
+            }
+            options={WIDTH_OPTIONS.map((value) => ({
+              value: String(value),
+              label: `${value} cm`,
+            }))}
           />
           <SelectField
             label="Długość"
             value={configuration.length}
-            onChange={(value) => updateConfiguration({ length: Number(value) as Length })}
-            options={LENGTH_OPTIONS.map((value) => ({ value: String(value), label: `${value} cm` }))}
+            onChange={(value) =>
+              updateConfiguration({ length: Number(value) as Length })
+            }
+            options={LENGTH_OPTIONS.map((value) => ({
+              value: String(value),
+              label: `${value} cm`,
+            }))}
           />
         </div>
       </CompactPanel>
@@ -171,11 +192,17 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
         <SelectField
           label="Pokrycie"
           value={configuration.roof}
-          onChange={(value) => updateConfiguration({ roof: value as RoofOption })}
-          options={roofOptions.map((roof) => ({ value: roof, label: ROOF_LABELS[roof] }))}
+          onChange={(value) =>
+            updateConfiguration({ roof: value as RoofOption })
+          }
+          options={roofOptions.map((roof) => ({
+            value: roof,
+            label: ROOF_LABELS[roof],
+          }))}
         />
+
         {!roofGlassAvailable && (
-          <p className="mt-2 text-[11px] leading-4 text-amber-700">
+          <p className="mt-2 text-[11px] leading-4 text-[#9a722e]">
             Dla długości 550 i 600 cm dach szklany wymaga wyceny indywidualnej.
           </p>
         )}
@@ -187,7 +214,11 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             {WALL_OPTIONS.map((walls) => (
               <SmallOption
                 key={walls}
-                label={walls === "glass_clear" ? "Przezr." : "Przyciem."}
+                label={
+                  walls === "glass_clear"
+                    ? "Przezroczyste"
+                    : "Przyciemniane"
+                }
                 active={configuration.walls === walls}
                 onClick={() => updateWalls(walls)}
               />
@@ -198,38 +229,86 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
 
       <CompactPanel title="Osłony ZIP">
         <div className="grid grid-cols-3 gap-2">
-          <SmallOption label="Przód" active={configuration.hasFrontZip}
-            onClick={() => updateConfiguration({ hasFrontZip: !configuration.hasFrontZip })} />
-          <SmallOption label="Lewa" active={configuration.hasLeftZip} disabled={!hasWalls}
-            onClick={() => updateConfiguration({ hasLeftZip: !configuration.hasLeftZip })} />
-          <SmallOption label="Prawa" active={configuration.hasRightZip} disabled={!hasWalls}
-            onClick={() => updateConfiguration({ hasRightZip: !configuration.hasRightZip })} />
+          <SmallOption
+            label="Przód"
+            active={configuration.hasFrontZip}
+            onClick={() =>
+              updateConfiguration({
+                hasFrontZip: !configuration.hasFrontZip,
+              })
+            }
+          />
+          <SmallOption
+            label="Lewa"
+            active={configuration.hasLeftZip}
+            disabled={!hasWalls}
+            onClick={() =>
+              updateConfiguration({ hasLeftZip: !configuration.hasLeftZip })
+            }
+          />
+          <SmallOption
+            label="Prawa"
+            active={configuration.hasRightZip}
+            disabled={!hasWalls}
+            onClick={() =>
+              updateConfiguration({ hasRightZip: !configuration.hasRightZip })
+            }
+          />
         </div>
+
         {!hasWalls && (
-          <p className="mt-2 text-[11px] leading-4 text-neutral-500">
-            Bez ścian dostępna jest roleta ZIP z przodu. Rolety boczne wymagają ścian.
+          <p className="mt-2 text-[11px] leading-4 text-[#7a7f7b]">
+            Bez ścian dostępna jest roleta ZIP z przodu. Rolety boczne wymagają
+            ścian.
           </p>
         )}
       </CompactPanel>
 
-      <CompactPanel title="Komfort">
+      <CompactPanel title="Komfort i dodatki">
         <div className="grid grid-cols-2 gap-2">
-          <OptionToggle label="Markiza" checked={configuration.hasAwning}
-            onChange={(checked) => updateConfiguration({ hasAwning: checked })} />
-          <OptionToggle label="LED punkt." checked={configuration.hasLed} onChange={updateSpotLed} />
-          <OptionToggle label="LED RGB CCT" checked={configuration.hasCob} onChange={updateCctLed} />
-          <OptionToggle label="Uchwyty" checked={configuration.hasHandles}
-            onChange={(checked) => updateConfiguration({ hasHandles: checked })} />
-          <OptionToggle label="Szczotki" checked={configuration.hasBrushes}
-            onChange={(checked) => updateConfiguration({ hasBrushes: checked })} />
-          <OptionToggle label="Fundament / profil" checked={configuration.hasLevelingProfile}
-            onChange={(checked) => updateConfiguration({ hasLevelingProfile: checked })} />
+          <OptionToggle
+            label="Markiza"
+            checked={configuration.hasAwning}
+            onChange={(checked) =>
+              updateConfiguration({ hasAwning: checked })
+            }
+          />
+          <OptionToggle
+            label="LED punktowe"
+            checked={configuration.hasLed}
+            onChange={updateSpotLed}
+          />
+          <OptionToggle
+            label="LED RGB CCT"
+            checked={configuration.hasCob}
+            onChange={updateCctLed}
+          />
+          <OptionToggle
+            label="Uchwyty"
+            checked={configuration.hasHandles}
+            onChange={(checked) =>
+              updateConfiguration({ hasHandles: checked })
+            }
+          />
+          <OptionToggle
+            label="Szczotki"
+            checked={configuration.hasBrushes}
+            onChange={(checked) =>
+              updateConfiguration({ hasBrushes: checked })
+            }
+          />
+          <OptionToggle
+            label="Fundament / profil"
+            checked={configuration.hasLevelingProfile}
+            onChange={(checked) =>
+              updateConfiguration({ hasLevelingProfile: checked })
+            }
+          />
         </div>
       </CompactPanel>
     </div>
   );
 }
-
 
 function ColorSwatch({
   label,
@@ -251,30 +330,28 @@ function ColorSwatch({
       aria-pressed={active}
       title={label}
       onClick={onClick}
-      className="group flex min-h-16 flex-col items-center justify-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-neutral-50"
+      className="group flex min-h-16 flex-col items-center justify-center gap-2 px-2 py-1.5 transition hover:bg-[#f4ead5]/60"
     >
       <span
         className={[
           "flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition",
           swatchClass,
           active
-            ? "border-emerald-500 ring-2 ring-emerald-200 ring-offset-2"
-            : "border-neutral-300 group-hover:border-neutral-400",
+            ? "border-[#c79a46] ring-2 ring-[#dfbd78]/45 ring-offset-2 ring-offset-[#fffdf8]"
+            : "border-[#cfc8bc] group-hover:border-[#9a722e]",
         ].join(" ")}
       >
         {active && (
-          <span
-            aria-hidden="true"
-            className={`${checkClass} text-sm font-black`}
-          >
+          <span aria-hidden="true" className={`${checkClass} text-sm font-black`}>
             ✓
           </span>
         )}
       </span>
+
       <span
         className={[
           "text-[10px] font-black leading-none transition",
-          active ? "text-emerald-800" : "text-neutral-600",
+          active ? "text-[#062c25]" : "text-[#68706c]",
         ].join(" ")}
       >
         {label}
@@ -283,16 +360,29 @@ function ColorSwatch({
   );
 }
 
-function CompactPanel({ title, children }: { title: string; children: ReactNode }) {
+function CompactPanel({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-3">
-      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-500">{title}</h4>
+    <section className="border border-[#ded7ca] bg-[#fffdf8] p-3">
+      <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
+        {title}
+      </h4>
       <div className="mt-3">{children}</div>
     </section>
   );
 }
 
-function SelectField({ label, value, options, onChange }: {
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
   label: string;
   value: string | number;
   options: Array<{ value: string; label: string }>;
@@ -300,44 +390,88 @@ function SelectField({ label, value, options, onChange }: {
 }) {
   return (
     <label className="block">
-      <span className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-500">{label}</span>
-      <select value={String(value)} onChange={(event) => onChange(event.target.value)}
-        className="mt-1 h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 text-xs font-black text-neutral-950 outline-none">
-        {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+      <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+        {label}
+      </span>
+      <select
+        value={String(value)}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-1 h-11 w-full border border-[#ded7ca] bg-[#f8f4ec] px-3 text-xs font-black text-[#24312d] outline-none transition focus:border-[#9a722e]"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
     </label>
   );
 }
 
-function SmallOption({ label, active, disabled = false, onClick }: {
-  label: string; active: boolean; disabled?: boolean; onClick(): void;
+function SmallOption({
+  label,
+  active,
+  disabled = false,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  disabled?: boolean;
+  onClick(): void;
 }) {
   return (
-    <button type="button" disabled={disabled} onClick={onClick}
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
       className={[
-        "min-h-12 rounded-xl border px-2 py-2 text-center text-[11px] font-black transition",
-        active ? "border-emerald-500 bg-emerald-50 text-emerald-950" : "border-neutral-200 bg-neutral-50 text-neutral-700",
-        disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer",
-      ].join(" ")}>
+        "min-h-12 border px-2 py-2 text-center text-[11px] font-black transition",
+        active
+          ? "border-[#c79a46] bg-[#f4ead5] text-[#062c25]"
+          : "border-[#ded7ca] bg-[#f8f4ec] text-[#4f5854] hover:border-[#bca36c]",
+        disabled ? "cursor-not-allowed opacity-35" : "cursor-pointer",
+      ].join(" ")}
+    >
       {label}
     </button>
   );
 }
 
-function OptionToggle({ label, checked, onChange }: {
-  label: string; checked: boolean; onChange(checked: boolean): void;
+function OptionToggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange(checked: boolean): void;
 }) {
   return (
-    <button type="button" onClick={() => onChange(!checked)}
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
       className={[
-        "flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition",
-        checked ? "border-emerald-500 bg-emerald-50" : "border-neutral-200 bg-neutral-50",
-      ].join(" ")}>
-      <span className="text-[11px] font-black leading-tight text-neutral-950">{label}</span>
-      <span className={["flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition",
-        checked ? "bg-emerald-500" : "bg-neutral-300"].join(" ")}>
-        <span className={["h-4 w-4 rounded-full bg-white shadow-sm transition",
-          checked ? "translate-x-4" : "translate-x-0"].join(" ")} />
+        "flex min-h-12 items-center justify-between gap-2 border px-3 py-2 text-left transition",
+        checked
+          ? "border-[#c79a46] bg-[#f4ead5]"
+          : "border-[#ded7ca] bg-[#f8f4ec] hover:border-[#bca36c]",
+      ].join(" ")}
+    >
+      <span className="text-[11px] font-black leading-tight text-[#24312d]">
+        {label}
+      </span>
+      <span
+        className={[
+          "flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition",
+          checked ? "bg-[#062c25]" : "bg-[#c9c5bc]",
+        ].join(" ")}
+      >
+        <span
+          className={[
+            "h-4 w-4 rounded-full bg-white shadow-sm transition",
+            checked ? "translate-x-4" : "translate-x-0",
+          ].join(" ")}
+        />
       </span>
     </button>
   );
