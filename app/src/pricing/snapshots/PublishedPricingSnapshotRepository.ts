@@ -1,4 +1,4 @@
-import examplePricingSnapshot from "@/data/pricing/eg/published-pricing.example.json";
+import publishedPricingSnapshot from "@/data/pricing/glass-system/published-pricing.generated.json";
 import type { PricingSnapshot } from "./PricingSnapshot";
 import {
   validatePricingSnapshot,
@@ -40,6 +40,6 @@ export class StaticPublishedPricingSnapshotRepository
 
 export function createExamplePublishedPricingSnapshotRepository(): PublishedPricingSnapshotRepository {
   return new StaticPublishedPricingSnapshotRepository(
-    examplePricingSnapshot as PricingSnapshot
+    publishedPricingSnapshot as PricingSnapshot
   );
 }
