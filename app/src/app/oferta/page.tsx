@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Oferta",
+  title: "Ogrody zimowe i zadaszenia tarasów",
   description:
     "Ogrody zimowe i zadaszenia tarasów MoonGlass. Aluminiowe konstrukcje wykonywane na wymiar z możliwością dopasowania dachu, przeszkleń i wyposażenia.",
 };
@@ -18,7 +18,7 @@ const offerItems = [
     title: "Ogrody zimowe",
     description:
       "Zabudowa tarasu pozwalająca stworzyć dodatkową, osłoniętą przestrzeń przy domu. Konstrukcję, przeszklenia i wyposażenie dopasowujemy do wymiarów oraz sposobu użytkowania.",
-    image: "/images/glass-system/product-winter-garden-day.png",
+    image: "/images/glass-system/oferta/oferta-ogrod-zimowy-triangle.png",
     points: [
       "Aluminiowa konstrukcja na wymiar",
       "Przesuwne ściany szklane",
@@ -32,7 +32,7 @@ const offerItems = [
     title: "Zadaszenia tarasowe",
     description:
       "Nowoczesne zadaszenie chroniące taras przed deszczem i nadmiernym nasłonecznieniem. Projekt powstaje pod konkretny budynek, wymiary i wybrany wariant wykończenia.",
-    image: "/images/glass-system/product-terrace-roof-sunset.png",
+    image: "/images/glass-system/oferta-zadaszenie-tarasu.png",
     points: [
       "Konstrukcja aluminiowa",
       "Pokrycie szklane lub poliwęglanowe",
@@ -74,9 +74,9 @@ export default function OfertaPage() {
     <>
       <main>
         {/* HERO */}
-        <section className="relative min-h-[620px] overflow-hidden bg-[#031d18] text-[#f6f1e7] sm:min-h-[680px]">
+        <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
-            src="/images/glass-system/hero-winter-garden-evening.png"
+            src="/images/glass-system/hero-moonglass-day-v2.png"
             alt="Ogród zimowy MoonGlass"
             fill
             priority
@@ -84,12 +84,13 @@ export default function OfertaPage() {
             className="object-cover"
           />
 
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.95)_0%,rgba(3,29,24,0.78)_42%,rgba(3,29,24,0.28)_78%,rgba(3,29,24,0.12)_100%)]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/70 via-transparent to-[#031d18]/25" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
           <SiteHeader activePage="oferta" />
 
-          <div className="relative z-10 mx-auto flex min-h-[620px] max-w-7xl items-center px-6 pb-16 pt-36 sm:min-h-[680px] sm:px-8 lg:px-12">
+          <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
             <div className="max-w-4xl">
               <div className="flex items-center gap-4">
                 <span className="h-px w-11 bg-[#c79a46]" />

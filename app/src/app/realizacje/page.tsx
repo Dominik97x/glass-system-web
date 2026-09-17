@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Inspiracje",
+  title: "Inspiracje – ogrody zimowe i zadaszenia tarasów",
   description:
     "Inspiracje MoonGlass — ogrody zimowe, zadaszenia tarasów i zabudowy szklane dopasowane do nowoczesnych domów.",
 };
@@ -14,37 +14,42 @@ export const metadata: Metadata = {
 const inspirations = [
   {
     number: "01",
-    title: "Ogród zimowy po zmroku",
-    subtitle: "Całoroczna przestrzeń przy domu",
-    image: "/images/glass-system/hero-winter-garden-evening.png",
+    title: "Zadaszenie tarasu o zachodzie",
+    subtitle: "Strefa relaksu przy domu",
+    image:
+      "/images/glass-system/inspiracje/inspiracja-pergola-zachod-slonca.png",
     size: "large",
   },
   {
     number: "02",
-    title: "Zadaszenie tarasu",
-    subtitle: "Lekka ochrona tarasu",
-    image: "/images/glass-system/product-terrace-roof-sunset.png",
+    title: "Ogród zimowy otwarty na ogród",
+    subtitle: "Całoroczna przestrzeń wśród zieleni",
+    image:
+      "/images/glass-system/inspiracje/inspiracja-przeszklony-ogrod-zimowy.png",
     size: "small",
   },
   {
     number: "03",
-    title: "Przeszklona przestrzeń",
-    subtitle: "Więcej światła i komfortu",
-    image: "/images/glass-system/product-winter-garden-day.png",
+    title: "Zadaszenie tarasu z jadalnią",
+    subtitle: "Jadalnia na świeżym powietrzu",
+    image:
+      "/images/glass-system/inspiracje/inspiracja-zadaszenie-tarasu-jadalnia.png",
     size: "small",
   },
   {
     number: "04",
-    title: "Wieczorna strefa wypoczynku",
-    subtitle: "Oświetlenie i zabudowa",
-    image: "/images/glass-system/parallax-evening-led.png",
+    title: "Ogród zimowy wieczorem",
+    subtitle: "Światło i komfort po zmroku",
+    image:
+      "/images/glass-system/inspiracje/inspiracja-oranzeria-zmierzch.png",
     size: "large",
   },
   {
     number: "05",
-    title: "Zabudowa przy nowoczesnym domu",
-    subtitle: "Architektura i ogród",
-    image: "/images/glass-system/gallery-glass-enclosure-day.png",
+    title: "Ogród zimowy zimą",
+    subtitle: "Przestrzeń na każdą porę roku",
+    image:
+      "/images/glass-system/inspiracje/inspiracja-ogrod-zimowy-zima.png",
     size: "wide",
   },
 ] as const;
@@ -54,9 +59,9 @@ export default function RealizacjePage() {
     <>
       <main>
         {/* HERO */}
-        <section className="relative min-h-[620px] overflow-hidden bg-[#031d18] text-[#f6f1e7] sm:min-h-[680px]">
+        <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
-            src="/images/glass-system/parallax-evening-led.png"
+            src="/images/glass-system/hero-moonglass-day-v2.png"
             alt="Inspiracje MoonGlass"
             fill
             priority
@@ -64,12 +69,13 @@ export default function RealizacjePage() {
             className="object-cover"
           />
 
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.96)_0%,rgba(3,29,24,0.78)_42%,rgba(3,29,24,0.25)_78%,rgba(3,29,24,0.12)_100%)]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/75 via-transparent to-[#031d18]/25" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
           <SiteHeader activePage="realizacje" />
 
-          <div className="relative z-10 mx-auto flex min-h-[620px] max-w-7xl items-center px-6 pb-16 pt-36 sm:min-h-[680px] sm:px-8 lg:px-12">
+          <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
             <div className="max-w-4xl">
               <div className="flex items-center gap-4">
                 <span className="h-px w-11 bg-[#c79a46]" />

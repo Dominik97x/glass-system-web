@@ -181,24 +181,18 @@ export function ContactForm() {
           />
         </label>
 
-        <label className="mt-6 flex items-start gap-3 text-xs leading-6 text-[#202421]/55">
-          <input
-            type="checkbox"
-            required
-            className="mt-1 h-4 w-4 accent-[#9a722e]"
-          />
-
-          <span>
-            Zapoznałem się z{" "}
-            <Link
-              href="/polityka-prywatnosci"
-              className="text-[#062c25] underline underline-offset-2"
-            >
-              polityką prywatności
-            </Link>
-            .
-          </span>
-        </label>
+        <p className="mt-6 text-xs leading-6 text-[#202421]/55">
+          Informacje o zasadach przetwarzania danych osobowych znajdziesz w{" "}
+          <Link
+            href="/polityka-prywatnosci"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#062c25] underline underline-offset-2"
+          >
+            polityce prywatności
+          </Link>
+          .
+        </p>
 
         <button
           type="submit"

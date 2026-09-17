@@ -9,9 +9,9 @@ interface Props {
 
 export function ConfiguratorPanel({ configuration, onChange }: Props) {
   return (
-    <aside className="border-r border-[#d5ccbc] bg-[#f6f1e7] xl:sticky xl:top-0 xl:h-screen xl:max-h-screen xl:overflow-y-auto">
-      <div className="p-3 sm:p-4">
-        <div className="mb-4 border-b border-[#d5ccbc] pb-4">
+    <aside className="border-r border-[#d5ccbc] bg-[#f6f1e7]">
+      <div className="p-3">
+        <div className="mb-3 border-b border-[#d5ccbc] pb-3">
           <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
             Krok 1
           </p>

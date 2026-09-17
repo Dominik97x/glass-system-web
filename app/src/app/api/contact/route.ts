@@ -123,28 +123,97 @@ export async function POST(request: Request): Promise<Response> {
     }),
   });
 
-  if (!response.ok) {
-    const body = await response.text();
+if (!response.ok) {
+  const body = await response.text();
 
-    console.error("Contact form Resend error:", {
-      status: response.status,
-      body,
-    });
-
-    return Response.json(
-      {
-        success: false,
-        message:
-          "Nie udało się wysłać wiadomości. Spróbuj ponownie później.",
-      },
-      { status: 500 }
-    );
-  }
-
-  return Response.json({
-    success: true,
-    message: "Wiadomość została wysłana.",
+  console.error("Contact form Resend error:", {
+    status: response.status,
+    body,
   });
+
+  return Response.json(
+    {
+      success: false,
+      message:
+        "Nie udało się wysłać wiadomości. Spróbuj ponownie później.",
+    },
+    { status: 500 }
+  );
+}
+
+// Automatyczne potwierdzenie dla klienta.
+// Ewentualny błąd tego maila nie powoduje błędu formularza,
+// ponieważ wiadomość do MoonGlass została już poprawnie dostarczona.
+try {
+  const confirmationResponse = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [data.email],
+      reply_to: "biuro@moonglass.pl",
+      subject: "Otrzymaliśmy Twoje zapytanie | MoonGlass",
+      text: [
+        `Dzień dobry ${data.name},`,
+        "",
+        "dziękujemy za kontakt z MoonGlass.",
+        "Otrzymaliśmy Twoje zapytanie i skontaktujemy się z Tobą możliwie szybko.",
+        "",
+        `Temat: ${topicLabel}`,
+        "",
+        "Pozdrawiamy,",
+        "Zespół MoonGlass",
+        "tel. 533 850 226",
+        "e-mail: biuro@moonglass.pl",
+        "www.moonglass.pl",
+      ].join("\n"),
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; color: #202421;">
+          <h2 style="color: #062c25;">Dziękujemy za kontakt z MoonGlass</h2>
+
+          <p>Dzień dobry ${escapeHtml(data.name)},</p>
+
+          <p>
+            Otrzymaliśmy Twoje zapytanie i skontaktujemy się z Tobą
+            możliwie szybko.
+          </p>
+
+          <p>
+            <strong>Temat:</strong> ${escapeHtml(topicLabel)}
+          </p>
+
+          <hr style="border: 0; border-top: 1px solid #ddd; margin: 28px 0;" />
+
+          <p style="margin-bottom: 4px;"><strong>Zespół MoonGlass</strong></p>
+          <p style="margin: 4px 0;">tel. 533 850 226</p>
+          <p style="margin: 4px 0;">
+            <a href="mailto:biuro@moonglass.pl">biuro@moonglass.pl</a>
+          </p>
+          <p style="margin: 4px 0;">www.moonglass.pl</p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!confirmationResponse.ok) {
+    const confirmationBody = await confirmationResponse.text();
+
+    console.error("Contact form confirmation email error:", {
+      status: confirmationResponse.status,
+      body: confirmationBody,
+    });
+  }
+} catch (error) {
+  console.error("Contact form confirmation email exception:", error);
+}
+
+return Response.json({
+  success: true,
+  message: "Wiadomość została wysłana.",
+});
 }
 
 function validatePayload(

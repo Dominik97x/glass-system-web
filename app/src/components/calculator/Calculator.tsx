@@ -39,21 +39,21 @@ export function Calculator() {
 
   return (
     <div className="relative w-full border border-[#d5ccbc] bg-[#f9f6ef] shadow-2xl shadow-[#031d18]/10">
-      <header className="border-b border-[#d5ccbc] bg-[#fffdf8] px-4 py-5 sm:px-6 lg:flex lg:items-center lg:justify-between lg:gap-8">
+      <header className="border-b border-[#d5ccbc] bg-[#fffdf8] px-4 py-3 sm:px-5 lg:flex lg:items-center lg:justify-between lg:gap-6">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#9a722e]">
             Konfigurator MoonGlass
           </p>
-          <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-[#062c25] sm:text-3xl">
+          <h2 className="mt-1 font-serif text-2xl font-medium tracking-tight text-[#062c25] sm:text-[28px]">
             Skonfiguruj swoją przestrzeń
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#202421]/60">
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-[#202421]/60 sm:text-sm">
             Dobierz podstawowe parametry. Cena oraz podsumowanie aktualizują się
             wraz z każdą zmianą.
           </p>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-0 lg:min-w-[470px]">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-0 lg:min-w-[450px]">
           <HeaderStat label="Typ" value={productLabel} />
           <HeaderStat
             label="Wymiar"
@@ -111,7 +111,7 @@ function HeaderStat({ label, value, highlight = false }: HeaderStatProps) {
   return (
     <div
       className={[
-        "border px-4 py-3",
+        "border px-3 py-2.5",
         highlight
           ? "border-[#c79a46]/45 bg-[#f4ead5]"
           : "border-[#ded7ca] bg-[#f8f4ec]",

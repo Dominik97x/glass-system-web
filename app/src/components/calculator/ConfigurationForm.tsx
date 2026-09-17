@@ -126,9 +126,9 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   }
 
   return (
-    <div className="space-y-3 text-sm">
+    <div className="space-y-2 text-sm">
       <CompactPanel title="Konstrukcja">
-        <div className="mb-3 grid grid-cols-2 gap-2">
+        <div className="mb-2 grid grid-cols-2 gap-2">
           <SmallOption
             label="Zadaszenie tarasu"
             active={productType === "terrace_roof"}
@@ -141,12 +141,12 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
           />
         </div>
 
-        <div className="mb-3">
+        <div className="mb-2">
           <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
             Kolor konstrukcji
           </p>
 
-          <div className="grid max-w-sm grid-cols-3 gap-3">
+          <div className="grid max-w-sm grid-cols-3 gap-2">
             {FRAME_COLOR_OPTIONS.map((option) => (
               <ColorSwatch
                 key={option.value}
@@ -186,10 +186,12 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }))}
           />
         </div>
-      </CompactPanel>
 
-      <CompactPanel title="Dach">
-        <SelectField
+        <div className="mt-2 border-t border-[#ded7ca] pt-2">
+          <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+            Dach
+          </p>
+          <SelectField
           label="Pokrycie"
           value={configuration.roof}
           onChange={(value) =>
@@ -206,11 +208,14 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             Dla długości 550 i 600 cm dach szklany wymaga wyceny indywidualnej.
           </p>
         )}
-      </CompactPanel>
+        </div>
 
-      {productType === "winter_garden" && (
-        <CompactPanel title="Ściany">
-          <div className="grid grid-cols-2 gap-2">
+        {productType === "winter_garden" && (
+          <div className="mt-2 border-t border-[#ded7ca] pt-2">
+            <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+              Ściany
+            </p>
+            <div className="grid grid-cols-2 gap-2">
             {WALL_OPTIONS.map((walls) => (
               <SmallOption
                 key={walls}
@@ -223,11 +228,12 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
                 onClick={() => updateWalls(walls)}
               />
             ))}
+            </div>
           </div>
-        </CompactPanel>
-      )}
+        )}
+      </CompactPanel>
 
-      <CompactPanel title="Osłony ZIP">
+      <CompactPanel title="Osłony i dodatki">
         <div className="grid grid-cols-3 gap-2">
           <SmallOption
             label="Przód"
@@ -258,14 +264,15 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
 
         {!hasWalls && (
           <p className="mt-2 text-[11px] leading-4 text-[#7a7f7b]">
-            Bez ścian dostępna jest roleta ZIP z przodu. Rolety boczne wymagają
-            ścian.
+            Bez ścian dostępna jest roleta ZIP z przodu. Rolety boczne wymagają ścian.
           </p>
         )}
-      </CompactPanel>
 
-      <CompactPanel title="Komfort i dodatki">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="mt-2 border-t border-[#ded7ca] pt-2">
+          <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+            Komfort i dodatki
+          </p>
+          <div className="grid grid-cols-2 gap-2">
           <OptionToggle
             label="Markiza"
             checked={configuration.hasAwning}
@@ -304,6 +311,7 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
               updateConfiguration({ hasLevelingProfile: checked })
             }
           />
+          </div>
         </div>
       </CompactPanel>
     </div>
@@ -330,11 +338,11 @@ function ColorSwatch({
       aria-pressed={active}
       title={label}
       onClick={onClick}
-      className="group flex min-h-16 flex-col items-center justify-center gap-2 px-2 py-1.5 transition hover:bg-[#f4ead5]/60"
+      className="group flex min-h-12 flex-col items-center justify-center gap-1 px-1.5 py-1 transition hover:bg-[#f4ead5]/60"
     >
       <span
         className={[
-          "flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition",
+          "flex h-8 w-8 items-center justify-center rounded-full border-2 shadow-sm transition",
           swatchClass,
           active
             ? "border-[#c79a46] ring-2 ring-[#dfbd78]/45 ring-offset-2 ring-offset-[#fffdf8]"
@@ -368,11 +376,11 @@ function CompactPanel({
   children: ReactNode;
 }) {
   return (
-    <section className="border border-[#ded7ca] bg-[#fffdf8] p-3">
+    <section className="border border-[#ded7ca] bg-[#fffdf8] p-2.5">
       <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
         {title}
       </h4>
-      <div className="mt-3">{children}</div>
+      <div className="mt-2">{children}</div>
     </section>
   );
 }
@@ -396,7 +404,7 @@ function SelectField({
       <select
         value={String(value)}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1 h-11 w-full border border-[#ded7ca] bg-[#f8f4ec] px-3 text-xs font-black text-[#24312d] outline-none transition focus:border-[#9a722e]"
+        className="mt-1 h-9 w-full border border-[#ded7ca] bg-[#f8f4ec] px-2.5 text-xs font-black text-[#24312d] outline-none transition focus:border-[#9a722e]"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -425,7 +433,7 @@ function SmallOption({
       disabled={disabled}
       onClick={onClick}
       className={[
-        "min-h-12 border px-2 py-2 text-center text-[11px] font-black transition",
+        "min-h-10 border px-2 py-1.5 text-center text-[10px] font-black transition",
         active
           ? "border-[#c79a46] bg-[#f4ead5] text-[#062c25]"
           : "border-[#ded7ca] bg-[#f8f4ec] text-[#4f5854] hover:border-[#bca36c]",
@@ -451,7 +459,7 @@ function OptionToggle({
       type="button"
       onClick={() => onChange(!checked)}
       className={[
-        "flex min-h-12 items-center justify-between gap-2 border px-3 py-2 text-left transition",
+        "flex min-h-10 items-center justify-between gap-2 border px-2.5 py-1.5 text-left transition",
         checked
           ? "border-[#c79a46] bg-[#f4ead5]"
           : "border-[#ded7ca] bg-[#f8f4ec] hover:border-[#bca36c]",

@@ -1,19 +1,18 @@
 import Link from "next/link";
 
 const footerNavigation = [
-  { label: "Strona główna", href: "/" },
-  { label: "Produkty", href: "/oferta" },
+  { label: "Start", href: "/" },
+  { label: "Oferta", href: "/oferta" },
   { label: "Inspiracje", href: "/realizacje" },
-  { label: "Wycena online", href: "/kalkulator" },
+  { label: "Wycena", href: "/kalkulator" },
   { label: "Kontakt", href: "/kontakt" },
-];
+] as const;
 
 export function SiteFooter() {
   return (
     <footer className="bg-[#031d18] text-[#f6f1e7]">
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12">
         <div className="grid gap-14 border-b border-[#f6f1e7]/15 pb-14 lg:grid-cols-[1.15fr_0.55fr_0.65fr] lg:gap-20">
-          {/* MARKA */}
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-8 bg-[#c79a46]" />
@@ -24,13 +23,12 @@ export function SiteFooter() {
             </div>
 
             <p className="mt-1 pl-11 text-[9px] font-bold uppercase tracking-[0.22em] text-[#dfbd78] sm:text-[10px]">
-              Ogrody zimowe · Zadaszenia · Carporty
+              Ogrody zimowe · Zadaszenia tarasowe
             </p>
 
             <p className="mt-7 max-w-md text-sm leading-7 text-[#f6f1e7]/55">
-              Projektujemy i wykonujemy nowoczesne ogrody zimowe,
-              zadaszenia tarasów oraz zabudowy szklane dopasowane
-              do architektury domu i potrzeb użytkowników.
+              Projektujemy i wykonujemy nowoczesne ogrody zimowe oraz zadaszenia
+              tarasowe dopasowane do architektury domu i potrzeb użytkowników.
             </p>
 
             <Link
@@ -41,7 +39,6 @@ export function SiteFooter() {
             </Link>
           </div>
 
-          {/* NAWIGACJA */}
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#dfbd78]">
               Nawigacja
@@ -60,7 +57,6 @@ export function SiteFooter() {
             </nav>
           </div>
 
-          {/* KONTAKT */}
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#dfbd78]">
               Kontakt
@@ -106,7 +102,6 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* DOLNY PASEK */}
         <div className="flex flex-col gap-5 pt-7 text-[10px] text-[#f6f1e7]/35 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} MoonGlass. Wszelkie prawa zastrzeżone.

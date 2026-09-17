@@ -4,9 +4,10 @@ import Link from "next/link";
 
 import { Calculator } from "@/components/calculator/Calculator";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Kalkulator",
+  title: "Kalkulator ogrodu zimowego i zadaszenia tarasu",
   description:
     "Skonfiguruj ogród zimowy lub zadaszenie tarasu MoonGlass, sprawdź orientacyjną cenę brutto i wyślij gotową konfigurację do doradcy.",
 };
@@ -42,9 +43,9 @@ export default function KalkulatorPage() {
   return (
     <>
       <main className="min-h-screen bg-[#f4efe6] text-[#14221e]">
-        <section className="relative min-h-[620px] overflow-hidden bg-[#031d18] text-[#f6f1e7]">
+        <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
-            src="/images/glass-system/hero-winter-garden-evening.png"
+            src="/images/glass-system/hero-moonglass-day-v2.png"
             alt="Ogród zimowy MoonGlass przy domu"
             fill
             loading="eager"
@@ -52,85 +53,20 @@ export default function KalkulatorPage() {
             className="object-cover"
           />
 
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.96)_0%,rgba(3,29,24,0.80)_42%,rgba(3,29,24,0.34)_76%,rgba(3,29,24,0.18)_100%)]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/75 via-transparent to-[#031d18]/25" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
 
-          <header className="relative z-20 border-b border-[#f6f1e7]/10">
-            <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-6 sm:px-8 lg:px-12">
-              <Link href="/" className="group shrink-0">
-                <p className="font-serif text-2xl tracking-[0.08em] text-[#f6f1e7]">
-                  MoonGlass
-                </p>
-                <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[#dfbd78]">
-                  Konstrukcje na wymiar
-                </p>
-              </Link>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
-              <nav className="hidden items-center gap-8 text-[11px] font-bold uppercase tracking-[0.14em] text-[#f6f1e7]/70 lg:flex">
-                <Link href="/" className="transition hover:text-[#dfbd78]">
-                  Start
-                </Link>
-                <Link href="/oferta" className="transition hover:text-[#dfbd78]">
-                  Oferta
-                </Link>
-                <Link
-                  href="/realizacje"
-                  className="transition hover:text-[#dfbd78]"
-                >
-                  Inspiracje
-                </Link>
-                <Link
-                  href="/kontakt"
-                  className="transition hover:text-[#dfbd78]"
-                >
-                  Kontakt
-                </Link>
-              </nav>
+          <SiteHeader activePage="kalkulator" />
 
-              <div className="flex items-center gap-3">
-                <Link
-                  href="#kalkulator"
-                  className="hidden border border-[#c79a46]/70 px-5 py-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#f6f1e7] transition hover:bg-[#c79a46] hover:text-[#031d18] sm:inline-flex"
-                >
-                  Przejdź do wyceny
-                </Link>
-
-                <details className="relative lg:hidden">
-                  <summary className="flex h-11 w-11 cursor-pointer list-none items-center justify-center border border-[#f6f1e7]/25 bg-[#031d18]/45 text-[#f6f1e7] backdrop-blur transition hover:border-[#c79a46] [&::-webkit-details-marker]:hidden">
-                    <span className="sr-only">Otwórz menu</span>
-                    <span aria-hidden="true" className="space-y-1.5">
-                      <span className="block h-px w-5 bg-current" />
-                      <span className="block h-px w-5 bg-current" />
-                      <span className="block h-px w-5 bg-current" />
-                    </span>
-                  </summary>
-
-                  <div className="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-64 border border-[#c79a46]/35 bg-[#031d18]/96 p-2 shadow-2xl shadow-black/30 backdrop-blur">
-                    <MobileNavLink href="/">Start</MobileNavLink>
-                    <MobileNavLink href="/oferta">Oferta</MobileNavLink>
-                    <MobileNavLink href="/realizacje">Inspiracje</MobileNavLink>
-                    <MobileNavLink href="/kontakt">Kontakt</MobileNavLink>
-
-                    <Link
-                      href="#kalkulator"
-                      className="mt-2 block bg-[#c79a46] px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.16em] text-[#031d18] transition hover:bg-[#dfbd78]"
-                    >
-                      Przejdź do wyceny
-                    </Link>
-                  </div>
-                </details>
-              </div>
-            </div>
-          </header>
-
-          <div className="relative z-10 mx-auto flex min-h-[520px] max-w-7xl items-center px-6 pb-16 pt-16 sm:px-8 lg:px-12">
+          <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
             <div className="max-w-4xl">
               <div className="flex items-center gap-4">
                 <span className="h-px w-11 bg-[#c79a46]" />
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#dfbd78]">
                   Kalkulator MoonGlass
                 </p>
-              </div>
+              </div> 
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
                 Skonfiguruj swoją przestrzeń
@@ -245,19 +181,3 @@ export default function KalkulatorPage() {
   );
 }
 
-function MobileNavLink({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="block border-b border-[#f6f1e7]/10 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#f6f1e7]/78 transition hover:bg-[#f6f1e7]/5 hover:text-[#dfbd78]"
-    >
-      {children}
-    </Link>
-  );
-}

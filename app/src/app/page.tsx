@@ -3,7 +3,13 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 const images = {
-  hero: "/images/glass-system/hero-winter-garden-evening.png",
+  hero: "/images/glass-system/hero-moonglass-day-v2.png",
+
+  // Zdjęcia używane tylko w dwóch głównych kartach oferty na stronie startowej
+  startWinterGarden: "/images/glass-system/start-ogrod-zimowy.png",
+  startTerraceRoof: "/images/glass-system/start-zadaszenie-tarasu.png",
+
+  // Pozostałe zdjęcia używane w dalszych sekcjach strony
   winterGarden: "/images/glass-system/product-winter-garden-day.png",
   terraceRoof: "/images/glass-system/product-terrace-roof-sunset.png",
   evening: "/images/glass-system/parallax-evening-led.png",
@@ -16,7 +22,7 @@ const productCards = [
     eyebrow: "Całoroczna przestrzeń przy domu",
     description:
       "Zabudowa tarasu ze szkłem, zadaszeniem i dodatkami, która pozwala korzystać z przestrzeni niezależnie od pogody.",
-    image: images.winterGarden,
+    image: images.startWinterGarden,
     href: "/kalkulator",
   },
   {
@@ -24,7 +30,7 @@ const productCards = [
     eyebrow: "Nowoczesna ochrona tarasu",
     description:
       "Aluminiowa konstrukcja z dachem szklanym lub poliwęglanowym, projektowana pod wymiar i styl budynku.",
-    image: images.terraceRoof,
+    image: images.startTerraceRoof,
     href: "/kalkulator",
   },
 ];
@@ -85,9 +91,9 @@ export default function Home() {
     className="object-cover animate-[glassHeroZoom_22s_ease-in-out_infinite_alternate]"
   />
 
-  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.92)_0%,rgba(3,29,24,0.72)_35%,rgba(3,29,24,0.28)_70%,rgba(3,29,24,0.12)_100%)]" />
+  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
 
-  <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/75 via-transparent to-[#031d18]/20" />
+  <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
   <SiteHeader activePage="start" />
 

@@ -91,17 +91,17 @@ function getDisplayedItemQuantity(quote: Quote, item: QuoteItem): number {
 
 export function PriceSidebar({ quote }: Props) {
   return (
-    <aside className="border-l border-[#d5ccbc] bg-[#f6f1e7] xl:sticky xl:top-0 xl:h-screen xl:max-h-screen xl:overflow-y-auto">
-      <div className="space-y-3 p-3 sm:p-4">
-        <section className="bg-[#062c25] p-5 text-[#f6f1e7]">
+    <aside className="border-l border-[#d5ccbc] bg-[#f6f1e7]">
+      <div className="space-y-1.5 p-2.5">
+        <section className="bg-[#062c25] p-3.5 text-[#f6f1e7]">
           <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#dfbd78]">
             Wycena orientacyjna
           </p>
 
-          <div className="mt-3 flex items-end justify-between gap-3">
+          <div className="mt-2 flex items-end justify-between gap-3">
             <div>
               <p className="text-sm text-[#f6f1e7]/62">Razem brutto</p>
-              <p className="mt-1 font-serif text-4xl font-medium tracking-tight">
+              <p className="mt-0.5 font-serif text-[28px] font-medium tracking-tight">
                 {formatPrice(quote.totalGross)}
               </p>
             </div>
@@ -116,17 +116,17 @@ export function PriceSidebar({ quote }: Props) {
             </div>
           </div>
 
-          <div className="mt-5 border-t border-[#f6f1e7]/12 pt-5">
+          <div className="mt-3 border-t border-[#f6f1e7]/12 pt-3">
             <QuoteActions quote={quote} />
           </div>
         </section>
 
-        <section className="border border-[#ded7ca] bg-[#fffdf8] p-4">
-          <div className="mb-3">
+        <section className="border border-[#ded7ca] bg-[#fffdf8] p-2.5">
+          <div className="mb-2">
             <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
               Twoja konfiguracja
             </p>
-            <h3 className="mt-1 font-serif text-lg font-medium text-[#062c25]">
+            <h3 className="mt-0.5 font-serif text-[17px] font-medium text-[#062c25]">
               Najważniejsze parametry
             </h3>
           </div>
@@ -156,12 +156,12 @@ export function PriceSidebar({ quote }: Props) {
         </section>
 
         <details className="group border border-[#ded7ca] bg-[#fffdf8]">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-3 py-2.5">
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
                 Szczegóły wyceny
               </p>
-              <p className="mt-1 text-sm font-bold text-[#24312d]">
+              <p className="mt-0.5 text-[13px] font-bold text-[#24312d]">
                 {quote.items.length} pozycji
               </p>
             </div>
@@ -171,14 +171,14 @@ export function PriceSidebar({ quote }: Props) {
             </span>
           </summary>
 
-          <div className="border-t border-[#ded7ca] px-4 pb-3">
+          <div className="border-t border-[#ded7ca] px-3 pb-2">
             {quote.items.map((item, index) => {
               const itemTotalGross = getItemTotalGross(item);
 
               return (
                 <div
                   key={`${item.name}-${index}`}
-                  className="flex items-start justify-between gap-3 border-b border-[#ded7ca] py-3 last:border-b-0"
+                  className="flex items-start justify-between gap-3 border-b border-[#ded7ca] py-2 last:border-b-0"
                 >
                   <div>
                     <p className="text-sm font-bold leading-5 text-[#24312d]">
@@ -198,11 +198,11 @@ export function PriceSidebar({ quote }: Props) {
           </div>
         </details>
 
-        <div className="border border-[#d7c9ab] bg-[#f4ead5]/55 px-4 py-3">
+        <div className="border border-[#d7c9ab] bg-[#f4ead5]/55 px-3 py-2">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#9a722e]">
             Co otrzymasz?
           </p>
-          <p className="mt-2 text-xs leading-5 text-[#4f5854]">
+          <p className="mt-1 text-[11px] leading-4 text-[#4f5854]">
             Podsumowanie konfiguracji i dokument PDF na e-mail. Doradca MoonGlass
             otrzyma komplet danych do dalszej weryfikacji.
           </p>
@@ -219,9 +219,9 @@ interface SummaryRowProps {
 
 function SummaryRow({ label, value }: SummaryRowProps) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[#ded7ca] py-2 last:border-b-0">
-      <p className="text-sm text-[#68706c]">{label}</p>
-      <p className="max-w-[62%] text-right text-sm font-bold leading-5 text-[#24312d]">
+    <div className="flex items-start justify-between gap-4 border-b border-[#ded7ca] py-1 last:border-b-0">
+      <p className="text-[13px] text-[#68706c]">{label}</p>
+      <p className="max-w-[62%] text-right text-[13px] font-bold leading-4 text-[#24312d]">
         {value}
       </p>
     </div>
