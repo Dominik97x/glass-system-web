@@ -286,7 +286,7 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             onChange={updateSpotLed}
           />
           <OptionToggle
-            label="LED RGB CCT"
+            label="LED CCT"
             checked={configuration.hasCob}
             onChange={updateCctLed}
           />

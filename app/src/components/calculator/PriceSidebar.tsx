@@ -116,9 +116,13 @@ export function PriceSidebar({ quote }: Props) {
             </div>
           </div>
 
-          <div className="mt-3 border-t border-[#f6f1e7]/12 pt-3">
+          <div className="mt-3 hidden border-t border-[#f6f1e7]/12 pt-3 xl:block">
             <QuoteActions quote={quote} />
           </div>
+
+          <p className="mt-3 border-t border-[#f6f1e7]/12 pt-3 text-[11px] leading-4 text-[#d9d1c4] xl:hidden">
+            Bez zobowiązań. Finalna oferta zostanie potwierdzona po weryfikacji technicznej.
+          </p>
         </section>
 
         <section className="border border-[#ded7ca] bg-[#fffdf8] p-2.5">

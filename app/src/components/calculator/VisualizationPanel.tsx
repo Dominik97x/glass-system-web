@@ -42,7 +42,7 @@ export function VisualizationPanel({ configuration }: Props) {
     productKind === "winter_garden" ? "Ogród zimowy" : "Zadaszenie tarasu";
   const previewImage = PREVIEW_IMAGES[productKind][frameColorKey];
   const previewLabel = `${productLabel} — ${frameColor}`;
-  const [displayedImage, setDisplayedImage] = useState(previewImage);
+  const [displayedImage, setDisplayedImage] = useState<string>(previewImage);
   const [incomingImage, setIncomingImage] = useState<string | null>(null);
   const [incomingVisible, setIncomingVisible] = useState(false);
 
@@ -132,15 +132,15 @@ export function VisualizationPanel({ configuration }: Props) {
               <VisualBadge label={ROOF_LABELS[configuration.roof]} />
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-              <div className="max-w-xl border-l-2 border-[#c79a46] bg-[#031d18]/74 px-3 py-2.5 text-[#f6f1e7] backdrop-blur-sm">
-                <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#dfbd78] sm:text-[9px]">
+            <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4">
+              <div className="max-w-xl border-l-2 border-[#c79a46] bg-[#031d18]/74 px-2.5 py-2 text-[#f6f1e7] backdrop-blur-sm sm:px-3 sm:py-2.5">
+                <p className="text-[7px] font-bold uppercase tracking-[0.18em] text-[#dfbd78] sm:text-[9px] sm:tracking-[0.2em]">
                   Zdjęcie poglądowe
                 </p>
-                <p className="mt-1 font-serif text-xl font-medium sm:text-2xl">
+                <p className="mt-0.5 font-serif text-lg font-medium leading-tight sm:mt-1 sm:text-2xl">
                   {previewLabel}
                 </p>
-                <p className="mt-1 text-[11px] leading-4 text-[#f6f1e7]/65 sm:text-xs sm:leading-5">
+                <p className="mt-1 hidden text-xs leading-5 text-[#f6f1e7]/65 sm:block">
                   Finalny wygląd konstrukcji zostanie dopasowany do budynku,
                   wymiarów i warunków montażu.
                 </p>
@@ -160,7 +160,7 @@ export function VisualizationPanel({ configuration }: Props) {
 
 function VisualBadge({ label }: { label: string }) {
   return (
-    <span className="border border-[#f6f1e7]/20 bg-[#031d18]/72 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.08em] text-[#f6f1e7] backdrop-blur-sm">
+    <span className="border border-[#f6f1e7]/20 bg-[#031d18]/72 px-2 py-1 text-[8px] font-black uppercase tracking-[0.06em] text-[#f6f1e7] backdrop-blur-sm sm:px-2.5 sm:py-1.5 sm:text-[9px] sm:tracking-[0.08em]">
       {label}
     </span>
   );

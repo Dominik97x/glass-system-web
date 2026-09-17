@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { Quote } from "@/domain/Quote";
 import { InquiryForm } from "./InquiryForm";
@@ -78,54 +79,57 @@ export function QuoteActions({ quote, variant = "default" }: Props) {
         </p>
       ) : null}
 
-      {isInquiryFormOpen ? (
-        <div
-          className="fixed inset-0 z-[100] overflow-y-auto bg-[#031d18]/72 px-3 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Formularz zapytania MoonGlass"
-          onMouseDown={(event) => {
-            if (event.currentTarget === event.target) {
-              setIsInquiryFormOpen(false);
-            }
-          }}
-        >
-          <div className="mx-auto flex min-h-full max-w-2xl items-center justify-center">
-            <div className="w-full border border-[#d5ccbc] bg-[#f6f1e7] shadow-2xl shadow-black/30">
-              <div className="flex items-start justify-between gap-5 border-b border-[#d5ccbc] bg-[#fffdf8] px-5 py-5 sm:px-7">
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#9a722e]">
-                    MoonGlass
-                  </p>
-                  <h3 className="mt-2 font-serif text-2xl font-medium text-[#062c25]">
-                    Wyślij konfigurację
-                  </h3>
-                  <p className="mt-2 max-w-lg text-sm leading-6 text-[#4f5854]">
-                    Uzupełnij dane kontaktowe. Zapiszemy konfigurację i wyślemy
-                    jej podsumowanie na podany adres e-mail.
-                  </p>
+      {isInquiryFormOpen && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-[1000] overflow-y-auto bg-[#f6f1e7] sm:bg-[#031d18]/72 sm:px-6 sm:py-8 sm:backdrop-blur-sm"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Formularz zapytania MoonGlass"
+              onMouseDown={(event) => {
+                if (event.currentTarget === event.target) {
+                  setIsInquiryFormOpen(false);
+                }
+              }}
+            >
+              <div className="mx-auto min-h-[100dvh] w-full sm:flex sm:min-h-full sm:max-w-2xl sm:items-center sm:justify-center">
+                <div className="min-h-[100dvh] w-full bg-[#f6f1e7] sm:min-h-0 sm:border sm:border-[#d5ccbc] sm:shadow-2xl sm:shadow-black/30">
+                  <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#d5ccbc] bg-[#fffdf8]/98 px-4 py-4 backdrop-blur sm:static sm:gap-5 sm:px-7 sm:py-5">
+                    <div>
+                      <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[#9a722e] sm:text-[9px] sm:tracking-[0.22em]">
+                        MoonGlass
+                      </p>
+                      <h3 className="mt-1 font-serif text-xl font-medium text-[#062c25] sm:mt-2 sm:text-2xl">
+                        Wyślij konfigurację
+                      </h3>
+                      <p className="mt-1 max-w-lg text-xs leading-5 text-[#4f5854] sm:mt-2 sm:text-sm sm:leading-6">
+                        Uzupełnij dane kontaktowe. Zapiszemy konfigurację i wyślemy
+                        jej podsumowanie na podany adres e-mail.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsInquiryFormOpen(false)}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#d5ccbc] bg-[#f8f4ec] text-xl text-[#24312d] transition hover:border-[#9a722e] hover:text-[#9a722e]"
+                      aria-label="Zamknij formularz"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <div className="p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:p-6">
+                    <InquiryForm
+                      quote={quote}
+                      onCancel={() => setIsInquiryFormOpen(false)}
+                    />
+                  </div>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsInquiryFormOpen(false)}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#d5ccbc] bg-[#f8f4ec] text-xl text-[#24312d] transition hover:border-[#9a722e] hover:text-[#9a722e]"
-                  aria-label="Zamknij formularz"
-                >
-                  ×
-                </button>
               </div>
-
-              <div className="p-4 sm:p-6">
-                <InquiryForm
-                  quote={quote}
-                  onCancel={() => setIsInquiryFormOpen(false)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }

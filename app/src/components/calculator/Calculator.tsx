@@ -70,7 +70,7 @@ export function Calculator() {
         </div>
       </header>
 
-      <div className="grid items-stretch bg-[#eee7dc] xl:grid-cols-[290px_minmax(0,1fr)_340px] 2xl:grid-cols-[305px_minmax(0,1fr)_360px]">
+      <div className="grid items-stretch bg-[#eee7dc] pb-24 sm:pb-28 xl:grid-cols-[290px_minmax(0,1fr)_340px] xl:pb-0 2xl:grid-cols-[305px_minmax(0,1fr)_360px]">
         <ConfiguratorPanel
           configuration={configuration}
           onChange={setConfiguration}
@@ -81,7 +81,7 @@ export function Calculator() {
         <PriceSidebar quote={quote} />
       </div>
 
-      <div className="sticky bottom-0 z-40 border-t border-[#c79a46]/35 bg-[#062c25]/96 px-3 pt-3 shadow-[0_-8px_30px_rgba(3,29,24,0.22)] backdrop-blur [padding-bottom:calc(0.75rem+env(safe-area-inset-bottom))] xl:hidden">
+      <div className="sticky bottom-0 z-40 border-t border-[#c79a46]/35 bg-[#062c25]/96 px-3 pt-2.5 shadow-[0_-8px_30px_rgba(3,29,24,0.22)] backdrop-blur [padding-bottom:calc(0.6rem+env(safe-area-inset-bottom))] xl:hidden">
         <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
           <div className="min-w-0 text-[#f6f1e7]">
             <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#dfbd78]">
