@@ -51,8 +51,12 @@ export function VisualizationPanel({ configuration }: Props) {
       return;
     }
 
-    setIncomingVisible(false);
-    setIncomingImage(previewImage);
+    const frameId = window.requestAnimationFrame(() => {
+      setIncomingVisible(false);
+      setIncomingImage(previewImage);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
   }, [previewImage, displayedImage]);
 
   useEffect(() => {
