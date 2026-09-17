@@ -1,10 +1,29 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
+import { requireAdminSession } from "@/auth/admin-session";
+import { AdminToolbar } from "@/components/admin/AdminToolbar";
+import type {
+  Bitrix24SyncStatus,
+  CalculatorInquiryStatus,
+} from "@/domain/StoredCalculatorInquiryLead";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
-import { formatPrice } from "@/lib/format-price";
-import { updateInquiryStatusAction } from "./actions";
+import {
+  getBitrix24ContactUrl,
+  getBitrix24DealUrl,
+} from "@/integrations/bitrix24/Bitrix24PortalLinks";
+import {
+  formatAccountingPrice,
+  formatPrice,
+} from "@/lib/format-price";
+import {
+  getQuoteSnapshotWebsiteTotalGross,
+  hasDetailedQuoteFinancials,
+} from "@/lib/quote-snapshot";
+import {
+  retryBitrix24SyncAction,
+  updateInquiryStatusAction,
+} from "./actions";
 
 interface Props {
   params: Promise<{
@@ -30,15 +49,28 @@ const inquiryAdminService = new CalculatorInquiryAdminService();
 
 export default async function AdminLeadDetailsPage({ params }: Props) {
   const { id } = await params;
+  const session = await requireAdminSession(`/admin/leady/${id}`);
   const inquiry = await inquiryAdminService.getInquiryById(id);
 
   if (!inquiry) {
     notFound();
   }
 
+  const bitrix24Status = inquiry.bitrix24?.status ?? "not_configured";
+  const contactUrl = getBitrix24ContactUrl(inquiry.bitrix24?.contactId);
+  const dealUrl = getBitrix24DealUrl(inquiry.bitrix24?.dealId);
+  const retryButtonLabel = getBitrix24RetryButtonLabel(bitrix24Status);
+  const synchronizationInProgress = bitrix24Status === "processing";
+  const financialQuote = hasDetailedQuoteFinancials(inquiry.quote)
+    ? inquiry.quote
+    : null;
+  const websiteTotalGross = getQuoteSnapshotWebsiteTotalGross(inquiry.quote);
+
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
+        <AdminToolbar username={session.username} />
+
         <Link
           href="/admin/leady"
           className="text-sm text-neutral-400 underline-offset-4 hover:text-white hover:underline"
@@ -103,6 +135,94 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
             </section>
 
             <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+              <h2 className="text-xl font-semibold">Bitrix24</h2>
+
+              <div className="mt-4 space-y-2 text-sm text-neutral-300">
+                <p>
+                  <strong className="text-white">Status:</strong>{" "}
+                  {formatBitrix24SyncStatus(bitrix24Status)}
+                </p>
+                <p>
+                  <strong className="text-white">Kontakt:</strong>{" "}
+                  {contactUrl ? (
+                    <a
+                      href={contactUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-sky-300 underline-offset-4 hover:underline"
+                    >
+                      Otwórz kontakt #{inquiry.bitrix24?.contactId}
+                    </a>
+                  ) : (
+                    inquiry.bitrix24?.contactId ?? "—"
+                  )}
+                </p>
+                <p>
+                  <strong className="text-white">Deal:</strong>{" "}
+                  {dealUrl ? (
+                    <a
+                      href={dealUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-sky-300 underline-offset-4 hover:underline"
+                    >
+                      Otwórz Deal #{inquiry.bitrix24?.dealId}
+                    </a>
+                  ) : (
+                    inquiry.bitrix24?.dealId ?? "—"
+                  )}
+                </p>
+                <p>
+                  <strong className="text-white">Próby:</strong>{" "}
+                  {inquiry.bitrix24?.attempts ?? 0}
+                </p>
+                {inquiry.bitrix24?.lastAttemptAt ? (
+                  <p>
+                    <strong className="text-white">Ostatnia próba:</strong>{" "}
+                    {formatDateTime(inquiry.bitrix24.lastAttemptAt)}
+                  </p>
+                ) : null}
+                {inquiry.bitrix24?.startedAt && synchronizationInProgress ? (
+                  <p>
+                    <strong className="text-white">Rozpoczęto:</strong>{" "}
+                    {formatDateTime(inquiry.bitrix24.startedAt)}
+                  </p>
+                ) : null}
+                {inquiry.bitrix24?.syncedAt ? (
+                  <p>
+                    <strong className="text-white">Zsynchronizowano:</strong>{" "}
+                    {formatDateTime(inquiry.bitrix24.syncedAt)}
+                  </p>
+                ) : null}
+                {inquiry.bitrix24?.nextRetryAt &&
+                ["pending", "failed"].includes(bitrix24Status) ? (
+                  <p>
+                    <strong className="text-white">Następna próba:</strong>{" "}
+                    {formatDateTime(inquiry.bitrix24.nextRetryAt)}
+                  </p>
+                ) : null}
+                {bitrix24Status === "failed" && inquiry.bitrix24?.lastError ? (
+                  <p className="rounded-lg border border-red-900/70 bg-red-950/40 p-3 text-red-200">
+                    {inquiry.bitrix24.lastError}
+                  </p>
+                ) : null}
+              </div>
+
+              {inquiry.bitrix24 && bitrix24Status !== "not_configured" ? (
+                <form action={retryBitrix24SyncAction} className="mt-4">
+                  <input type="hidden" name="id" value={inquiry.id} />
+                  <button
+                    type="submit"
+                    disabled={synchronizationInProgress}
+                    className="w-full rounded-xl border border-neutral-600 px-4 py-3 font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+                  >
+                    {retryButtonLabel}
+                  </button>
+                </form>
+              ) : null}
+            </section>
+
+            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
               <h2 className="text-xl font-semibold">Klient</h2>
 
               <div className="mt-4 space-y-3 text-sm text-neutral-300">
@@ -132,12 +252,36 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
               <h2 className="text-xl font-semibold">Wycena</h2>
 
               <p className="mt-4 text-3xl font-bold">
-                {formatPrice(inquiry.quote.totalGross)}
+                {financialQuote
+                  ? formatAccountingPrice(inquiry.quote.totalGross)
+                  : formatPrice(inquiry.quote.totalGross)}
               </p>
 
-              <p className="mt-1 text-sm text-neutral-400">
-                Cena brutto, waluta: {inquiry.quote.currency}
-              </p>
+              {financialQuote ? (
+                <div className="mt-4 space-y-2 text-sm text-neutral-300">
+                  <p>
+                    <strong className="text-white">Netto:</strong>{" "}
+                    {formatAccountingPrice(financialQuote.totalNet)}
+                  </p>
+                  <p>
+                    <strong className="text-white">
+                      VAT {financialQuote.defaultVatRate}%:
+                    </strong>{" "}
+                    {formatAccountingPrice(financialQuote.totalTaxAmount)}
+                  </p>
+                  <p>
+                    <strong className="text-white">Brutto:</strong>{" "}
+                    {formatAccountingPrice(financialQuote.totalGross)}
+                  </p>
+                  <p className="pt-2 text-neutral-400">
+                    Orientacyjnie na stronie: {formatPrice(websiteTotalGross)}
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-1 text-sm text-neutral-400">
+                  Starszy snapshot brutto, waluta: {inquiry.quote.currency}
+                </p>
+              )}
             </section>
           </aside>
 
@@ -170,7 +314,14 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
                         Ilość
                       </th>
                       <th className="px-4 py-3 text-right font-medium">
-                        Cena
+                        Netto
+                      </th>
+                      <th className="px-4 py-3 text-right font-medium">VAT</th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Kwota VAT
+                      </th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Brutto
                       </th>
                     </tr>
                   </thead>
@@ -189,7 +340,18 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
                           {item.quantity}
                         </td>
                         <td className="px-4 py-3 text-right text-white">
-                          {formatPrice(item.totalPriceGross)}
+                          {formatOptionalPrice(item.totalPriceNet)}
+                        </td>
+                        <td className="px-4 py-3 text-right text-neutral-300">
+                          {typeof item.vatRate === "number"
+                            ? `${item.vatRate}%`
+                            : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right text-neutral-300">
+                          {formatOptionalPrice(item.totalTaxAmount)}
+                        </td>
+                        <td className="px-4 py-3 text-right text-white">
+                          {formatAccountingPrice(item.totalPriceGross)}
                         </td>
                       </tr>
                     ))}
@@ -210,4 +372,39 @@ export default async function AdminLeadDetailsPage({ params }: Props) {
       </div>
     </main>
   );
+}
+
+function getBitrix24RetryButtonLabel(status: Bitrix24SyncStatus): string {
+  const labels: Record<Bitrix24SyncStatus, string> = {
+    not_configured: "Bitrix24 nie jest skonfigurowany",
+    pending: "Wyślij teraz do Bitrix24",
+    processing: "Synchronizacja trwa…",
+    synced: "Synchronizuj ponownie",
+    failed: "Ponów wysyłkę do Bitrix24",
+  };
+
+  return labels[status];
+}
+
+function formatBitrix24SyncStatus(status: Bitrix24SyncStatus): string {
+  const labels: Record<Bitrix24SyncStatus, string> = {
+    not_configured: "nieskonfigurowany",
+    pending: "oczekuje",
+    processing: "w trakcie",
+    synced: "zsynchronizowany",
+    failed: "błąd",
+  };
+
+  return labels[status];
+}
+
+function formatDateTime(value: string): string {
+  return new Date(value).toLocaleString("pl-PL");
+}
+
+
+function formatOptionalPrice(value: number | undefined): string {
+  return typeof value === "number" && Number.isFinite(value)
+    ? formatAccountingPrice(value)
+    : "—";
 }

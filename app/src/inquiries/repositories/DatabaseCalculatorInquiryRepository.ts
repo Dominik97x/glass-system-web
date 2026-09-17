@@ -1,10 +1,13 @@
-import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
-import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
+import type {
+  Bitrix24SyncStatus,
+  CalculatorInquiryStatus,
+  StoredCalculatorInquiryLead,
+} from "@/domain/StoredCalculatorInquiryLead";
 import type { QuoteSnapshot } from "@/lib/quote-snapshot";
 import type { CalculatorInquiryRepository } from "./CalculatorInquiryRepository";
-import { getCalculatorInquiryDatabasePool } from "./PostgresCalculatorInquiryDatabase";
+import { runCalculatorInquiryDatabaseOperation } from "./PostgresCalculatorInquiryDatabase";
 
-interface CalculatorInquiryDatabaseRow {
+export interface CalculatorInquiryDatabaseRow {
   id: string;
   source: string;
   status: CalculatorInquiryStatus;
@@ -16,9 +19,15 @@ interface CalculatorInquiryDatabaseRow {
   customer_message: string;
   quote_total_gross: string | number;
   quote_snapshot: unknown;
-  bitrix24_sync_status: string;
+  bitrix24_sync_status: Bitrix24SyncStatus;
+  bitrix24_contact_id: string | number | null;
   bitrix24_deal_id: string | number | null;
+  bitrix24_sync_attempts: string | number;
   bitrix24_error: string | null;
+  bitrix24_last_attempt_at: Date | string | null;
+  bitrix24_sync_started_at: Date | string | null;
+  bitrix24_synced_at: Date | string | null;
+  bitrix24_next_retry_at: Date | string | null;
   notification_status: string;
   notification_error: string | null;
   created_in_database_at: Date | string;
@@ -29,122 +38,113 @@ export class DatabaseCalculatorInquiryRepository
   implements CalculatorInquiryRepository
 {
   async save(lead: StoredCalculatorInquiryLead): Promise<void> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    await pool.query(
-      `
-        insert into calculator_inquiries (
-          id,
-          source,
-          status,
-          created_at,
-          received_at,
-          customer_name,
-          customer_email,
-          customer_phone,
-          customer_message,
-          quote_total_gross,
-          quote_snapshot,
-          bitrix24_sync_status,
-          notification_status
-        )
-        values (
-          $1,
-          $2,
-          $3,
-          $4,
-          $5,
-          $6,
-          $7,
-          $8,
-          $9,
-          $10,
-          $11::jsonb,
-          $12,
-          $13
-        )
-      `,
-      [
-        lead.id,
-        lead.source,
-        lead.status,
-        lead.createdAt,
-        lead.receivedAt,
-        lead.customer.name,
-        lead.customer.email,
-        lead.customer.phone,
-        lead.customer.message,
-        lead.quote.totalGross,
-        JSON.stringify(lead.quote),
-        getInitialBitrix24SyncStatus(),
-        getInitialNotificationStatus(),
-      ]
+    await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query(
+        `
+          insert into calculator_inquiries (
+            id,
+            source,
+            status,
+            created_at,
+            received_at,
+            customer_name,
+            customer_email,
+            customer_phone,
+            customer_message,
+            quote_total_gross,
+            quote_snapshot,
+            bitrix24_sync_status,
+            notification_status
+          )
+          values (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8,
+            $9,
+            $10,
+            $11::jsonb,
+            $12,
+            $13
+          )
+          on conflict (id) do nothing
+        `,
+        [
+          lead.id,
+          lead.source,
+          lead.status,
+          lead.createdAt,
+          lead.receivedAt,
+          lead.customer.name,
+          lead.customer.email,
+          lead.customer.phone,
+          lead.customer.message,
+          lead.quote.totalGross,
+          JSON.stringify(lead.quote),
+          getInitialBitrix24SyncStatus(),
+          getInitialNotificationStatus(),
+        ]
+      )
     );
   }
 
   async findAll(): Promise<StoredCalculatorInquiryLead[]> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    const result = await pool.query<CalculatorInquiryDatabaseRow>(
-      `
-        select *
-        from calculator_inquiries
-        order by received_at desc
-      `
+    const result = await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query<CalculatorInquiryDatabaseRow>(
+        `
+          select *
+          from calculator_inquiries
+          order by received_at desc
+        `
+      )
     );
 
     return result.rows.map(mapDatabaseRowToStoredCalculatorInquiryLead);
   }
 
   async findById(id: string): Promise<StoredCalculatorInquiryLead | null> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    const result = await pool.query<CalculatorInquiryDatabaseRow>(
-      `
-        select *
-        from calculator_inquiries
-        where id = $1
-        limit 1
-      `,
-      [id]
+    const result = await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query<CalculatorInquiryDatabaseRow>(
+        `
+          select *
+          from calculator_inquiries
+          where id = $1
+          limit 1
+        `,
+        [id]
+      )
     );
 
     const row = result.rows[0];
-
-    if (!row) {
-      return null;
-    }
-
-    return mapDatabaseRowToStoredCalculatorInquiryLead(row);
+    return row ? mapDatabaseRowToStoredCalculatorInquiryLead(row) : null;
   }
 
   async updateStatus(
     id: string,
     status: CalculatorInquiryStatus
   ): Promise<StoredCalculatorInquiryLead | null> {
-    const pool = getCalculatorInquiryDatabasePool();
-
-    const result = await pool.query<CalculatorInquiryDatabaseRow>(
-      `
-        update calculator_inquiries
-        set status = $2
-        where id = $1
-        returning *
-      `,
-      [id, status]
+    const result = await runCalculatorInquiryDatabaseOperation((pool) =>
+      pool.query<CalculatorInquiryDatabaseRow>(
+        `
+          update calculator_inquiries
+          set status = $2
+          where id = $1
+          returning *
+        `,
+        [id, status]
+      )
     );
 
     const row = result.rows[0];
-
-    if (!row) {
-      return null;
-    }
-
-    return mapDatabaseRowToStoredCalculatorInquiryLead(row);
+    return row ? mapDatabaseRowToStoredCalculatorInquiryLead(row) : null;
   }
 }
 
-function mapDatabaseRowToStoredCalculatorInquiryLead(
+export function mapDatabaseRowToStoredCalculatorInquiryLead(
   row: CalculatorInquiryDatabaseRow
 ): StoredCalculatorInquiryLead {
   return {
@@ -160,6 +160,17 @@ function mapDatabaseRowToStoredCalculatorInquiryLead(
       message: row.customer_message,
     },
     quote: parseQuoteSnapshot(row.quote_snapshot),
+    bitrix24: {
+      status: row.bitrix24_sync_status,
+      contactId: toNullableNumber(row.bitrix24_contact_id),
+      dealId: toNullableNumber(row.bitrix24_deal_id),
+      attempts: Number(row.bitrix24_sync_attempts ?? 0),
+      lastError: row.bitrix24_error,
+      lastAttemptAt: toNullableIsoString(row.bitrix24_last_attempt_at),
+      startedAt: toNullableIsoString(row.bitrix24_sync_started_at),
+      syncedAt: toNullableIsoString(row.bitrix24_synced_at),
+      nextRetryAt: toNullableIsoString(row.bitrix24_next_retry_at),
+    },
   };
 }
 
@@ -179,8 +190,24 @@ function toIsoString(value: Date | string): string {
   return new Date(value).toISOString();
 }
 
-function getInitialBitrix24SyncStatus(): string {
-  if (process.env.BITRIX24_ENABLED === "true") {
+function toNullableIsoString(value: Date | string | null): string | null {
+  return value === null ? null : toIsoString(value);
+}
+
+function toNullableNumber(value: string | number | null): number | null {
+  if (value === null) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getInitialBitrix24SyncStatus(): Bitrix24SyncStatus {
+  if (
+    process.env.BITRIX24_ENABLED === "true" &&
+    process.env.CALCULATOR_INQUIRY_REPOSITORY === "database"
+  ) {
     return "pending";
   }
 

@@ -1,0 +1,24 @@
+﻿# Archiwa i raporty tworzone lokalnie
+*.zip
+*.rar
+*.7z
+*_git-audit.txt
+PROJECT_STATE_FOR_REVIEW.txt
+ENV_KEYS_FOR_REVIEW.example
+
+# Sekrety środowiskowe
+**/.env*
+!**/.env.example
+!**/.env.local.example
+
+# Katalogi tymczasowe
+.review/
+.quarantine/
+temp/
+tmp/
+
+# System i edytory
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

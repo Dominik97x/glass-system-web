@@ -15,7 +15,7 @@ const WIDTH_OPTIONS: Width[] = [
   306, 406, 506, 606, 706, 806, 906, 1006, 1106, 1206,
 ];
 
-const LENGTH_OPTIONS: Length[] = [300, 350, 400, 450, 500];
+const LENGTH_OPTIONS: Length[] = [300, 350, 400, 450, 500, 550, 600];
 
 interface PricingCoverageScenario {
   id: string;
@@ -56,10 +56,11 @@ interface PricingCoverageRecord {
 const scenarios: PricingCoverageScenario[] = [
   {
     id: "terrace_roof_base",
-    label: "Zadaszenie tarasu - konfiguracja bazowa",
-    expectedCategories: ["construction"],
+    label: "Zadaszenie tarasu - baza",
+    expectedCategories: ["construction", "installation"],
     createConfiguration: (width, length) => ({
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width,
       length,
       walls: "none",
@@ -76,16 +77,24 @@ const scenarios: PricingCoverageScenario[] = [
     }),
   },
   {
-    id: "terrace_roof_with_options",
-    label: "Zadaszenie tarasu - dodatki bez ścian",
-    expectedCategories: ["construction", "awning", "lighting", "accessory"],
+    id: "terrace_roof_options",
+    label: "Zadaszenie tarasu - ZIP, markiza, LED punktowe i dodatki",
+    expectedCategories: [
+      "construction",
+      "installation",
+      "zip",
+      "awning",
+      "lighting",
+      "accessory",
+    ],
     createConfiguration: (width, length) => ({
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
       width,
       length,
       walls: "none",
       roof: "polycarbonate_clear",
-      hasFrontZip: false,
+      hasFrontZip: true,
       hasLeftZip: false,
       hasRightZip: false,
       hasAwning: true,
@@ -97,11 +106,56 @@ const scenarios: PricingCoverageScenario[] = [
     }),
   },
   {
-    id: "winter_garden_base",
-    label: "Ogród zimowy - konfiguracja bazowa",
-    expectedCategories: ["construction", "wall"],
+    id: "terrace_roof_poly_color",
+    label: "Zadaszenie tarasu - dopłata do poliwęglanu kolorowego",
+    expectedCategories: ["construction", "installation", "roof"],
     createConfiguration: (width, length) => ({
       ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
+      width,
+      length,
+      walls: "none",
+      roof: "polycarbonate_grey",
+      hasFrontZip: false,
+      hasLeftZip: false,
+      hasRightZip: false,
+      hasAwning: false,
+      hasLed: false,
+      hasCob: false,
+      hasHandles: false,
+      hasBrushes: false,
+      hasLevelingProfile: false,
+    }),
+  },
+  {
+    id: "terrace_roof_rgb_cct",
+    label: "Zadaszenie tarasu - LED RGB CCT",
+    expectedCategories: ["construction", "installation", "lighting"],
+    createConfiguration: (width, length) => ({
+      ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
+      width,
+      length,
+      walls: "none",
+      roof: "polycarbonate_clear",
+      hasFrontZip: false,
+      hasLeftZip: false,
+      hasRightZip: false,
+      hasAwning: false,
+      hasLed: false,
+      hasCob: true,
+      hasHandles: false,
+      hasBrushes: false,
+      hasLevelingProfile: false,
+    }),
+  },
+  {
+    id: "winter_garden_base",
+    label: "Ogród zimowy - baza",
+    expectedCategories: ["construction", "installation"],
+    createConfiguration: (width, length) => ({
+      ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width,
       length,
       walls: "glass_clear",
@@ -118,11 +172,38 @@ const scenarios: PricingCoverageScenario[] = [
     }),
   },
   {
-    id: "winter_garden_full",
-    label: "Ogród zimowy - konfiguracja z dodatkami",
+    id: "winter_garden_tinted_glass",
+    label: "Ogród zimowy - szkło dachowe i ściany przyciemniane",
     expectedCategories: [
       "construction",
-      "wall",
+      "installation",
+      "roof",
+      "walls",
+    ],
+    createConfiguration: (width, length) => ({
+      ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
+      width,
+      length,
+      walls: "glass_tinted",
+      roof: "glass_tinted",
+      hasFrontZip: false,
+      hasLeftZip: false,
+      hasRightZip: false,
+      hasAwning: false,
+      hasLed: false,
+      hasCob: false,
+      hasHandles: false,
+      hasBrushes: false,
+      hasLevelingProfile: false,
+    }),
+  },
+  {
+    id: "winter_garden_full",
+    label: "Ogród zimowy - trzy ZIP, markiza, LED punktowe i dodatki",
+    expectedCategories: [
+      "construction",
+      "installation",
       "zip",
       "awning",
       "lighting",
@@ -130,6 +211,7 @@ const scenarios: PricingCoverageScenario[] = [
     ],
     createConfiguration: (width, length) => ({
       ...DEFAULT_CONFIGURATION,
+      productType: "winter_garden",
       width,
       length,
       walls: "glass_clear",
@@ -164,6 +246,7 @@ export async function GET(request: NextRequest) {
 
   const records: PricingCoverageRecord[] = [];
   const problems: PricingCoverageProblem[] = [];
+  let expectedIndividualQuoteChecks = 0;
 
   for (const scenario of scenarios) {
     for (const width of WIDTH_OPTIONS) {
@@ -184,13 +267,24 @@ export async function GET(request: NextRequest) {
             ...findRecordProblems(scenario, configuration, quote, record)
           );
         } catch (error) {
+          if (
+            isExpectedIndividualQuote(
+              scenario,
+              configuration,
+              error
+            )
+          ) {
+            expectedIndividualQuoteChecks += 1;
+            continue;
+          }
+
           problems.push({
             scenarioId: scenario.id,
             scenarioLabel: scenario.label,
             width,
             length,
             dimensionLabel: `${length} x ${width} cm`,
-            message: "Pricing Engine threw an error for this configuration.",
+            message: "QuoteService threw an error for this configuration.",
             details:
               error instanceof Error
                 ? {
@@ -204,7 +298,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const response = createCoverageResponse(records, problems);
+  const response = createCoverageResponse(
+    records,
+    problems,
+    expectedIndividualQuoteChecks
+  );
 
   if (mode === "full") {
     return NextResponse.json(response);
@@ -226,9 +324,24 @@ export async function GET(request: NextRequest) {
   });
 }
 
+function isExpectedIndividualQuote(
+  scenario: PricingCoverageScenario,
+  configuration: ProductConfiguration,
+  error: unknown
+): boolean {
+  return (
+    scenario.id === "winter_garden_tinted_glass" &&
+    configuration.length >= 550 &&
+    configuration.roof.startsWith("glass_") &&
+    error instanceof Error &&
+    error.message.includes("550 i 600 cm")
+  );
+}
+
 function createCoverageResponse(
   records: PricingCoverageRecord[],
-  problems: PricingCoverageProblem[]
+  problems: PricingCoverageProblem[],
+  expectedIndividualQuoteChecks: number
 ) {
   const totals = records.map((record) => record.totalGross);
   const categorySet = new Set<string>();
@@ -249,12 +362,13 @@ function createCoverageResponse(
 
   return {
     success: problems.length === 0,
-    source: "current-typescript-pricing-engine",
+    source: "current-quote-service-complete-catalog-model",
     pricingFlow: [
       "QuoteService",
-      "PricingEngine",
-      "FilePriceRepository",
-      "TypeScript price files",
+      "SnapshotQuoteService",
+      "CrmCoreCatalog",
+      "crm-core-products.generated.json",
+      "published-pricing.generated.json",
     ],
     summary: {
       widths: WIDTH_OPTIONS.length,
@@ -263,10 +377,14 @@ function createCoverageResponse(
       scenarios: scenarios.length,
       expectedQuoteChecks:
         WIDTH_OPTIONS.length * LENGTH_OPTIONS.length * scenarios.length,
-      successfulQuoteChecks: records.length,
+      successfulQuoteChecks:
+        records.length + expectedIndividualQuoteChecks,
+      pricedQuoteChecks: records.length,
+      expectedIndividualQuoteChecks,
       failedQuoteChecks:
         WIDTH_OPTIONS.length * LENGTH_OPTIONS.length * scenarios.length -
-        records.length,
+        records.length -
+        expectedIndividualQuoteChecks,
       problems: problems.length,
       recordsWithZeroTotal: recordsWithZeroTotal.length,
       recordsWithNoItems: recordsWithNoItems.length,
@@ -278,15 +396,16 @@ function createCoverageResponse(
     problemGroups: groupProblems(problems),
     successfulDimensions: getSuccessfulDimensions(records),
     recommendedNextSteps: [
-      "Nie uzupełniać dalej ręcznie cen w plikach TypeScript jako docelowego źródła.",
-      "Użyć tego raportu jako dowodu, że obecny cennik TS jest tylko tymczasowy.",
-      "Przenieść główną matrycę cen do Excel/snapshot i docelowo przepiąć kalkulator na snapshot pricing.",
-      "Przed integracją Bitrix ujednolicić kategorię ścian: obecnie PricingEngine używa 'wall', a snapshot docelowo używa 'walls'.",
+      "Utrzymywać QuoteService jako kanoniczny punkt wejścia do wyceny kalkulatora.",
+      "Produkty kompletne i montaż pobierać z katalogu D4.2.",
+      "Dodatki nadal pobierać z opublikowanego snapshotu cenowego.",
+      "Wyceny indywidualne traktować jako poprawny wynik biznesowy, a nie błąd coverage.",
     ],
     notes: [
-      "Ten endpoint sprawdza obecny silnik cenowy używany przez kalkulator.",
-      "To nie jest jeszcze walidacja Excel snapshot.",
-      "W aktualnym PricingEngine kategoria ścian ma nazwę 'wall'. W snapshotach używamy docelowo 'walls', więc to będzie trzeba ujednolicić przed pełnym mappingiem Bitrix/Excel.",
+      "Endpoint sprawdza aktualny tor produkcyjny kalkulatora przez QuoteService.",
+      "successfulQuoteChecks obejmuje wyceny automatyczne oraz oczekiwane wyceny indywidualne.",
+      "pricedQuoteChecks oznacza konfiguracje, dla których kalkulator zwrócił cenę.",
+      "expectedIndividualQuoteChecks oznacza konfiguracje celowo przekazane do wyceny indywidualnej.",
     ],
     scenarios: scenarios.map((scenario) => ({
       id: scenario.id,
@@ -312,17 +431,17 @@ function createConclusions(
 ): string[] {
   if (problems.length === 0) {
     return [
-      "Obecny TypeScript Pricing Engine ma pełne pokrycie dla sprawdzanych scenariuszy.",
+      "Aktualny QuoteService poprawnie obsługuje wszystkie sprawdzane scenariusze.",
     ];
   }
 
   return [
-    `Obecny TypeScript Pricing Engine nie ma pełnego pokrycia cen: ${problems.length} problemów.`,
-    `Silnik poprawnie policzył tylko ${records.length} konfiguracji spośród ${
+    `Aktualny QuoteService ma ${problems.length} nieoczekiwanych problemów coverage.`,
+    `Automatyczną cenę zwrócono dla ${records.length} konfiguracji spośród ${
       WIDTH_OPTIONS.length * LENGTH_OPTIONS.length * scenarios.length
-    } sprawdzonych przypadków.`,
-    "Najczęstszy problem to brak ceny konstrukcji dla wielu wymiarów.",
-    "To potwierdza, że docelowym źródłem powinien być Excel/snapshot, a nie ręczne pliki TypeScript.",
+    } sprawdzonych przypadków; oczekiwane wyceny indywidualne są liczone osobno.`,
+    "Należy przeanalizować problemGroups i usunąć nieoczekiwane błędy konfiguracji lub danych.",
+    "Wyceny indywidualne powinny być klasyfikowane osobno od rzeczywistych błędów coverage.",
   ];
 }
 

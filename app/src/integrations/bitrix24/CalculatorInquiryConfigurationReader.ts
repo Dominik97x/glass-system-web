@@ -2,8 +2,9 @@ import type { ProductConfiguration } from "@/domain/ProductConfiguration";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 
 const WIDTHS = [306, 406, 506, 606, 706, 806, 906, 1006, 1106, 1206];
-const LENGTHS = [300, 350, 400, 450, 500];
+const LENGTHS = [300, 350, 400, 450, 500, 550, 600];
 
+const FRAME_COLORS = ["anthracite", "white", "brown"];
 const WALL_OPTIONS = ["none", "glass_clear", "glass_milky", "glass_tinted"];
 const ROOF_OPTIONS = [
   "polycarbonate_clear",
@@ -12,6 +13,7 @@ const ROOF_OPTIONS = [
   "polycarbonate_smoke",
   "glass_clear",
   "glass_milky",
+  "glass_tinted",
 ];
 
 interface QuoteSnapshotWithConfiguration {
@@ -39,6 +41,8 @@ function isProductConfiguration(value: unknown): value is ProductConfiguration {
   return (
     isKnownNumber(value.width, WIDTHS) &&
     isKnownNumber(value.length, LENGTHS) &&
+    (value.frameColor === undefined ||
+      isKnownString(value.frameColor, FRAME_COLORS)) &&
     isKnownString(value.walls, WALL_OPTIONS) &&
     isKnownString(value.roof, ROOF_OPTIONS) &&
     typeof value.hasFrontZip === "boolean" &&

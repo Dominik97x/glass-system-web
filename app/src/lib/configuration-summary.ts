@@ -1,4 +1,6 @@
 import {
+  getFrameColor,
+  getFrameColorLabel,
   getProductKind,
   type ProductConfiguration,
 } from "@/domain/ProductConfiguration";
@@ -21,10 +23,6 @@ function getProductKindLabel(configuration: ProductConfiguration): string {
 }
 
 function getZipSummary(configuration: ProductConfiguration): string {
-  if (configuration.walls === "none") {
-    return "Niedostępne bez ścian";
-  }
-
   const selectedZips: string[] = [];
 
   if (configuration.hasFrontZip) {
@@ -50,7 +48,7 @@ function getLightingSummary(configuration: ProductConfiguration): string {
   }
 
   if (configuration.hasCob) {
-    selectedLighting.push("LED taśma");
+    selectedLighting.push("LED RGB CCT");
   }
 
   return selectedLighting.length > 0
@@ -88,7 +86,11 @@ export function getConfigurationSummaryRows(
     },
     {
       label: "Wymiary",
-      value: `${configuration.width} × ${configuration.length} cm`,
+      value: `${configuration.length} × ${configuration.width} cm`,
+    },
+    {
+      label: "Kolor konstrukcji",
+      value: getFrameColorLabel(getFrameColor(configuration)),
     },
     {
       label: "Dach",

@@ -7,7 +7,9 @@ export function mapPreparedRowToBitrix24ProductRow(
   return {
     productId: row.productId,
     productName: row.productName,
-    price: row.priceNet,
+    // Bitrix24 REST oczekuje w polu `price` kwoty końcowej z podatkiem.
+    // TAX_INCLUDED=N powoduje, że portal prezentuje równolegle cenę netto.
+    price: row.priceGross,
     quantity: row.quantity,
     sort: row.sort,
     taxRate: row.vatRate,

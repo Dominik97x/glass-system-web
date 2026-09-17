@@ -31,7 +31,11 @@ export function createCalculatorInquiryNotificationService(): CalculatorInquiryN
 }
 
 function getCalculatorInquiryNotificationMode(): CalculatorInquiryNotificationMode {
-  const value = process.env.CALCULATOR_INQUIRY_NOTIFICATIONS ?? "console";
+  const fallbackMode: CalculatorInquiryNotificationMode =
+    process.env.NODE_ENV === "production" ? "disabled" : "console";
+
+  const value =
+    process.env.CALCULATOR_INQUIRY_NOTIFICATIONS ?? fallbackMode;
 
   if (
     value === "disabled" ||

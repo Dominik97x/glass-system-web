@@ -1,0 +1,685 @@
+{
+  "metadata": {
+    "version": "moonglass-crm-addons-2026-08-07",
+    "currency": "PLN",
+    "priceMode": "net",
+    "scope": "crm_only",
+    "notes": [
+      "Publiczny snapshot dodatków D4.2.",
+      "Zawiera wyłącznie dane handlowe potrzebne katalogowi CRM.",
+      "Nie zawiera kosztów źródłowych dostawcy ani parametrów marży."
+    ]
+  },
+  "products": [
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-194",
+      "name": "System przesuwny 2-torowy 194 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 2417,
+      "currency": "PLN",
+      "sort": 90000000,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-194",
+      "name": "Dopłata: szkło przyciemniane — system 2-torowy 194 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 283,
+      "currency": "PLN",
+      "sort": 90000010,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-194",
+      "name": "Dopłata: szkło mleczne — system 2-torowy 194 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 236,
+      "currency": "PLN",
+      "sort": 90000020,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-194",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 194 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 1238,
+      "currency": "PLN",
+      "sort": 90000030,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-241",
+      "name": "System przesuwny 3-torowy 241 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 3525,
+      "currency": "PLN",
+      "sort": 90000040,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-241",
+      "name": "Dopłata: szkło przyciemniane — system 3-torowy 241 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 424,
+      "currency": "PLN",
+      "sort": 90000050,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-241",
+      "name": "Dopłata: szkło mleczne — system 3-torowy 241 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 354,
+      "currency": "PLN",
+      "sort": 90000060,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-241",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 241 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 1238,
+      "currency": "PLN",
+      "sort": 90000070,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-290",
+      "name": "System przesuwny 3-torowy 290 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 3525,
+      "currency": "PLN",
+      "sort": 90000080,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-290",
+      "name": "Dopłata: szkło przyciemniane — system 3-torowy 290 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 424,
+      "currency": "PLN",
+      "sort": 90000090,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-290",
+      "name": "Dopłata: szkło mleczne — system 3-torowy 290 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 354,
+      "currency": "PLN",
+      "sort": 90000100,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-290",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 290 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 1238,
+      "currency": "PLN",
+      "sort": 90000110,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-337",
+      "name": "System przesuwny 4-torowy 337 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 4810,
+      "currency": "PLN",
+      "sort": 90000120,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-337",
+      "name": "Dopłata: szkło przyciemniane — system 4-torowy 337 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 566,
+      "currency": "PLN",
+      "sort": 90000130,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-337",
+      "name": "Dopłata: szkło mleczne — system 4-torowy 337 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 472,
+      "currency": "PLN",
+      "sort": 90000140,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-337",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 337 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 1474,
+      "currency": "PLN",
+      "sort": 90000150,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-386",
+      "name": "System przesuwny 4-torowy 386 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 4810,
+      "currency": "PLN",
+      "sort": 90000160,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-386",
+      "name": "Dopłata: szkło przyciemniane — system 4-torowy 386 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 566,
+      "currency": "PLN",
+      "sort": 90000170,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-386",
+      "name": "Dopłata: szkło mleczne — system 4-torowy 386 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 472,
+      "currency": "PLN",
+      "sort": 90000180,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-386",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 386 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 1709,
+      "currency": "PLN",
+      "sort": 90000190,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-433",
+      "name": "System przesuwny 5-torowy 433 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 6154,
+      "currency": "PLN",
+      "sort": 90000200,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-433",
+      "name": "Dopłata: szkło przyciemniane — system 5-torowy 433 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 707,
+      "currency": "PLN",
+      "sort": 90000210,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-433",
+      "name": "Dopłata: szkło mleczne — system 5-torowy 433 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 589,
+      "currency": "PLN",
+      "sort": 90000220,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-433",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 433 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 2122,
+      "currency": "PLN",
+      "sort": 90000230,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-482",
+      "name": "System przesuwny 5-torowy 482 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 6154,
+      "currency": "PLN",
+      "sort": 90000240,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-482",
+      "name": "Dopłata: szkło przyciemniane — system 5-torowy 482 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 707,
+      "currency": "PLN",
+      "sort": 90000250,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-482",
+      "name": "Dopłata: szkło mleczne — system 5-torowy 482 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 589,
+      "currency": "PLN",
+      "sort": 90000260,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-482",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 482 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 2476,
+      "currency": "PLN",
+      "sort": 90000270,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-529",
+      "name": "System przesuwny 6-torowy 529 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 7722,
+      "currency": "PLN",
+      "sort": 90000280,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-529",
+      "name": "Dopłata: szkło przyciemniane — system 6-torowy 529 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 849,
+      "currency": "PLN",
+      "sort": 90000290,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-529",
+      "name": "Dopłata: szkło mleczne — system 6-torowy 529 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 707,
+      "currency": "PLN",
+      "sort": 90000300,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-529",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 529 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 3537,
+      "currency": "PLN",
+      "sort": 90000310,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-CLEAR-578",
+      "name": "System przesuwny 6-torowy 578 cm — szkło bezbarwne",
+      "sectionKey": "walls",
+      "family": "crm_sliding_clear",
+      "priceNet": 7722,
+      "currency": "PLN",
+      "sort": 90000320,
+      "notes": "Materiał systemu prowadnic + szkło. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-TINT-SUR-578",
+      "name": "Dopłata: szkło przyciemniane — system 6-torowy 578 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_tinted_surcharge",
+      "priceNet": 849,
+      "currency": "PLN",
+      "sort": 90000330,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-SLIDE-MILKY-SUR-578",
+      "name": "Dopłata: szkło mleczne — system 6-torowy 578 cm",
+      "sectionKey": "walls",
+      "family": "crm_sliding_milky_surcharge",
+      "priceNet": 707,
+      "currency": "PLN",
+      "sort": 90000340,
+      "notes": "Dopłata do systemu przesuwnego. Bez osobnej robocizny/montażu."
+    },
+    {
+      "sku": "MG-CRM-TRI-MAT-578",
+      "name": "Trójkąt boczny — materiał — szerokość systemu 578 cm",
+      "sectionKey": "walls",
+      "family": "crm_triangle_material",
+      "priceNet": 3890,
+      "currency": "PLN",
+      "sort": 90000350,
+      "notes": "Materiał na 1 trójkąt boczny z poliwęglanu litego. Montaż nie jest w tej pozycji wyceniony."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PRO-300",
+      "name": "Dodatkowa krokiew PRO — poliwęglan — szer. zadaszenia 300 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 426,
+      "currency": "PLN",
+      "sort": 91000360,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PRO-350",
+      "name": "Dodatkowa krokiew PRO — poliwęglan — szer. zadaszenia 350 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 499,
+      "currency": "PLN",
+      "sort": 91000370,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PRO-400",
+      "name": "Dodatkowa krokiew PRO — poliwęglan — szer. zadaszenia 400 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 574,
+      "currency": "PLN",
+      "sort": 91000380,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PROPLUS-450",
+      "name": "Dodatkowa krokiew PRO+ — poliwęglan — szer. zadaszenia 450 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 1286,
+      "currency": "PLN",
+      "sort": 91000390,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PROPLUS-500",
+      "name": "Dodatkowa krokiew PRO+ — poliwęglan — szer. zadaszenia 500 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 1433,
+      "currency": "PLN",
+      "sort": 91000400,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PROPLUS-550",
+      "name": "Dodatkowa krokiew PRO+ — poliwęglan — szer. zadaszenia 550 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 1580,
+      "currency": "PLN",
+      "sort": 91000410,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-POLY-PROPLUS-600",
+      "name": "Dodatkowa krokiew PRO+ — poliwęglan — szer. zadaszenia 600 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_poly",
+      "priceNet": 1727,
+      "currency": "PLN",
+      "sort": 91000420,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-GLASS-PRO-300",
+      "name": "Dodatkowa krokiew PRO pod szkło — szer. zadaszenia 300 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_glass",
+      "priceNet": 508,
+      "currency": "PLN",
+      "sort": 91000430,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-GLASS-PRO-350",
+      "name": "Dodatkowa krokiew PRO pod szkło — szer. zadaszenia 350 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_glass",
+      "priceNet": 857,
+      "currency": "PLN",
+      "sort": 91000440,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-GLASS-PRO-400",
+      "name": "Dodatkowa krokiew PRO pod szkło — szer. zadaszenia 400 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_glass",
+      "priceNet": 1285,
+      "currency": "PLN",
+      "sort": 91000450,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-GLASS-PROPLUS-450",
+      "name": "Dodatkowa krokiew PRO+ pod szkło — szer. zadaszenia 450 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_glass",
+      "priceNet": 2498,
+      "currency": "PLN",
+      "sort": 91000460,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-RAFTER-GLASS-PROPLUS-500",
+      "name": "Dodatkowa krokiew PRO+ pod szkło — szer. zadaszenia 500 cm",
+      "sectionKey": "accessories",
+      "family": "crm_rafter_glass",
+      "priceNet": 2637,
+      "currency": "PLN",
+      "sort": 91000470,
+      "notes": "Komplet krokwi pośredniej wg cennika dostawcy. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PRO-300",
+      "name": "Profil H do wykonania trójkąta PRO — szer. zadaszenia 300 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 383,
+      "currency": "PLN",
+      "sort": 92000480,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PRO-350",
+      "name": "Profil H do wykonania trójkąta PRO — szer. zadaszenia 350 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 427,
+      "currency": "PLN",
+      "sort": 92000490,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PRO-400",
+      "name": "Profil H do wykonania trójkąta PRO — szer. zadaszenia 400 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 490,
+      "currency": "PLN",
+      "sort": 92000500,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PROPLUS-450",
+      "name": "Profil H do wykonania trójkąta PRO+ — szer. zadaszenia 450 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 581,
+      "currency": "PLN",
+      "sort": 92000510,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PROPLUS-500",
+      "name": "Profil H do wykonania trójkąta PRO+ — szer. zadaszenia 500 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 646,
+      "currency": "PLN",
+      "sort": 92000520,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PROPLUS-550",
+      "name": "Profil H do wykonania trójkąta PRO+ — szer. zadaszenia 550 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 713,
+      "currency": "PLN",
+      "sort": 92000530,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-HPROFILE-PROPLUS-600",
+      "name": "Profil H do wykonania trójkąta PRO+ — szer. zadaszenia 600 cm",
+      "sectionKey": "accessories",
+      "family": "crm_triangle_h_profile",
+      "priceNet": 779,
+      "currency": "PLN",
+      "sort": 92000540,
+      "notes": "Element techniczny CRM. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN."
+    },
+    {
+      "sku": "MG-CRM-FOOT-CONCRETE",
+      "name": "Betonowa stopa fundamentowa",
+      "sectionKey": "foundation",
+      "family": "crm_foundation",
+      "priceNet": 113,
+      "currency": "PLN",
+      "sort": 93000550,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-BASE-15",
+      "name": "Dodatkowa podstawa słupa 15×15 standard",
+      "sectionKey": "foundation",
+      "family": "crm_foundation",
+      "priceNet": 73,
+      "currency": "PLN",
+      "sort": 93000560,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-BASE-HIDDEN",
+      "name": "Dodatkowa podstawa słupa ukryta",
+      "sectionKey": "foundation",
+      "family": "crm_foundation",
+      "priceNet": 144,
+      "currency": "PLN",
+      "sort": 93000570,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-GUTTER-CONNECTOR",
+      "name": "Dodatkowy łącznik rynny",
+      "sectionKey": "accessories",
+      "family": "crm_accessory",
+      "priceNet": 116,
+      "currency": "PLN",
+      "sort": 93000580,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-260",
+      "name": "Dodatkowy słup kwadratowy bez podstawy 260 cm",
+      "sectionKey": "accessories",
+      "family": "crm_post",
+      "priceNet": 514,
+      "currency": "PLN",
+      "sort": 93000590,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-300",
+      "name": "Dodatkowy słup kwadratowy bez podstawy 300 cm",
+      "sectionKey": "accessories",
+      "family": "crm_post",
+      "priceNet": 595,
+      "currency": "PLN",
+      "sort": 93000600,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-390",
+      "name": "Dodatkowy słup kwadratowy bez podstawy 390 cm",
+      "sectionKey": "accessories",
+      "family": "crm_post",
+      "priceNet": 773,
+      "currency": "PLN",
+      "sort": 93000610,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-600",
+      "name": "Dodatkowy słup kwadratowy bez podstawy 600 cm",
+      "sectionKey": "accessories",
+      "family": "crm_post",
+      "priceNet": 1189,
+      "currency": "PLN",
+      "sort": 93000620,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-HANDLE-ONE",
+      "name": "Uchwyt do szyb ściennych — dodatkowy 1 szt.",
+      "sectionKey": "accessories",
+      "family": "crm_accessory",
+      "priceNet": 41,
+      "currency": "PLN",
+      "sort": 93000630,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-BRUSH-ONE",
+      "name": "Szczotka przeciwkurzowa — dodatkowa 1 szt.",
+      "sectionKey": "accessories",
+      "family": "crm_accessory",
+      "priceNet": 46,
+      "currency": "PLN",
+      "sort": 93000640,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-DRAINAGE",
+      "name": "Odwodnienie — sitko, rura, kolanko",
+      "sectionKey": "foundation",
+      "family": "crm_foundation",
+      "priceNet": 94,
+      "currency": "PLN",
+      "sort": 93000650,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    },
+    {
+      "sku": "MG-CRM-POST-CAP",
+      "name": "Zaślepka ze spadkiem do słupa kwadratowego",
+      "sectionKey": "accessories",
+      "family": "crm_accessory",
+      "priceNet": 35,
+      "currency": "PLN",
+      "sort": 93000660,
+      "notes": "CRM-only. Cena netto sprzedaży = koszt netto × 1,45, zaokrąglona do 1 PLN. Montaż nie jest doliczany, jeśli nazwa pozycji tego nie wskazuje."
+    }
+  ]
+}

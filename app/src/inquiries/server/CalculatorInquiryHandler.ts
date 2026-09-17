@@ -1,53 +1,91 @@
-import type { CalculatorInquiryLead } from "@/domain/CalculatorInquiryLead";
+import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
-import type { CalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationService";
+import { getQuoteSnapshotWebsiteTotalGross } from "@/lib/quote-snapshot";
+import type {
+  CalculatorInquiryNotificationResult,
+  CalculatorInquiryNotificationService,
+} from "../notifications/CalculatorInquiryNotificationService";
 import { createCalculatorInquiryNotificationService } from "../notifications/CalculatorInquiryNotificationServiceFactory";
 import type { CalculatorInquiryRepository } from "../repositories/CalculatorInquiryRepository";
+import { CalculatorInquiryBitrix24SyncService } from "../sync/CalculatorInquiryBitrix24SyncService";
+import { CalculatorInquiryQuoteService } from "./CalculatorInquiryQuoteService";
 
 export interface CalculatorInquiryHandlerResult {
   success: true;
   inquiryId: string;
   message: string;
+  totalGross: number;
+  customerEmailSent: boolean;
 }
 
 export class CalculatorInquiryHandler {
   constructor(
     private readonly repository: CalculatorInquiryRepository,
     private readonly notificationService: CalculatorInquiryNotificationService =
-      createCalculatorInquiryNotificationService()
+      createCalculatorInquiryNotificationService(),
+    private readonly quoteService: CalculatorInquiryQuoteService =
+      new CalculatorInquiryQuoteService(),
+    private readonly bitrix24SyncService: CalculatorInquiryBitrix24SyncService =
+      new CalculatorInquiryBitrix24SyncService()
   ) {}
 
   async handle(
-    lead: CalculatorInquiryLead
+    submission: CalculatorInquirySubmission
   ): Promise<CalculatorInquiryHandlerResult> {
-    const storedLead = createStoredCalculatorInquiryLead(lead);
+    const trustedLead = this.quoteService.createTrustedLead(submission);
+    const storedLead = createStoredCalculatorInquiryLead(trustedLead);
 
     await this.repository.save(storedLead);
-    await this.notifySafely(storedLead);
+
+    const notificationResult = await this.notifySafely(storedLead);
+
+    await this.syncBitrix24Safely(storedLead.id);
+
+    const websiteTotalGross = getQuoteSnapshotWebsiteTotalGross(
+      storedLead.quote
+    );
 
     return {
       success: true,
       inquiryId: storedLead.id,
-      message: `Zapytanie zostało przyjęte. Numer zapytania: ${storedLead.id}`,
+      message: `Zapytanie zostało przyjęte. Numer zapytania: ${storedLead.id}. Zweryfikowana wartość konfiguracji: ${websiteTotalGross.toLocaleString("pl-PL")} zł.`,
+      totalGross: websiteTotalGross,
+      customerEmailSent: notificationResult.customerEmailSent,
     };
+  }
+
+  private async syncBitrix24Safely(inquiryId: string): Promise<void> {
+    try {
+      await this.bitrix24SyncService.syncInquiry(inquiryId);
+    } catch (error) {
+      console.error("Unexpected Bitrix24 synchronization failure:", {
+        inquiryId,
+        error,
+      });
+    }
   }
 
   private async notifySafely(
     lead: StoredCalculatorInquiryLead
-  ): Promise<void> {
+  ): Promise<CalculatorInquiryNotificationResult> {
     try {
-      await this.notificationService.notify(lead);
+      return await this.notificationService.notify(lead);
     } catch (error) {
       console.error("Calculator inquiry notification failed:", {
         inquiryId: lead.id,
         error,
       });
+
+      return {
+        internalEmailSent: false,
+        customerEmailSent: false,
+      };
     }
   }
 }
 
 function createStoredCalculatorInquiryLead(
-  lead: CalculatorInquiryLead
+  lead: Omit<StoredCalculatorInquiryLead, "id" | "status" | "receivedAt">
 ): StoredCalculatorInquiryLead {
   const now = new Date().toISOString();
 

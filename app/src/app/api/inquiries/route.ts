@@ -1,11 +1,15 @@
+import { getAdminSession } from "@/auth/admin-session";
 import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
-import { validateCalculatorInquiryLead } from "@/inquiries/validators/calculator-inquiry-validator";
+import { InvalidCalculatorInquiryConfigurationError } from "@/inquiries/server/CalculatorInquiryQuoteService";
+import { validateCalculatorInquirySubmission } from "@/inquiries/validators/calculator-inquiry-validator";
 
 interface SubmitCalculatorInquiryResponse {
   success: boolean;
   message: string;
   inquiryId?: string;
+  totalGross?: number;
+  customerEmailSent?: boolean;
 }
 
 export const runtime = "nodejs";
@@ -14,11 +18,35 @@ const inquiryRepository = createCalculatorInquiryRepository();
 const inquiryHandler = new CalculatorInquiryHandler(inquiryRepository);
 
 export async function GET(): Promise<Response> {
+  const session = await getAdminSession();
+
+  if (!session) {
+    return Response.json(
+      {
+        success: false,
+        message: "Wymagane jest zalogowanie administratora.",
+      },
+      {
+        status: 401,
+        headers: {
+          "Cache-Control": "no-store",
+          Vary: "Cookie",
+        },
+      }
+    );
+  }
+
   const inquiries = await inquiryRepository.findAll();
 
-  return Response.json({
-    inquiries,
-  });
+  return Response.json(
+    { inquiries },
+    {
+      headers: {
+        "Cache-Control": "no-store",
+        Vary: "Cookie",
+      },
+    }
+  );
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -35,7 +63,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(response, { status: 400 });
   }
 
-  const validation = validateCalculatorInquiryLead(payload);
+  const validation = validateCalculatorInquirySubmission(payload);
 
   if (!validation.success) {
     const response: SubmitCalculatorInquiryResponse = {
@@ -46,7 +74,27 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(response, { status: 400 });
   }
 
-  const result = await inquiryHandler.handle(validation.lead);
+  try {
+    const result = await inquiryHandler.handle(validation.submission);
+    return Response.json(result, { status: 201 });
+  } catch (error) {
+    if (error instanceof InvalidCalculatorInquiryConfigurationError) {
+      const response: SubmitCalculatorInquiryResponse = {
+        success: false,
+        message: error.message,
+      };
 
-  return Response.json(result);
+      return Response.json(response, { status: 400 });
+    }
+
+    console.error("Calculator inquiry submission failed:", error);
+
+    const response: SubmitCalculatorInquiryResponse = {
+      success: false,
+      message:
+        "Nie udało się zapisać zapytania. Spróbuj ponownie później.",
+    };
+
+    return Response.json(response, { status: 500 });
+  }
 }

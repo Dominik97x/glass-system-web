@@ -1,12 +1,16 @@
 import type { ReactNode } from "react";
 
-import { ROOF_LABELS, WALL_LABELS } from "@/data/configuration-labels";
-import type {
-  Length,
-  ProductConfiguration,
-  RoofOption,
-  WallOption,
-  Width,
+import { ROOF_LABELS } from "@/data/configuration-labels";
+import {
+  getFrameColor,
+  getProductKind,
+  type FrameColor,
+  type Length,
+  type ProductConfiguration,
+  type ProductKind,
+  type RoofOption,
+  type WallOption,
+  type Width,
 } from "@/domain/ProductConfiguration";
 
 interface Props {
@@ -14,36 +18,84 @@ interface Props {
   onChange(configuration: ProductConfiguration): void;
 }
 
+const FRAME_COLOR_OPTIONS: Array<{
+  value: FrameColor;
+  label: string;
+  swatchClass: string;
+  checkClass: string;
+}> = [
+  {
+    value: "anthracite",
+    label: "Antracyt",
+    swatchClass: "bg-[#383e42]",
+    checkClass: "text-white",
+  },
+  {
+    value: "white",
+    label: "Biały",
+    swatchClass: "bg-[#f8f8f5]",
+    checkClass: "text-neutral-900",
+  },
+  {
+    value: "brown",
+    label: "Brązowy",
+    swatchClass: "bg-[#4a3028]",
+    checkClass: "text-white",
+  },
+];
+
 const WIDTH_OPTIONS: Width[] = [
   306, 406, 506, 606, 706, 806, 906, 1006, 1106, 1206,
 ];
-
-const LENGTH_OPTIONS: Length[] = [300, 350, 400, 450, 500];
-
-const ROOF_OPTIONS: RoofOption[] = [
+const LENGTH_OPTIONS: Length[] = [300, 350, 400, 450, 500, 550, 600];
+const ALL_ROOF_OPTIONS: RoofOption[] = [
   "polycarbonate_clear",
   "polycarbonate_milky",
   "polycarbonate_grey",
   "polycarbonate_smoke",
   "glass_clear",
-  "glass_milky",
-];
-
-const WALL_OPTIONS: WallOption[] = [
-  "none",
-  "glass_clear",
-  "glass_milky",
   "glass_tinted",
 ];
+const WALL_OPTIONS: WallOption[] = ["glass_clear", "glass_tinted"];
 
 export function ConfigurationForm({ configuration, onChange }: Props) {
+  const productType = getProductKind(configuration);
+  const frameColor = getFrameColor(configuration);
   const hasWalls = configuration.walls !== "none";
-  const productLabel = hasWalls ? "Ogród zimowy" : "Zadaszenie";
+  const roofGlassAvailable = configuration.length <= 500;
+  const roofOptions = roofGlassAvailable
+    ? ALL_ROOF_OPTIONS
+    : ALL_ROOF_OPTIONS.filter((option) => !option.startsWith("glass_"));
 
   function updateConfiguration(partial: Partial<ProductConfiguration>) {
+    const next = { ...configuration, ...partial };
+
+    if (next.length >= 550 && next.roof.startsWith("glass_")) {
+      next.roof = "polycarbonate_clear";
+    }
+
+    onChange(next);
+  }
+
+  function updateProductType(nextProductType: ProductKind) {
+    if (nextProductType === "terrace_roof") {
+      onChange({
+        ...configuration,
+        productType: nextProductType,
+        walls: "none",
+        hasLeftZip: false,
+        hasRightZip: false,
+      });
+      return;
+    }
+
     onChange({
       ...configuration,
-      ...partial,
+      productType: nextProductType,
+      walls:
+        configuration.walls === "none"
+          ? "glass_clear"
+          : configuration.walls,
     });
   }
 
@@ -51,9 +103,9 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
     onChange({
       ...configuration,
       walls,
-      hasFrontZip: walls === "none" ? false : configuration.hasFrontZip,
-      hasLeftZip: walls === "none" ? false : configuration.hasLeftZip,
-      hasRightZip: walls === "none" ? false : configuration.hasRightZip,
+      hasFrontZip: configuration.hasFrontZip,
+      hasLeftZip: configuration.hasLeftZip,
+      hasRightZip: configuration.hasRightZip,
     });
   }
 
@@ -65,7 +117,7 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
     });
   }
 
-  function updateStripLed(checked: boolean) {
+  function updateCctLed(checked: boolean) {
     onChange({
       ...configuration,
       hasCob: checked,
@@ -74,30 +126,42 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   }
 
   return (
-    <div className="space-y-3 text-sm">
-      <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">
-              Konfiguracja
-            </p>
-            <h3 className="mt-1 text-xl font-semibold leading-tight tracking-tight text-neutral-950">
-              Parametry
-            </h3>
-          </div>
+    <div className="space-y-2 text-sm">
+      <CompactPanel title="Konstrukcja">
+        <div className="mb-2 grid grid-cols-2 gap-2">
+          <SmallOption
+            label="Zadaszenie tarasu"
+            active={productType === "terrace_roof"}
+            onClick={() => updateProductType("terrace_roof")}
+          />
+          <SmallOption
+            label="Ogród zimowy"
+            active={productType === "winter_garden"}
+            onClick={() => updateProductType("winter_garden")}
+          />
+        </div>
 
-          <div className="rounded-2xl bg-neutral-950 px-3 py-2 text-right text-white">
-            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-300">
-              Typ
-            </p>
-            <p className="mt-1 text-xs font-black leading-tight">
-              {productLabel}
-            </p>
+        <div className="mb-2">
+          <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+            Kolor konstrukcji
+          </p>
+
+          <div className="grid max-w-sm grid-cols-3 gap-2">
+            {FRAME_COLOR_OPTIONS.map((option) => (
+              <ColorSwatch
+                key={option.value}
+                label={option.label}
+                swatchClass={option.swatchClass}
+                checkClass={option.checkClass}
+                active={frameColor === option.value}
+                onClick={() =>
+                  updateConfiguration({ frameColor: option.value })
+                }
+              />
+            ))}
           </div>
         </div>
-      </section>
 
-      <CompactPanel title="Konstrukcja">
         <div className="grid grid-cols-2 gap-2">
           <SelectField
             label="Szerokość"
@@ -105,71 +169,81 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             onChange={(value) =>
               updateConfiguration({ width: Number(value) as Width })
             }
-            options={WIDTH_OPTIONS.map((width) => ({
-              value: String(width),
-              label: `${width} cm`,
+            options={WIDTH_OPTIONS.map((value) => ({
+              value: String(value),
+              label: `${value} cm`,
             }))}
           />
-
           <SelectField
             label="Długość"
             value={configuration.length}
             onChange={(value) =>
               updateConfiguration({ length: Number(value) as Length })
             }
-            options={LENGTH_OPTIONS.map((length) => ({
-              value: String(length),
-              label: `${length} cm`,
+            options={LENGTH_OPTIONS.map((value) => ({
+              value: String(value),
+              label: `${value} cm`,
             }))}
           />
         </div>
 
-        <div className="mt-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-500">
-            Kolor profilu
+        <div className="mt-2 border-t border-[#ded7ca] pt-2">
+          <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+            Dach
           </p>
-          <div className="mt-2 grid grid-cols-4 gap-2">
-            <ColorChip label="Grafit" colorClass="bg-neutral-900" active />
-            <ColorChip label="Biały" colorClass="bg-white" />
-            <ColorChip label="Brąz" colorClass="bg-stone-700" />
-            <ColorChip label="RAL" colorClass="bg-neutral-200" />
-          </div>
-          <p className="mt-2 text-[11px] leading-4 text-neutral-500">
-            Na teraz kolor jest informacyjny. Dopłaty RAL ustalimy po
-            potwierdzeniu cennika.
-          </p>
-        </div>
-      </CompactPanel>
-
-      <CompactPanel title="Dach">
-        <SelectField
+          <SelectField
           label="Pokrycie"
           value={configuration.roof}
           onChange={(value) =>
             updateConfiguration({ roof: value as RoofOption })
           }
-          options={ROOF_OPTIONS.map((roof) => ({
+          options={roofOptions.map((roof) => ({
             value: roof,
             label: ROOF_LABELS[roof],
           }))}
         />
-      </CompactPanel>
 
-      <CompactPanel title="Ściany">
-        <div className="grid grid-cols-2 gap-2">
-          {WALL_OPTIONS.map((walls) => (
-            <SmallOption
-              key={walls}
-              label={getShortWallLabel(walls)}
-              active={configuration.walls === walls}
-              onClick={() => updateWalls(walls)}
-            />
-          ))}
+        {!roofGlassAvailable && (
+          <p className="mt-2 text-[11px] leading-4 text-[#9a722e]">
+            Dla długości 550 i 600 cm dach szklany wymaga wyceny indywidualnej.
+          </p>
+        )}
         </div>
+
+        {productType === "winter_garden" && (
+          <div className="mt-2 border-t border-[#ded7ca] pt-2">
+            <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+              Ściany
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+            {WALL_OPTIONS.map((walls) => (
+              <SmallOption
+                key={walls}
+                label={
+                  walls === "glass_clear"
+                    ? "Przezroczyste"
+                    : "Przyciemniane"
+                }
+                active={configuration.walls === walls}
+                onClick={() => updateWalls(walls)}
+              />
+            ))}
+            </div>
+          </div>
+        )}
       </CompactPanel>
 
-      <CompactPanel title="Osłony ZIP">
+      <CompactPanel title="Osłony i dodatki">
         <div className="grid grid-cols-3 gap-2">
+          <SmallOption
+            label="Przód"
+            active={configuration.hasFrontZip}
+            onClick={() =>
+              updateConfiguration({
+                hasFrontZip: !configuration.hasFrontZip,
+              })
+            }
+          />
           <SmallOption
             label="Lewa"
             active={configuration.hasLeftZip}
@@ -186,19 +260,19 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
               updateConfiguration({ hasRightZip: !configuration.hasRightZip })
             }
           />
-          <SmallOption
-            label="Przód"
-            active={configuration.hasFrontZip}
-            disabled={!hasWalls}
-            onClick={() =>
-              updateConfiguration({ hasFrontZip: !configuration.hasFrontZip })
-            }
-          />
         </div>
-      </CompactPanel>
 
-      <CompactPanel title="Komfort">
-        <div className="grid grid-cols-2 gap-2">
+        {!hasWalls && (
+          <p className="mt-2 text-[11px] leading-4 text-[#7a7f7b]">
+            Bez ścian dostępna jest roleta ZIP z przodu. Rolety boczne wymagają ścian.
+          </p>
+        )}
+
+        <div className="mt-2 border-t border-[#ded7ca] pt-2">
+          <p className="mb-2 text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
+            Komfort i dodatki
+          </p>
+          <div className="grid grid-cols-2 gap-2">
           <OptionToggle
             label="Markiza"
             checked={configuration.hasAwning}
@@ -207,14 +281,14 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }
           />
           <OptionToggle
-            label="LED punkt."
+            label="LED punktowe"
             checked={configuration.hasLed}
             onChange={updateSpotLed}
           />
           <OptionToggle
-            label="LED taśma"
+            label="LED CCT"
             checked={configuration.hasCob}
-            onChange={updateStripLed}
+            onChange={updateCctLed}
           />
           <OptionToggle
             label="Uchwyty"
@@ -231,56 +305,106 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }
           />
           <OptionToggle
-            label="Profil"
+            label="Fundament / profil"
             checked={configuration.hasLevelingProfile}
             onChange={(checked) =>
               updateConfiguration({ hasLevelingProfile: checked })
             }
           />
+          </div>
         </div>
       </CompactPanel>
     </div>
   );
 }
 
-interface CompactPanelProps {
-  title: string;
-  children: ReactNode;
+function ColorSwatch({
+  label,
+  swatchClass,
+  checkClass,
+  active,
+  onClick,
+}: {
+  label: string;
+  swatchClass: string;
+  checkClass: string;
+  active: boolean;
+  onClick(): void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={`Kolor konstrukcji: ${label}`}
+      aria-pressed={active}
+      title={label}
+      onClick={onClick}
+      className="group flex min-h-12 flex-col items-center justify-center gap-1 px-1.5 py-1 transition hover:bg-[#f4ead5]/60"
+    >
+      <span
+        className={[
+          "flex h-8 w-8 items-center justify-center rounded-full border-2 shadow-sm transition",
+          swatchClass,
+          active
+            ? "border-[#c79a46] ring-2 ring-[#dfbd78]/45 ring-offset-2 ring-offset-[#fffdf8]"
+            : "border-[#cfc8bc] group-hover:border-[#9a722e]",
+        ].join(" ")}
+      >
+        {active && (
+          <span aria-hidden="true" className={`${checkClass} text-sm font-black`}>
+            ✓
+          </span>
+        )}
+      </span>
+
+      <span
+        className={[
+          "text-[10px] font-black leading-none transition",
+          active ? "text-[#062c25]" : "text-[#68706c]",
+        ].join(" ")}
+      >
+        {label}
+      </span>
+    </button>
+  );
 }
 
-function CompactPanel({ title, children }: CompactPanelProps) {
+function CompactPanel({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-3">
-      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-500">
+    <section className="border border-[#ded7ca] bg-[#fffdf8] p-2.5">
+      <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
         {title}
       </h4>
-      <div className="mt-3">{children}</div>
+      <div className="mt-2">{children}</div>
     </section>
   );
 }
 
-interface SelectFieldOption {
-  value: string;
-  label: string;
-}
-
-interface SelectFieldProps {
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
   label: string;
   value: string | number;
-  options: SelectFieldOption[];
+  options: Array<{ value: string; label: string }>;
   onChange(value: string): void;
-}
-
-function SelectField({ label, value, options, onChange }: SelectFieldProps) {
+}) {
   return (
     <label className="block">
-      <span className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-500">
+      <span className="text-[9px] font-black uppercase tracking-[0.16em] text-[#7a7f7b]">
         {label}
       </span>
       <select
         value={String(value)}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1 h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 text-xs font-black text-neutral-950 outline-none transition hover:bg-white focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+        className="mt-1 h-9 w-full border border-[#ded7ca] bg-[#f8f4ec] px-2.5 text-xs font-black text-[#24312d] outline-none transition focus:border-[#9a722e]"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -292,30 +416,28 @@ function SelectField({ label, value, options, onChange }: SelectFieldProps) {
   );
 }
 
-interface SmallOptionProps {
-  label: string;
-  active: boolean;
-  disabled?: boolean;
-  onClick(): void;
-}
-
 function SmallOption({
   label,
   active,
   disabled = false,
   onClick,
-}: SmallOptionProps) {
+}: {
+  label: string;
+  active: boolean;
+  disabled?: boolean;
+  onClick(): void;
+}) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
       className={[
-        "min-h-12 rounded-xl border px-2 py-2 text-center text-[11px] font-black transition",
+        "min-h-10 border px-2 py-1.5 text-center text-[10px] font-black transition",
         active
-          ? "border-emerald-500 bg-emerald-50 text-emerald-950"
-          : "border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-white",
-        disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer",
+          ? "border-[#c79a46] bg-[#f4ead5] text-[#062c25]"
+          : "border-[#ded7ca] bg-[#f8f4ec] text-[#4f5854] hover:border-[#bca36c]",
+        disabled ? "cursor-not-allowed opacity-35" : "cursor-pointer",
       ].join(" ")}
     >
       {label}
@@ -323,32 +445,33 @@ function SmallOption({
   );
 }
 
-interface OptionToggleProps {
+function OptionToggle({
+  label,
+  checked,
+  onChange,
+}: {
   label: string;
   checked: boolean;
   onChange(checked: boolean): void;
-}
-
-function OptionToggle({ label, checked, onChange }: OptionToggleProps) {
+}) {
   return (
     <button
       type="button"
       onClick={() => onChange(!checked)}
       className={[
-        "flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition",
+        "flex min-h-10 items-center justify-between gap-2 border px-2.5 py-1.5 text-left transition",
         checked
-          ? "border-emerald-500 bg-emerald-50"
-          : "border-neutral-200 bg-neutral-50 hover:bg-white",
+          ? "border-[#c79a46] bg-[#f4ead5]"
+          : "border-[#ded7ca] bg-[#f8f4ec] hover:border-[#bca36c]",
       ].join(" ")}
     >
-      <span className="text-[11px] font-black leading-tight text-neutral-950">
+      <span className="text-[11px] font-black leading-tight text-[#24312d]">
         {label}
       </span>
-
       <span
         className={[
           "flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition",
-          checked ? "bg-emerald-500" : "bg-neutral-300",
+          checked ? "bg-[#062c25]" : "bg-[#c9c5bc]",
         ].join(" ")}
       >
         <span
@@ -360,47 +483,4 @@ function OptionToggle({ label, checked, onChange }: OptionToggleProps) {
       </span>
     </button>
   );
-}
-
-function ColorChip({
-  label,
-  colorClass,
-  active = false,
-}: {
-  label: string;
-  colorClass: string;
-  active?: boolean;
-}) {
-  return (
-    <div
-      className={[
-        "rounded-xl border p-2 text-center",
-        active ? "border-emerald-500 bg-emerald-50" : "border-neutral-200",
-      ].join(" ")}
-    >
-      <div
-        className={[
-          "mx-auto h-5 w-5 rounded-full border border-neutral-300",
-          colorClass,
-        ].join(" ")}
-      />
-      <p className="mt-1 text-[9px] font-black text-neutral-600">{label}</p>
-    </div>
-  );
-}
-
-function getShortWallLabel(walls: WallOption): string {
-  if (walls === "none") {
-    return "Brak";
-  }
-
-  if (walls === "glass_clear") {
-    return "Przezr.";
-  }
-
-  if (walls === "glass_milky") {
-    return "Mleczne";
-  }
-
-  return "Przyciem.";
 }

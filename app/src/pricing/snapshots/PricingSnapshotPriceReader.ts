@@ -7,7 +7,31 @@ import {
   type PricingSnapshotVatRule,
 } from "./PricingSnapshot";
 
-export const PRICING_SNAPSHOT_PRICE_FIELDS = [
+export const PRICING_SNAPSHOT_NET_PRICE_FIELDS = [
+  "constructionNet",
+  "wallGlassClearNet",
+  "wallGlassMilkyNet",
+  "wallGlassTintedNet",
+  "roofPolycarbonateClearNet",
+  "roofPolycarbonateMilkyNet",
+  "roofPolycarbonateGreyNet",
+  "roofPolycarbonateSmokeNet",
+  "roofGlassClearNet",
+  "roofGlassMilkyNet",
+  "roofGlassTintedNet",
+  "zipRightNet",
+  "zipLeftNet",
+  "zipFrontNet",
+  "awningNet",
+  "levelingProfileNet",
+  "ledSpotNet",
+  "ledStripNet",
+  "ledCobNet",
+  "handlesNet",
+  "brushesNet",
+] as const satisfies ReadonlyArray<keyof PricingSnapshotPriceMatrixRow>;
+
+export const PRICING_SNAPSHOT_GROSS_PRICE_FIELDS = [
   "constructionGross",
   "wallGlassClearGross",
   "wallGlassMilkyGross",
@@ -31,6 +55,15 @@ export const PRICING_SNAPSHOT_PRICE_FIELDS = [
   "brushesGross",
 ] as const satisfies ReadonlyArray<keyof PricingSnapshotPriceMatrixRow>;
 
+export const PRICING_SNAPSHOT_PRICE_FIELDS = [
+  ...PRICING_SNAPSHOT_NET_PRICE_FIELDS,
+  ...PRICING_SNAPSHOT_GROSS_PRICE_FIELDS,
+] as const;
+
+export type PricingSnapshotNetPriceField =
+  (typeof PRICING_SNAPSHOT_NET_PRICE_FIELDS)[number];
+export type PricingSnapshotGrossPriceField =
+  (typeof PRICING_SNAPSHOT_GROSS_PRICE_FIELDS)[number];
 export type PricingSnapshotPriceField =
   (typeof PRICING_SNAPSHOT_PRICE_FIELDS)[number];
 
@@ -96,7 +129,7 @@ export class PricingSnapshotPriceReader {
     field: PricingSnapshotPriceField
   ): number {
     const row = this.getActivePriceMatrixRow(criteria);
-    return row[field];
+    return Number(row[field] ?? 0);
   }
 
   sumPrices(
@@ -146,5 +179,5 @@ export function sumPricingSnapshotPriceFields(
   row: PricingSnapshotPriceMatrixRow,
   fields: PricingSnapshotPriceField[]
 ): number {
-  return fields.reduce((sum, field) => sum + row[field], 0);
+  return fields.reduce((sum, field) => sum + Number(row[field] ?? 0), 0);
 }

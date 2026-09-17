@@ -48,22 +48,23 @@ export function getPricingSnapshotPriceFieldsForConfiguration(
   fields.push(roofField);
 
   const wallField = getWallPriceField(configuration.walls);
-  const hasWalls = wallField !== null;
 
   if (wallField) {
     fields.push(wallField);
   }
 
-  if (hasWalls && configuration.hasRightZip) {
-    fields.push("zipRightGross");
-  }
-
-  if (hasWalls && configuration.hasLeftZip) {
-    fields.push("zipLeftGross");
-  }
-
-  if (hasWalls && configuration.hasFrontZip) {
+  if (configuration.hasFrontZip) {
     fields.push("zipFrontGross");
+  }
+
+  if (configuration.walls !== "none") {
+    if (configuration.hasRightZip) {
+      fields.push("zipRightGross");
+    }
+
+    if (configuration.hasLeftZip) {
+      fields.push("zipLeftGross");
+    }
   }
 
   if (configuration.hasAwning) {
@@ -75,7 +76,7 @@ export function getPricingSnapshotPriceFieldsForConfiguration(
   }
 
   if (configuration.hasCob) {
-    fields.push("ledCobGross");
+    fields.push("ledStripGross");
   }
 
   if (configuration.hasHandles) {
@@ -134,5 +135,9 @@ function getRoofPriceField(
     return "roofGlassClearGross";
   }
 
-  return "roofGlassMilkyGross";
+  if (roofOption === "glass_milky") {
+    return "roofGlassMilkyGross";
+  }
+
+  return "roofGlassTintedGross";
 }

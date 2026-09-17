@@ -1,7 +1,25 @@
+﻿import type { ProductConfiguration } from "@/domain/ProductConfiguration";
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
 import { createCalculatorInquiryNotificationMessage } from "@/inquiries/notifications/CalculatorInquiryNotificationMessage";
+import { getConfigurationSummaryRows } from "@/lib/configuration-summary";
 
 export const runtime = "nodejs";
+
+const exampleConfiguration: ProductConfiguration = {
+  width: 306,
+  length: 300,
+  walls: "glass_clear",
+  roof: "polycarbonate_clear",
+  hasFrontZip: true,
+  hasLeftZip: false,
+  hasRightZip: false,
+  hasAwning: true,
+  hasLed: true,
+  hasCob: false,
+  hasHandles: true,
+  hasBrushes: true,
+  hasLevelingProfile: true,
+};
 
 const exampleLead: StoredCalculatorInquiryLead = {
   id: "inq_preview_001",
@@ -9,74 +27,71 @@ const exampleLead: StoredCalculatorInquiryLead = {
   createdAt: "2026-07-06T12:00:00.000Z",
   receivedAt: "2026-07-06T12:00:01.000Z",
   status: "new",
+
   customer: {
     name: "Jan Kowalski",
     email: "jan.kowalski@example.com",
     phone: "500600700",
     message: "Proszę o kontakt w sprawie ogrodu zimowego.",
   },
+
   quote: {
-    productKind: "winter_garden",
-    configuration: {
-      width: 306,
-      length: 300,
-      walls: "glass_clear",
-      roof: "polycarbonate_clear",
-      hasFrontZip: true,
-      hasLeftZip: false,
-      hasRightZip: false,
-      hasAwning: true,
-      hasLed: true,
-      hasCob: false,
-      hasHandles: true,
-      hasBrushes: true,
-      hasLevelingProfile: true,
-    },
+    configuration: exampleConfiguration,
+    configurationSummary: getConfigurationSummaryRows(exampleConfiguration),
+
     items: [
       {
+        id: "construction",
         name: "Konstrukcja",
         category: "construction",
         quantity: 1,
         unitPriceGross: 8383,
-        totalGross: 8383,
+        totalPriceGross: 8383,
       },
       {
+        id: "walls",
         name: "Ściany przesuwne",
         category: "walls",
         quantity: 1,
         unitPriceGross: 15029,
-        totalGross: 15029,
+        totalPriceGross: 15029,
       },
       {
+        id: "zip",
         name: "Rolety ZIP",
         category: "zip",
         quantity: 1,
         unitPriceGross: 3079,
-        totalGross: 3079,
+        totalPriceGross: 3079,
       },
       {
+        id: "awning",
         name: "Markiza",
         category: "awning",
         quantity: 1,
         unitPriceGross: 5532,
-        totalGross: 5532,
+        totalPriceGross: 5532,
       },
       {
+        id: "lighting",
         name: "Oświetlenie LED",
         category: "lighting",
         quantity: 1,
         unitPriceGross: 999,
-        totalGross: 999,
+        totalPriceGross: 999,
       },
       {
+        id: "accessories",
         name: "Akcesoria",
         category: "accessory",
         quantity: 1,
         unitPriceGross: 2397,
-        totalGross: 2397,
+        totalPriceGross: 2397,
       },
     ],
+
     totalGross: 35419,
+    currency: "PLN",
   },
 };
 

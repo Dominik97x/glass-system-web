@@ -1,6 +1,14 @@
 import type { StoredCalculatorInquiryLead } from "@/domain/StoredCalculatorInquiryLead";
-import { createCalculatorInquiryNotificationMessage } from "./CalculatorInquiryNotificationMessage";
-import type { CalculatorInquiryNotificationService } from "./CalculatorInquiryNotificationService";
+import { createCalculatorInquiryQuotePdf } from "@/inquiries/pdf/CalculatorInquiryQuotePdf";
+import {
+  createCalculatorInquiryCustomerMessage,
+  createCalculatorInquiryNotificationMessage,
+  type CalculatorInquiryNotificationMessage,
+} from "./CalculatorInquiryNotificationMessage";
+import type {
+  CalculatorInquiryNotificationResult,
+  CalculatorInquiryNotificationService,
+} from "./CalculatorInquiryNotificationService";
 
 interface ResendCalculatorInquiryNotificationConfig {
   apiKey?: string;
@@ -15,6 +23,19 @@ interface ResendEmailResponse {
   statusCode?: number;
 }
 
+interface ResendEmailAttachment {
+  filename: string;
+  content: string;
+  content_type?: string;
+}
+
+interface ResendEmailPayload {
+  to: string[];
+  message: CalculatorInquiryNotificationMessage;
+  replyTo?: string;
+  attachments?: ResendEmailAttachment[];
+}
+
 export class ResendCalculatorInquiryNotificationService
   implements CalculatorInquiryNotificationService
 {
@@ -23,25 +44,108 @@ export class ResendCalculatorInquiryNotificationService
       getResendCalculatorInquiryNotificationConfig()
   ) {}
 
-  async notify(lead: StoredCalculatorInquiryLead): Promise<void> {
-    const message = createCalculatorInquiryNotificationMessage(lead);
+  async notify(
+    lead: StoredCalculatorInquiryLead
+  ): Promise<CalculatorInquiryNotificationResult> {
+    this.validateConfig();
 
+    const internalMessage = createCalculatorInquiryNotificationMessage(lead);
+    const customerMessage = createCalculatorInquiryCustomerMessage(lead);
+    const businessReplyTo = this.config.to[0];
+
+    const internalEmailPromise = this.sendEmail({
+      to: this.config.to,
+      message: internalMessage,
+      replyTo: lead.customer.email,
+    }).then((responseId) => {
+      console.log("Calculator inquiry internal email sent:", {
+        inquiryId: lead.id,
+        provider: "resend",
+        responseId,
+      });
+    });
+
+    const customerEmailPromise = this.sendCustomerEmailWithPdf(
+      lead,
+      customerMessage,
+      businessReplyTo
+    );
+
+    const [internalResult, customerResult] = await Promise.allSettled([
+      internalEmailPromise,
+      customerEmailPromise,
+    ]);
+
+    if (internalResult.status === "rejected") {
+      console.error("Calculator inquiry internal email failed:", {
+        inquiryId: lead.id,
+        error: internalResult.reason,
+      });
+    }
+
+    if (customerResult.status === "rejected") {
+      console.error("Calculator inquiry customer email failed:", {
+        inquiryId: lead.id,
+        error: customerResult.reason,
+      });
+    }
+
+    return {
+      internalEmailSent: internalResult.status === "fulfilled",
+      customerEmailSent: customerResult.status === "fulfilled",
+    };
+  }
+
+  private async sendCustomerEmailWithPdf(
+    lead: StoredCalculatorInquiryLead,
+    message: CalculatorInquiryNotificationMessage,
+    replyTo: string | undefined
+  ): Promise<void> {
+    const pdf = await createCalculatorInquiryQuotePdf(lead);
+
+    const responseId = await this.sendEmail({
+      to: [lead.customer.email],
+      message,
+      replyTo,
+      attachments: [
+        {
+          filename: pdf.filename,
+          content: Buffer.from(pdf.bytes).toString("base64"),
+          content_type: "application/pdf",
+        },
+      ],
+    });
+
+    console.log("Calculator inquiry customer email sent:", {
+      inquiryId: lead.id,
+      provider: "resend",
+      responseId,
+      attachment: pdf.filename,
+      documentNumber: pdf.documentNumber,
+    });
+  }
+
+  private validateConfig(): void {
     if (!this.config.apiKey) {
       throw new Error("Missing RESEND_API_KEY for inquiry notifications.");
     }
 
     if (!this.config.from) {
       throw new Error(
-        "Missing CALCULATOR_INQUIRY_NOTIFICATION_FROM for inquiry notifications."
+        "Missing CALCULATOR_INQUIRY_NOTIFICATION_FROM or CONTACT_FORM_FROM for inquiry notifications."
       );
     }
 
     if (this.config.to.length === 0) {
       throw new Error(
-        "Missing CALCULATOR_INQUIRY_NOTIFICATION_TO for inquiry notifications."
+        "Missing CALCULATOR_INQUIRY_NOTIFICATION_TO or CONTACT_FORM_TO for inquiry notifications."
       );
     }
+  }
 
+  private async sendEmail(
+    payload: ResendEmailPayload
+  ): Promise<string | undefined> {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -50,11 +154,14 @@ export class ResendCalculatorInquiryNotificationService
       },
       body: JSON.stringify({
         from: this.config.from,
-        to: this.config.to,
-        subject: message.subject,
-        text: message.text,
-        html: message.html,
-        reply_to: lead.customer.email,
+        to: payload.to,
+        subject: payload.message.subject,
+        text: payload.message.text,
+        html: payload.message.html,
+        ...(payload.replyTo ? { reply_to: payload.replyTo } : {}),
+        ...(payload.attachments && payload.attachments.length > 0
+          ? { attachments: payload.attachments }
+          : {}),
       }),
     });
 
@@ -64,19 +171,20 @@ export class ResendCalculatorInquiryNotificationService
       throw new Error(createResendErrorMessage(response.status, data));
     }
 
-    console.log("Calculator inquiry email notification sent:", {
-      inquiryId: lead.id,
-      provider: "resend",
-      responseId: data.id,
-    });
+    return data.id;
   }
 }
 
 function getResendCalculatorInquiryNotificationConfig(): ResendCalculatorInquiryNotificationConfig {
+  const explicitTo = process.env.CALCULATOR_INQUIRY_NOTIFICATION_TO;
+  const contactFormTo = process.env.CONTACT_FORM_TO;
+
   return {
     apiKey: process.env.RESEND_API_KEY,
-    from: process.env.CALCULATOR_INQUIRY_NOTIFICATION_FROM,
-    to: parseRecipientList(process.env.CALCULATOR_INQUIRY_NOTIFICATION_TO),
+    from:
+      process.env.CALCULATOR_INQUIRY_NOTIFICATION_FROM ??
+      process.env.CONTACT_FORM_FROM,
+    to: parseRecipientList(explicitTo ?? contactFormTo),
   };
 }
 

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requireAdminSession } from "@/auth/admin-session";
 import type { CalculatorInquiryStatus } from "@/domain/StoredCalculatorInquiryLead";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
 
@@ -28,6 +29,8 @@ function isCalculatorInquiryStatus(
 export async function updateInquiryStatusAction(
   formData: FormData
 ): Promise<void> {
+  await requireAdminSession("/admin/leady");
+
   const id = formData.get("id");
   const status = formData.get("status");
 
@@ -40,6 +43,24 @@ export async function updateInquiryStatusAction(
   }
 
   await inquiryAdminService.updateInquiryStatus(id, status);
+
+  revalidatePath("/admin/leady");
+  revalidatePath(`/admin/leady/${id}`);
+
+  redirect(`/admin/leady/${id}`);
+}
+export async function retryBitrix24SyncAction(
+  formData: FormData
+): Promise<void> {
+  await requireAdminSession("/admin/leady");
+
+  const id = formData.get("id");
+
+  if (typeof id !== "string" || id.trim().length === 0) {
+    return;
+  }
+
+  await inquiryAdminService.retryBitrix24Sync(id);
 
   revalidatePath("/admin/leady");
   revalidatePath(`/admin/leady/${id}`);

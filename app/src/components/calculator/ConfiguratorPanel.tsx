@@ -9,9 +9,21 @@ interface Props {
 
 export function ConfiguratorPanel({ configuration, onChange }: Props) {
   return (
-    <aside className="border-r border-neutral-200 bg-white xl:sticky xl:top-0 xl:h-[calc(100vh-0rem)] xl:max-h-screen xl:overflow-y-auto">
+    <aside className="border-r border-[#d5ccbc] bg-[#f6f1e7]">
       <div className="p-3">
-        <ConfigurationForm configuration={configuration} onChange={onChange} />
+        <div className="mb-3 border-b border-[#d5ccbc] pb-3">
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#9a722e]">
+            Krok 1
+          </p>
+          <h3 className="mt-1 font-serif text-xl font-medium text-[#062c25]">
+            Parametry projektu
+          </h3>
+        </div>
+
+        <ConfigurationForm
+          configuration={configuration}
+          onChange={onChange}
+        />
       </div>
     </aside>
   );

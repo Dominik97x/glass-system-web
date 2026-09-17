@@ -1,7 +1,16 @@
 import Link from "next/link";
 
+import { requireAdminSession } from "@/auth/admin-session";
+import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { CalculatorInquiryAdminService } from "@/inquiries/server/CalculatorInquiryAdminService";
-import { formatPrice } from "@/lib/format-price";
+import {
+  formatAccountingPrice,
+  formatPrice,
+} from "@/lib/format-price";
+import {
+  getQuoteSnapshotWebsiteTotalGross,
+  hasDetailedQuoteFinancials,
+} from "@/lib/quote-snapshot";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,11 +18,14 @@ export const dynamic = "force-dynamic";
 const inquiryAdminService = new CalculatorInquiryAdminService();
 
 export default async function AdminLeadyPage() {
+  const session = await requireAdminSession("/admin/leady");
   const inquiries = await inquiryAdminService.getAllInquiries();
 
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
+        <AdminToolbar username={session.username} />
+
         <header className="mb-8">
           <h1 className="text-3xl font-bold">Leady z kalkulatora</h1>
           <p className="mt-2 text-neutral-400">
@@ -46,8 +58,13 @@ export default async function AdminLeadyPage() {
                     </Link>
                   </div>
 
-                  <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
-                    status: {inquiry.status}
+                  <div className="flex flex-wrap gap-2">
+                    <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
+                      status: {inquiry.status}
+                    </div>
+                    <div className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
+                      Bitrix24: {inquiry.bitrix24?.status ?? "brak"}
+                    </div>
                   </div>
                 </div>
 
@@ -95,10 +112,34 @@ export default async function AdminLeadyPage() {
                     <h3 className="font-semibold">Wycena</h3>
 
                     <div className="mt-3 space-y-2 text-sm text-neutral-300">
-                      <p>
-                        <strong className="text-white">Razem:</strong>{" "}
-                        {formatPrice(inquiry.quote.totalGross)}
-                      </p>
+                      {hasDetailedQuoteFinancials(inquiry.quote) ? (
+                        <>
+                          <p>
+                            <strong className="text-white">Netto:</strong>{" "}
+                            {formatAccountingPrice(inquiry.quote.totalNet)}
+                          </p>
+                          <p>
+                            <strong className="text-white">
+                              VAT {inquiry.quote.defaultVatRate}%:
+                            </strong>{" "}
+                            {formatAccountingPrice(inquiry.quote.totalTaxAmount)}
+                          </p>
+                          <p>
+                            <strong className="text-white">Brutto:</strong>{" "}
+                            {formatAccountingPrice(inquiry.quote.totalGross)}
+                          </p>
+                          <p className="text-neutral-400">
+                            Strona: {formatPrice(
+                              getQuoteSnapshotWebsiteTotalGross(inquiry.quote)
+                            )}
+                          </p>
+                        </>
+                      ) : (
+                        <p>
+                          <strong className="text-white">Razem brutto:</strong>{" "}
+                          {formatPrice(inquiry.quote.totalGross)}
+                        </p>
+                      )}
 
                       <p>
                         <strong className="text-white">Przyjęto:</strong>{" "}
@@ -111,7 +152,9 @@ export default async function AdminLeadyPage() {
                         <li key={item.id}>
                           {item.name}:{" "}
                           <span className="text-white">
-                            {formatPrice(item.totalPriceGross)}
+                            {hasDetailedQuoteFinancials(inquiry.quote)
+                              ? formatAccountingPrice(item.totalPriceGross)
+                              : formatPrice(item.totalPriceGross)}
                           </span>
                         </li>
                       ))}
