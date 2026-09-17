@@ -31,23 +31,24 @@ if (!hasDetailedQuoteFinancials(snapshot)) {
 assertEqual(snapshot.version, 2, "wersja snapshotu");
 assertEqual(snapshot.priceMode, "net", "tryb ceny");
 assertEqual(snapshot.taxIncluded, false, "VAT niewliczony w cenę netto");
-assertEqual(snapshot.items.length, 7, "liczba szczegółowych pozycji");
-assertEqual(snapshot.websiteItems.length, 5, "liczba grup widocznych na stronie");
+assertEqual(snapshot.items.length, 8, "liczba szczegółowych pozycji");
+assertEqual(snapshot.websiteItems.length, 6, "liczba grup widocznych na stronie");
 assertEqual(snapshot.defaultVatRate, 8, "domyślna stawka VAT");
-assertMoney(snapshot.totalNet, 17632, "suma netto");
-assertMoney(snapshot.totalTaxAmount, 1410.56, "suma VAT");
-assertMoney(snapshot.totalGross, 19042.56, "dokładna suma brutto");
-assertMoney(snapshot.websiteTotalGross, 19043, "suma pokazywana na stronie");
+assertMoney(snapshot.totalNet, 17907, "suma netto");
+assertMoney(snapshot.totalTaxAmount, 1432.56, "suma VAT");
+assertMoney(snapshot.totalGross, 19339.56, "dokładna suma brutto");
+assertMoney(snapshot.websiteTotalGross, 19339.56, "suma pokazywana na stronie");
 
 
 const expectedItemIds = [
-  "construction",
-  "zip_front",
-  "awning",
-  "led_cct",
-  "leveling_profile",
-  "brushes",
-  "handles",
+  "MG-TR-BASE-D300-W306",
+  "MG-INSTALL-TR-D300-W306",
+  "MG-ZIP-FRONT-D300-W306",
+  "MG-AWNING-D300-W306",
+  "MG-LED-RGB-CCT-D300-W306",
+  "MG-FOUNDATION-D300-W306",
+  "MG-BRUSHES-D300-W306",
+  "MG-HANDLES-D300-W306",
 ];
 assertEqual(
   snapshot.items.map((item) => item.id).join(","),
@@ -55,17 +56,17 @@ assertEqual(
   "kolejność szczegółowych pozycji"
 );
 
-const construction = snapshot.items.find((item) => item.id === "construction");
+const construction = snapshot.items.find((item) => item.id === "MG-TR-BASE-D300-W306");
 if (!construction) {
   throw new Error("Brak pozycji construction w snapshotcie.");
 }
 
-assertMoney(construction.totalPriceNet, 7419, "konstrukcja netto");
-assertMoney(construction.totalTaxAmount, 593.52, "konstrukcja VAT");
-assertMoney(construction.totalPriceGross, 8012.52, "konstrukcja brutto");
+assertMoney(construction.totalPriceNet, 4869, "konstrukcja netto");
+assertMoney(construction.totalTaxAmount, 389.52, "konstrukcja VAT");
+assertMoney(construction.totalPriceGross, 5258.52, "konstrukcja brutto");
 assertMoney(
   construction.websiteTotalPriceGross,
-  8013,
+  5258.52,
   "konstrukcja brutto na stronie"
 );
 assertEqual(construction.vatRate, 8, "VAT konstrukcji");
