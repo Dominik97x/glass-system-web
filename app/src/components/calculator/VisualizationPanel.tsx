@@ -96,8 +96,8 @@ export function VisualizationPanel({ configuration }: Props) {
           </div>
         </div>
 
-        <div className="mt-2 flex min-h-0 flex-1 items-start justify-center overflow-hidden bg-[#fffdf8] xl:h-[clamp(500px,60vh,555px)]">
-          <div className="relative aspect-[4/3] h-auto w-full max-w-full xl:h-full xl:w-auto">
+        <div className="mt-2 min-h-0 flex-1 overflow-hidden bg-[#fffdf8]">
+          <div className="relative aspect-[4/3] w-full">
             <Image
               src={displayedImage}
               alt={`${previewLabel} — przykładowy podgląd MoonGlass`}
