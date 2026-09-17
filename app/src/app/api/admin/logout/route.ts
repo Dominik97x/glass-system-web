@@ -14,7 +14,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   const response = NextResponse.redirect(
-    new URL("/admin/logowanie?loggedOut=1", request.url),
+    new URL("/admin/logowanie?loggedOut=1", process.env.NEXT_PUBLIC_SITE_URL ?? request.url),
     { status: 303 }
   );
 
