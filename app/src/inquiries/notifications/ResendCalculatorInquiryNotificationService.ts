@@ -86,7 +86,6 @@ export class ResendCalculatorInquiryNotificationService
     if (customerResult.status === "rejected") {
       console.error("Calculator inquiry customer email failed:", {
         inquiryId: lead.id,
-        customerEmail: lead.customer.email,
         error: customerResult.reason,
       });
     }
@@ -119,7 +118,6 @@ export class ResendCalculatorInquiryNotificationService
 
     console.log("Calculator inquiry customer email sent:", {
       inquiryId: lead.id,
-      customerEmail: lead.customer.email,
       provider: "resend",
       responseId,
       attachment: pdf.filename,

@@ -14,6 +14,17 @@ export class ConsoleCalculatorInquiryNotificationService
   async notify(
     lead: StoredCalculatorInquiryLead
   ): Promise<CalculatorInquiryNotificationResult> {
+    if (process.env.NODE_ENV === "production") {
+      console.log("Calculator inquiry console preview suppressed in production:", {
+        inquiryId: lead.id,
+      });
+
+      return {
+        internalEmailSent: false,
+        customerEmailSent: false,
+      };
+    }
+
     const internalMessage = createCalculatorInquiryNotificationMessage(lead);
     const customerMessage = createCalculatorInquiryCustomerMessage(lead);
 
