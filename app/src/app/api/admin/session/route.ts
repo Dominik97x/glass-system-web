@@ -35,7 +35,7 @@ function createLoginRedirect(
   error: "invalid" | "blocked" | "configuration",
   nextPath: string
 ): NextResponse {
-  const loginUrl = new URL("/admin/logowanie", request.url);
+  const loginUrl = new URL("/admin/logowanie", process.env.NEXT_PUBLIC_SITE_URL ?? request.url);
   loginUrl.searchParams.set("error", error);
   loginUrl.searchParams.set("next", nextPath);
 
@@ -87,7 +87,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   clearAdminLoginAttempts(rateLimitKey);
 
   const { token, expiresAt } = createAdminSessionToken();
-  const response = NextResponse.redirect(new URL(nextPath, request.url), {
+  const response = NextResponse.redirect(new URL(nextPath, process.env.NEXT_PUBLIC_SITE_URL ?? request.url), {
     status: 303,
   });
 
