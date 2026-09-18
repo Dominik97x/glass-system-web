@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "Ogrody zimowe i zadaszenia tarasów",
   description:
     "Ogrody zimowe i zadaszenia tarasów MoonGlass. Aluminiowe konstrukcje wykonywane na wymiar z możliwością dopasowania dachu, przeszkleń i wyposażenia.",
+  alternates: {
+    canonical: "/oferta",
+  },
 };
 
 const offerItems = [

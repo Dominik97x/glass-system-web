@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "Inspiracje – ogrody zimowe i zadaszenia tarasów",
   description:
     "Inspiracje MoonGlass — ogrody zimowe, zadaszenia tarasów i zabudowy szklane dopasowane do nowoczesnych domów.",
+  alternates: {
+    canonical: "/realizacje",
+  },
 };
 
 const inspirations = [

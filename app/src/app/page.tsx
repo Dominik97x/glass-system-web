@@ -103,7 +103,7 @@ export default function Home() {
         <span className="h-px w-12 bg-[#c79a46]" />
 
         <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#dfbd78] sm:text-xs">
-          Zabudowy tarasowe na wymiar
+          Ogrody zimowe i zadaszenia tarasów na wymiar
         </p>
       </div>
 
