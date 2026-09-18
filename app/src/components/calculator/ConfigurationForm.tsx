@@ -96,6 +96,7 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
         configuration.walls === "none"
           ? "glass_clear"
           : configuration.walls,
+      hasLevelingProfile: true,
     });
   }
 
@@ -306,7 +307,8 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
           />
           <OptionToggle
             label="Fundament / profil"
-            checked={configuration.hasLevelingProfile}
+            checked={productType === "winter_garden" || configuration.hasLevelingProfile}
+            disabled={productType === "winter_garden"}
             onChange={(checked) =>
               updateConfiguration({ hasLevelingProfile: checked })
             }
@@ -448,15 +450,18 @@ function SmallOption({
 function OptionToggle({
   label,
   checked,
+  disabled = false,
   onChange,
 }: {
   label: string;
   checked: boolean;
+  disabled?: boolean;
   onChange(checked: boolean): void;
 }) {
   return (
     <button
       type="button"
+      disabled={disabled}
       onClick={() => onChange(!checked)}
       className={[
         "flex min-h-10 items-center justify-between gap-2 border px-2.5 py-1.5 text-left transition",

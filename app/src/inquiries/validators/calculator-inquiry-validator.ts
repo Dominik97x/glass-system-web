@@ -275,6 +275,17 @@ function validateConfiguration(
   }
 
   if (
+    validatedConfiguration.productType === "winter_garden" &&
+    !validatedConfiguration.hasLevelingProfile
+  ) {
+    return {
+      success: false,
+      message:
+        "Ogród zimowy wymaga fundamentu / profilu wyrównującego.",
+    };
+  }
+
+  if (
     validatedConfiguration.walls === "none" &&
     (validatedConfiguration.hasLeftZip ||
       validatedConfiguration.hasRightZip)

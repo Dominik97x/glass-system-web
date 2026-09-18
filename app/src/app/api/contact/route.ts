@@ -1,3 +1,5 @@
+import { consumeRequestRateLimit } from "@/security/request-rate-limit";
+
 interface ContactPayload {
   name: string;
   email: string;
@@ -22,7 +24,31 @@ const TOPICS: Record<string, string> = {
 
 export const runtime = "nodejs";
 
+const CONTACT_RATE_LIMIT = {
+  bucket: "contact-form",
+  limit: 5,
+  windowMs: 15 * 60 * 1000,
+} as const;
+
 export async function POST(request: Request): Promise<Response> {
+  const rateLimit = consumeRequestRateLimit(request, CONTACT_RATE_LIMIT);
+
+  if (!rateLimit.allowed) {
+    return Response.json(
+      {
+        success: false,
+        message: "Wysłano zbyt wiele wiadomości. Spróbuj ponownie później.",
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimit.retryAfterSeconds),
+          "Cache-Control": "no-store",
+        },
+      }
+    );
+  }
+
   let payload: unknown;
 
   try {
@@ -166,7 +192,7 @@ try {
         "",
         "Pozdrawiamy,",
         "Zespół MoonGlass",
-        "tel. 533 850 226",
+        "tel. +48 533 850 226",
         "e-mail: biuro@moonglass.pl",
         "www.moonglass.pl",
       ].join("\n"),
@@ -188,7 +214,7 @@ try {
           <hr style="border: 0; border-top: 1px solid #ddd; margin: 28px 0;" />
 
           <p style="margin-bottom: 4px;"><strong>Zespół MoonGlass</strong></p>
-          <p style="margin: 4px 0;">tel. 533 850 226</p>
+          <p style="margin: 4px 0;">tel. +48 533 850 226</p>
           <p style="margin: 4px 0;">
             <a href="mailto:biuro@moonglass.pl">biuro@moonglass.pl</a>
           </p>
