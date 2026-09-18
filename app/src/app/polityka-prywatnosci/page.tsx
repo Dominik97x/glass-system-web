@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Polityka prywatności",
   description:
     "Polityka prywatności serwisu MoonGlass – informacje dotyczące przetwarzania danych osobowych.",
+  alternates: {
+    canonical: "/polityka-prywatnosci",
+  },
 };
 
 export default function PrivacyPolicyPage() {

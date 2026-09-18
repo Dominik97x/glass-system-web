@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin", "/api"],
+      disallow: ["/api"],
     },
     sitemap: "https://moonglass.pl/sitemap.xml",
     host: "https://moonglass.pl",

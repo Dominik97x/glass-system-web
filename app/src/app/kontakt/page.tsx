@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Kontakt i wycena",
   description:
     "Skontaktuj się z MoonGlass w sprawie ogrodu zimowego, zadaszenia tarasu lub indywidualnej wyceny projektu.",
+  alternates: {
+    canonical: "/kontakt",
+  },
 };
 
 export default function KontaktPage() {

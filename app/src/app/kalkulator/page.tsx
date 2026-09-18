@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Kalkulator ogrodu zimowego i zadaszenia tarasu",
   description:
     "Skonfiguruj ogród zimowy lub zadaszenie tarasu MoonGlass, sprawdź orientacyjną cenę brutto i wyślij gotową konfigurację do doradcy.",
+  alternates: {
+    canonical: "/kalkulator",
+  },
 };
 
 const heroHighlights = [

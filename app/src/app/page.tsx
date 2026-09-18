@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
+
 const images = {
   hero: "/images/glass-system/hero-moonglass-day-v2.png",
 
@@ -103,7 +112,7 @@ export default function Home() {
         <span className="h-px w-12 bg-[#c79a46]" />
 
         <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#dfbd78] sm:text-xs">
-          Zabudowy tarasowe na wymiar
+          Ogrody zimowe i zadaszenia tarasów na wymiar
         </p>
       </div>
 
