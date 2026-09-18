@@ -1,4 +1,5 @@
 import { getAdminSession } from "@/auth/admin-session";
+import { consumeRequestRateLimit } from "@/security/request-rate-limit";
 import { createCalculatorInquiryRepository } from "@/inquiries/repositories/CalculatorInquiryRepositoryFactory";
 import { CalculatorInquiryHandler } from "@/inquiries/server/CalculatorInquiryHandler";
 import { InvalidCalculatorInquiryConfigurationError } from "@/inquiries/server/CalculatorInquiryQuoteService";
@@ -16,6 +17,12 @@ export const runtime = "nodejs";
 
 const inquiryRepository = createCalculatorInquiryRepository();
 const inquiryHandler = new CalculatorInquiryHandler(inquiryRepository);
+
+const INQUIRY_RATE_LIMIT = {
+  bucket: "calculator-inquiry",
+  limit: 8,
+  windowMs: 15 * 60 * 1000,
+} as const;
 
 export async function GET(): Promise<Response> {
   const session = await getAdminSession();
@@ -50,6 +57,23 @@ export async function GET(): Promise<Response> {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const rateLimit = consumeRequestRateLimit(request, INQUIRY_RATE_LIMIT);
+
+  if (!rateLimit.allowed) {
+    const response: SubmitCalculatorInquiryResponse = {
+      success: false,
+      message: "Wysłano zbyt wiele zapytań. Spróbuj ponownie później.",
+    };
+
+    return Response.json(response, {
+      status: 429,
+      headers: {
+        "Retry-After": String(rateLimit.retryAfterSeconds),
+        "Cache-Control": "no-store",
+      },
+    });
+  }
+
   let payload: unknown;
 
   try {

@@ -105,7 +105,7 @@ export default function KontaktPage() {
                     href="tel:+48533850226"
                     className="mt-2 inline-block font-serif text-3xl text-[#062c25] transition hover:text-[#9a722e]"
                   >
-                    533 850 226
+                    +48 533 850 226
                   </a>
                 </div>
 

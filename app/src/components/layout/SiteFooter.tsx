@@ -72,7 +72,7 @@ export function SiteFooter() {
                   href="tel:+48533850226"
                   className="mt-1 inline-block font-serif text-2xl text-[#f6f1e7] transition hover:text-[#dfbd78]"
                 >
-                  533 850 226
+                  +48 533 850 226
                 </a>
               </div>
 
