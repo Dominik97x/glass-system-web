@@ -24,27 +24,22 @@ export const metadata: Metadata = {
   description:
     "Ogrody zimowe, zadaszenia tarasów i zabudowy szklane na wymiar. Skonfiguruj projekt online i sprawdź orientacyjną wycenę.",
 
-  alternates: {
-    canonical: "/",
-  },
-
   openGraph: {
     type: "website",
     locale: "pl_PL",
     siteName: "MoonGlass",
-    url: "https://moonglass.pl",
-  images: [
-  {
-    url: "/images/glass-system/hero-moonglass-day-v2.png",
-    alt: "MoonGlass — ogrody zimowe i zadaszenia tarasów",
-  },
-],
+    images: [
+      {
+        url: "/images/glass-system/hero-moonglass-day-v2.png",
+        alt: "MoonGlass — ogrody zimowe i zadaszenia tarasów",
+      },
+    ],
   },
 
   twitter: {
-  card: "summary_large_image",
-  images: ["/images/glass-system/hero-moonglass-day-v2.png"],
-},
+    card: "summary_large_image",
+    images: ["/images/glass-system/hero-moonglass-day-v2.png"],
+  },
 };
 
 const organizationJsonLd = {
@@ -80,6 +75,7 @@ const websiteJsonLd = {
     "@id": "https://moonglass.pl/#organization",
   },
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -13,7 +13,7 @@ interface AdminLoginPageProps {
 }
 
 export const metadata: Metadata = {
-  title: "Logowanie administratora | MoonGlass",
+  title: "Logowanie administratora",
   robots: {
     index: false,
     follow: false,
