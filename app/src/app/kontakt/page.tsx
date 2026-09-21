@@ -7,9 +7,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Kontakt i wycena",
+  title: "Kontakt i wycena ogrodu zimowego lub zadaszenia tarasu",
   description:
-    "Skontaktuj się z MoonGlass w sprawie ogrodu zimowego, zadaszenia tarasu lub indywidualnej wyceny projektu.",
+    "Skontaktuj się z MoonGlass w sprawie ogrodu zimowego, zadaszenia tarasu lub indywidualnej wyceny. Realizujemy projekty na wymiar na terenie całej Polski.",
   alternates: {
     canonical: "/kontakt",
   },
@@ -23,7 +23,7 @@ export default function KontaktPage() {
         <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
             src="/images/glass-system/hero-moonglass-day-v2.png"
-            alt="Zabudowa tarasu MoonGlass"
+            alt="Ogród zimowy i zadaszenie tarasu MoonGlass"
             fill
             priority
             sizes="100vw"
@@ -47,24 +47,33 @@ export default function KontaktPage() {
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Porozmawiajmy o
+                Kontakt i wycena
                 <span className="block text-[#dfbd78]">
-                  Twojej przestrzeni.
+                  Twojego projektu.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/70 sm:text-base sm:leading-8">
-                Masz pytania dotyczące ogrodu zimowego, zadaszenia tarasu
-                albo przygotowanej konfiguracji? Napisz lub zadzwoń.
-                Pomożemy dobrać odpowiednie rozwiązanie.
+                Planujesz ogród zimowy, zadaszenie tarasu lub zabudowę szklaną?
+                Napisz lub zadzwoń. Pomożemy dopasować rozwiązanie do wymiarów,
+                budynku i sposobu korzystania z przestrzeni.
               </p>
 
-              <Link
-                href="#formularz"
-                className="mt-9 inline-flex bg-[#c79a46] px-8 py-4 text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#031d18] transition hover:bg-[#dfbd78]"
-              >
-                Napisz do nas
-              </Link>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="#formularz"
+                  className="bg-[#c79a46] px-8 py-4 text-center text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#031d18] transition hover:bg-[#dfbd78]"
+                >
+                  Napisz do nas
+                </Link>
+
+                <Link
+                  href="/kalkulator"
+                  className="border border-[#f6f1e7]/35 px-8 py-4 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-[#f6f1e7] transition hover:border-[#c79a46] hover:text-[#dfbd78]"
+                >
+                  Sprawdź orientacyjną cenę
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -86,16 +95,16 @@ export default function KontaktPage() {
               </div>
 
               <h2 className="mt-6 font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl">
-                Jesteśmy tutaj,
+                Opowiedz nam
                 <span className="block text-[#9a722e]">
-                  żeby pomóc.
+                  o swojej inwestycji.
                 </span>
               </h2>
 
               <p className="mt-6 max-w-lg text-sm leading-7 text-[#202421]/60 sm:text-base">
-                Jeśli masz już wymiary lub wstępny pomysł, możesz opisać go
-                w wiadomości. Jeżeli dopiero zaczynasz — również pomożemy
-                określić najlepszy kierunek.
+                Jeśli masz już wymiary tarasu, zdjęcia miejsca montażu lub
+                wstępny pomysł, dodaj je do wiadomości. Jeśli dopiero zaczynasz,
+                pomożemy określić odpowiedni typ konstrukcji i dalsze kroki.
               </p>
 
               <div className="mt-10 border-t border-[#062c25]/15">
@@ -127,6 +136,20 @@ export default function KontaktPage() {
 
                 <div className="border-b border-[#062c25]/15 py-6">
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9a722e]">
+                    Siedziba
+                  </p>
+
+                  <address className="mt-2 not-italic text-base leading-7 text-[#062c25]">
+                    Moon Glass Monika Bąk
+                    <br />
+                    Elizy Orzeszkowej 14/54
+                    <br />
+                    02-374 Warszawa
+                  </address>
+                </div>
+
+                <div className="border-b border-[#062c25]/15 py-6">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9a722e]">
                     Obszar działania
                   </p>
 
@@ -136,16 +159,26 @@ export default function KontaktPage() {
                 </div>
               </div>
 
-              <div className="mt-8">
-                <p className="text-sm leading-7 text-[#202421]/55">
-                  Chcesz najpierw poznać orientacyjny koszt?
-                </p>
+              <div className="mt-8 flex flex-col gap-3">
+                <div>
+                  <p className="text-sm leading-7 text-[#202421]/55">
+                    Chcesz najpierw poznać orientacyjny koszt?
+                  </p>
+
+                  <Link
+                    href="/kalkulator"
+                    className="mt-2 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#062c25] transition hover:text-[#9a722e]"
+                  >
+                    Przejdź do kalkulatora
+                    <span className="text-[#c79a46]">→</span>
+                  </Link>
+                </div>
 
                 <Link
-                  href="/kalkulator"
-                  className="mt-3 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#062c25] transition hover:text-[#9a722e]"
+                  href="/oferta"
+                  className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#062c25] transition hover:text-[#9a722e]"
                 >
-                  Przejdź do kalkulatora
+                  Zobacz ogrody zimowe i zadaszenia tarasów
                   <span className="text-[#c79a46]">→</span>
                 </Link>
               </div>
@@ -164,7 +197,8 @@ export default function KontaktPage() {
                 Projekt na wymiar
               </p>
               <p className="mt-2 text-sm leading-6 text-[#f6f1e7]/55">
-                Każdą konstrukcję dopasowujemy do konkretnego budynku.
+                Każdą konstrukcję dopasowujemy do konkretnego budynku i
+                wymiarów inwestycji.
               </p>
             </div>
 
@@ -173,7 +207,8 @@ export default function KontaktPage() {
                 Indywidualna wycena
               </p>
               <p className="mt-2 text-sm leading-6 text-[#f6f1e7]/55">
-                Finalny zakres potwierdzamy po poznaniu szczegółów inwestycji.
+                Finalny zakres i cenę potwierdzamy po poznaniu szczegółów
+                projektu oraz warunków realizacji.
               </p>
             </div>
 
@@ -182,7 +217,8 @@ export default function KontaktPage() {
                 Bezpośredni kontakt
               </p>
               <p className="mt-2 text-sm leading-6 text-[#f6f1e7]/55">
-                Zapytanie trafia bezpośrednio do zespołu MoonGlass.
+                Zapytanie trafia bezpośrednio do zespołu MoonGlass, razem z
+                informacjami potrzebnymi do dalszej rozmowy.
               </p>
             </div>
           </div>

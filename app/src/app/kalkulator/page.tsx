@@ -9,7 +9,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 export const metadata: Metadata = {
   title: "Kalkulator ogrodu zimowego i zadaszenia tarasu",
   description:
-    "Skonfiguruj ogród zimowy lub zadaszenie tarasu MoonGlass, sprawdź orientacyjną cenę brutto i wyślij gotową konfigurację do doradcy.",
+    "Skonfiguruj ogród zimowy lub zadaszenie tarasu MoonGlass, dobierz wymiary, dach i wyposażenie oraz sprawdź orientacyjną cenę brutto online.",
   alternates: {
     canonical: "/kalkulator",
   },
@@ -26,19 +26,19 @@ const steps = [
     number: "01",
     title: "Wybierz konstrukcję",
     description:
-      "Określ typ zabudowy, wymiary, kolor konstrukcji oraz rodzaj dachu.",
+      "Określ, czy konfigurujesz ogród zimowy czy zadaszenie tarasu, a następnie podaj wymiary, kolor konstrukcji i rodzaj dachu.",
   },
   {
     number: "02",
     title: "Dobierz wyposażenie",
     description:
-      "Dodaj przeszklenia, rolety ZIP, markizę, oświetlenie i akcesoria.",
+      "Dodaj przeszklenia, rolety ZIP, markizę, oświetlenie LED i pozostałe akcesoria dostępne dla wybranej konstrukcji.",
   },
   {
     number: "03",
-    title: "Wyślij konfigurację",
+    title: "Sprawdź wycenę i wyślij konfigurację",
     description:
-      "Otrzymasz podsumowanie na e-mail, a doradca MoonGlass zweryfikuje projekt.",
+      "Zobacz orientacyjną cenę brutto, a następnie wyślij konfigurację do doradcy MoonGlass i otrzymaj podsumowanie na e-mail.",
   },
 ] as const;
 
@@ -51,7 +51,7 @@ export default function KalkulatorPage() {
             src="/images/glass-system/hero-moonglass-day-v2.png"
             alt="Ogród zimowy MoonGlass przy domu"
             fill
-            loading="eager"
+            priority
             sizes="100vw"
             className="object-cover"
           />
@@ -69,19 +69,19 @@ export default function KalkulatorPage() {
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#dfbd78]">
                   Kalkulator MoonGlass
                 </p>
-              </div> 
+              </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Skonfiguruj swoją przestrzeń
+                Kalkulator ogrodu zimowego
                 <span className="block text-[#dfbd78]">
-                  i poznaj orientacyjny koszt.
+                  i zadaszenia tarasu.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/72 sm:text-base sm:leading-8">
-                Dobierz podstawowe parametry ogrodu zimowego lub zadaszenia
-                tarasu. Cena aktualizuje się automatycznie, a po wysłaniu
-                konfiguracji otrzymasz jej podsumowanie wraz z dokumentem PDF.
+                Skonfiguruj ogród zimowy lub zadaszenie tarasu na wymiar.
+                Dobierz podstawowe parametry konstrukcji, sprawdź orientacyjną
+                cenę brutto i wyślij gotową konfigurację do doradcy MoonGlass.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -145,10 +145,11 @@ export default function KalkulatorPage() {
                 Twoja konfiguracja
               </p>
               <h2 className="mt-4 font-serif text-3xl font-medium leading-tight text-[#062c25] sm:text-4xl lg:text-5xl">
-                Dobierz parametry i sprawdź cenę.
+                Dobierz parametry i sprawdź orientacyjną cenę.
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#202421]/60">
-                Zdjęcia w podglądzie mają charakter poglądowy. Dokładny wygląd
+                Wybierz wymiary, wariant dachu, przeszklenia i wyposażenie.
+                Zdjęcia w podglądzie mają charakter poglądowy, a dokładny wygląd
                 konstrukcji jest potwierdzany po weryfikacji technicznej.
               </p>
             </div>
@@ -174,6 +175,14 @@ export default function KalkulatorPage() {
                 zapytanie. Wymiary, sposób montażu i możliwość zastosowania
                 poszczególnych rozwiązań wymagają późniejszej weryfikacji.
               </p>
+
+              <Link
+                href="/oferta"
+                className="mt-5 inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#f6f1e7] transition hover:text-[#dfbd78]"
+              >
+                Zobacz ofertę MoonGlass
+                <span className="text-[#c79a46]">→</span>
+              </Link>
             </div>
           </div>
         </section>
@@ -183,4 +192,3 @@ export default function KalkulatorPage() {
     </>
   );
 }
-

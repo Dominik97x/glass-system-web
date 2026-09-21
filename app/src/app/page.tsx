@@ -89,47 +89,47 @@ const galleryItems = [
 export default function Home() {
   return (
     <>
-    <main className="min-h-screen bg-[#f4efe6] text-neutral-950">
-<section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-white lg:min-h-screen">
-  <Image
-    src={images.hero}
-    alt="Ogród zimowy MoonGlass przy domu"
-    fill
-    priority
-    sizes="100vw"
-    className="object-cover animate-[glassHeroZoom_22s_ease-in-out_infinite_alternate]"
-  />
+      <main className="min-h-screen bg-[#f4efe6] text-neutral-950">
+        <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-white lg:min-h-screen">
+          <Image
+            src={images.hero}
+            alt="Ogród zimowy MoonGlass przy domu"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover animate-[glassHeroZoom_22s_ease-in-out_infinite_alternate]"
+          />
 
-  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
 
-  <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
-  <SiteHeader activePage="start" />
+          <SiteHeader activePage="start" />
 
-  <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
-    <div className="max-w-4xl">
-      <div className="mb-7 flex items-center gap-4">
-        <span className="h-px w-12 bg-[#c79a46]" />
+          <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
+            <div className="max-w-4xl">
+              <div className="mb-7 flex items-center gap-4">
+                <span className="h-px w-12 bg-[#c79a46]" />
 
-        <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#dfbd78] sm:text-xs">
-          Ogrody zimowe i zadaszenia tarasów na wymiar
-        </p>
-      </div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#dfbd78] sm:text-xs">
+                  Aluminiowe konstrukcje MoonGlass
+                </p>
+              </div>
 
-      <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.94] tracking-[-0.025em] text-[#f6f1e7] sm:text-6xl lg:text-7xl xl:text-8xl">
-        Przestrzeń na każdą
-        <span className="block text-[#dfbd78]">
-          porę roku.
-        </span>
-      </h1>
+              <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.94] tracking-[-0.025em] text-[#f6f1e7] sm:text-6xl lg:text-7xl xl:text-8xl">
+                Ogrody zimowe i
+                <span className="block text-[#dfbd78]">
+                  zadaszenia tarasów na wymiar.
+                </span>
+              </h1>
 
-      <p className="mt-7 max-w-2xl text-base leading-8 text-[#f6f1e7]/75 sm:text-lg">
-        Ogrody zimowe, zadaszenia tarasów i zabudowy szklane
-        projektowane na wymiar. Komfortowa przestrzeń dopasowana
-        do Twojego domu i stylu życia.
-      </p>
+              <p className="mt-7 max-w-2xl text-base leading-8 text-[#f6f1e7]/75 sm:text-lg">
+                Projektujemy ogrody zimowe, zadaszenia tarasów i zabudowy szklane
+                dopasowane do wymiarów, architektury domu i sposobu korzystania
+                z przestrzeni.
+              </p>
 
-      <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
         <Link
           href="/kalkulator"
           className="bg-[#c79a46] px-8 py-4 text-center text-xs font-extrabold uppercase tracking-[0.14em] text-[#031d18] transition hover:bg-[#dfbd78]"
@@ -143,23 +143,23 @@ export default function Home() {
         >
           Poznaj ofertę
         </Link>
-      </div>
+              </div>
 
-      <div className="mt-14 flex flex-wrap gap-x-8 gap-y-4 border-t border-[#f6f1e7]/15 pt-6 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f6f1e7]/65 sm:text-[11px]">
-        <span>Aluminiowe konstrukcje</span>
-        <span className="text-[#c79a46]">◆</span>
-        <span>Realizacja na wymiar</span>
-        <span className="text-[#c79a46]">◆</span>
-        <span>Cała Polska</span>
-      </div>
-    </div>
-  </div>
+              <div className="mt-14 flex flex-wrap gap-x-8 gap-y-4 border-t border-[#f6f1e7]/15 pt-6 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f6f1e7]/65 sm:text-[11px]">
+                <span>Aluminiowe konstrukcje</span>
+                <span className="text-[#c79a46]">◆</span>
+                <span>Realizacja na wymiar</span>
+                <span className="text-[#c79a46]">◆</span>
+                <span>Cała Polska</span>
+              </div>
+            </div>
+          </div>
 
-  <div className="absolute bottom-8 right-8 z-20 hidden items-center gap-4 text-[9px] font-bold uppercase tracking-[0.24em] text-[#f6f1e7]/45 md:flex">
-    Przewiń
-    <span className="h-10 w-px bg-[#c79a46]/70" />
-  </div>
-</section>
+          <div className="absolute bottom-8 right-8 z-20 hidden items-center gap-4 text-[9px] font-bold uppercase tracking-[0.24em] text-[#f6f1e7]/45 md:flex">
+            Przewiń
+            <span className="h-10 w-px bg-[#c79a46]/70" />
+          </div>
+        </section>
 
 <section
   id="produkty"
@@ -285,7 +285,7 @@ export default function Home() {
         </p>
 
         <div className="mt-9">
-          <Link href ="/kontakt"
+          <Link href="/kontakt"
             className="inline-flex items-center gap-4 border-b border-[#c79a46]/70 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#f6f1e7] transition hover:text-[#dfbd78]"
           >
             Porozmawiaj z doradcą
@@ -648,8 +648,8 @@ export default function Home() {
     </div>
   </div>
 </section>
-    </main>
-    <SiteFooter />
+      </main>
+      <SiteFooter />
     </>
   );
 }
