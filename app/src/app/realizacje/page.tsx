@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Inspiracje – ogrody zimowe i zadaszenia tarasów",
+  title: "Inspiracje ogrodów zimowych i zadaszeń tarasów",
   description:
-    "Inspiracje MoonGlass — ogrody zimowe, zadaszenia tarasów i zabudowy szklane dopasowane do nowoczesnych domów.",
+    "Zobacz inspiracje MoonGlass: ogrody zimowe, zadaszenia tarasów i zabudowy szklane w różnych aranżacjach. Poznaj możliwości konstrukcji wykonywanych na wymiar.",
   alternates: {
     canonical: "/realizacje",
   },
@@ -65,7 +65,7 @@ export default function RealizacjePage() {
         <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
             src="/images/glass-system/hero-moonglass-day-v2.png"
-            alt="Inspiracje MoonGlass"
+            alt="Inspiracje ogrodów zimowych i zadaszeń tarasów MoonGlass"
             fill
             priority
             sizes="100vw"
@@ -89,16 +89,17 @@ export default function RealizacjePage() {
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Zobacz przestrzeń
+                Inspiracje ogrodów zimowych
                 <span className="block text-[#dfbd78]">
-                  w różnych odsłonach.
+                  i zadaszeń tarasów.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/70 sm:text-base sm:leading-8">
-                Każdy dom i taras są inne. Zobacz przykładowe aranżacje
-                ogrodów zimowych, zadaszeń i zabudów szklanych, które
-                mogą stać się punktem wyjścia do Twojego projektu.
+                Zobacz przykładowe aranżacje ogrodów zimowych, zadaszeń tarasów
+                i zabudów szklanych. Różne warianty dachu, przeszkleń,
+                wyposażenia i sposobu wykorzystania przestrzeni mogą być
+                punktem wyjścia do Twojego projektu.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -134,17 +135,18 @@ export default function RealizacjePage() {
                 </div>
 
                 <h2 className="mt-5 max-w-3xl font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl lg:text-6xl">
-                  Dopasowana do domu.
+                  Ogród zimowy lub zadaszenie
                   <span className="block text-[#9a722e]">
-                    Zaprojektowana dla Ciebie.
+                    dopasowane do Twojego domu.
                   </span>
                 </h2>
               </div>
 
               <p className="max-w-lg text-sm leading-7 text-[#202421]/65 sm:text-base lg:justify-self-end">
                 Kolor konstrukcji, rodzaj dachu, przeszklenia i dodatki
-                wpływają nie tylko na funkcjonalność, ale również na charakter
-                całej przestrzeni.
+                wpływają zarówno na funkcjonalność, jak i charakter całej
+                przestrzeni. Każdy projekt może zostać dopasowany do wymiarów
+                tarasu oraz architektury budynku.
               </p>
             </div>
           </div>
@@ -216,7 +218,8 @@ export default function RealizacjePage() {
             <div className="mt-10 flex flex-col gap-5 border-t border-[#f6f1e7]/15 pt-7 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-2xl text-sm leading-7 text-[#f6f1e7]/55">
                 Prezentowane obrazy pokazują przykładowe możliwości aranżacji.
-                Finalny projekt przygotowujemy pod konkretny budynek, wymiary
+                Nie są katalogiem gotowych realizacji — finalny projekt
+                przygotowujemy pod konkretny budynek, wymiary, sposób zabudowy
                 i wybrane wyposażenie.
               </p>
 
@@ -239,15 +242,16 @@ export default function RealizacjePage() {
             </p>
 
             <h2 className="mt-5 font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl lg:text-6xl">
-              Podoba Ci się ten kierunek?
+              Masz już kierunek?
               <span className="block text-[#9a722e]">
                 Zacznij od własnej konfiguracji.
               </span>
             </h2>
 
             <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-[#202421]/60 sm:text-base">
-              Określ podstawowe parametry konstrukcji i sprawdź orientacyjną
-              cenę. Na kolejnym etapie doradca pomoże dopracować rozwiązanie.
+              Określ typ konstrukcji, podstawowe wymiary, dach i wyposażenie,
+              aby sprawdzić orientacyjną cenę. Na kolejnym etapie doradca
+              pomoże dopracować rozwiązanie do Twojego domu.
             </p>
 
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">

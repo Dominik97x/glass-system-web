@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Ogrody zimowe i zadaszenia tarasów",
+  title: "Oferta ogrodów zimowych i zadaszeń tarasów",
   description:
-    "Ogrody zimowe i zadaszenia tarasów MoonGlass. Aluminiowe konstrukcje wykonywane na wymiar z możliwością dopasowania dachu, przeszkleń i wyposażenia.",
+    "Poznaj ofertę MoonGlass: ogrody zimowe i zadaszenia tarasów na wymiar, dachy szklane i poliwęglanowe, przeszklenia, rolety ZIP, markizy i oświetlenie LED.",
   alternates: {
     canonical: "/oferta",
   },
@@ -20,7 +20,7 @@ const offerItems = [
     eyebrow: "Całoroczna przestrzeń przy domu",
     title: "Ogrody zimowe",
     description:
-      "Zabudowa tarasu pozwalająca stworzyć dodatkową, osłoniętą przestrzeń przy domu. Konstrukcję, przeszklenia i wyposażenie dopasowujemy do wymiarów oraz sposobu użytkowania.",
+      "Ogrody zimowe projektowane na wymiar pozwalają stworzyć dodatkową, osłoniętą przestrzeń przy domu. Konstrukcję, przeszklenia i wyposażenie dopasowujemy do wymiarów tarasu, architektury budynku oraz sposobu użytkowania.",
     image: "/images/glass-system/oferta/oferta-ogrod-zimowy-triangle.png",
     points: [
       "Aluminiowa konstrukcja na wymiar",
@@ -34,7 +34,7 @@ const offerItems = [
     eyebrow: "Ochrona i komfort na tarasie",
     title: "Zadaszenia tarasowe",
     description:
-      "Nowoczesne zadaszenie chroniące taras przed deszczem i nadmiernym nasłonecznieniem. Projekt powstaje pod konkretny budynek, wymiary i wybrany wariant wykończenia.",
+      "Zadaszenia tarasowe na wymiar chronią przestrzeń przed deszczem i nadmiernym nasłonecznieniem. Projekt dopasowujemy do konkretnego budynku, wymiarów tarasu, wybranego pokrycia dachu i sposobu wykończenia.",
     image: "/images/glass-system/oferta-zadaszenie-tarasu.png",
     points: [
       "Konstrukcja aluminiowa",
@@ -87,9 +87,9 @@ export default function OfertaPage() {
             className="object-cover"
           />
 
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
           <SiteHeader activePage="oferta" />
 
@@ -104,16 +104,16 @@ export default function OfertaPage() {
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Rozwiązania stworzone
+                Oferta ogrodów zimowych
                 <span className="block text-[#dfbd78]">
-                  wokół Twojego domu.
+                  i zadaszeń tarasowych.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/70 sm:text-base sm:leading-8">
-                Projektujemy aluminiowo-szklane konstrukcje na wymiar.
-                Od lekkiego zadaszenia tarasu po pełną zabudowę,
-                która tworzy dodatkową przestrzeń przy domu.
+                Projektujemy ogrody zimowe i zadaszenia tarasowe na wymiar.
+                Aluminiowe konstrukcje dopasowujemy do budynku, wymiarów tarasu,
+                rodzaju dachu, przeszkleń i wybranego wyposażenia.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -152,17 +152,17 @@ export default function OfertaPage() {
                 </div>
 
                 <h2 className="mt-5 max-w-3xl font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl lg:text-6xl">
-                  Wybierz punkt wyjścia
+                  Dwa sposoby na
                   <span className="block text-[#9a722e]">
-                    dla swojej przestrzeni.
+                    lepszą przestrzeń przy domu.
                   </span>
                 </h2>
               </div>
 
               <p className="max-w-lg text-sm leading-7 text-[#202421]/65 sm:text-base lg:justify-self-end">
-                Każda konstrukcja powstaje na wymiar. Podstawowy typ
-                rozwiązania jest dopiero początkiem — później dobieramy
-                dach, przeszklenia, kolor i wyposażenie.
+                Wybierz ogród zimowy albo zadaszenie tarasu jako punkt wyjścia.
+                Każda konstrukcja powstaje na wymiar, a dach, przeszklenia,
+                kolor i wyposażenie dobieramy do konkretnego projektu.
               </p>
             </div>
 
@@ -258,8 +258,9 @@ export default function OfertaPage() {
                 </h2>
 
                 <p className="mt-7 max-w-lg text-sm leading-7 text-[#f6f1e7]/60 sm:text-base">
-                  Wygląd i funkcjonalność zabudowy możesz dopasować
-                  do własnych potrzeb już na etapie konfiguracji.
+                  Rodzaj dachu, zabudowa szklana, kolor konstrukcji i dodatki
+                  pozwalają dopasować wygląd oraz funkcjonalność projektu do
+                  sposobu, w jaki chcesz korzystać z tarasu.
                 </p>
               </div>
 
@@ -304,9 +305,9 @@ export default function OfertaPage() {
             </h2>
 
             <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-[#202421]/60 sm:text-base">
-              Wybierz podstawowe parametry konstrukcji w kalkulatorze.
-              Po zakończeniu konfiguracji możesz przesłać gotowe zapytanie
-              bezpośrednio do doradcy MoonGlass.
+              Wybierz typ konstrukcji, wymiary, dach i wyposażenie w
+              kalkulatorze. Po zakończeniu konfiguracji możesz przesłać gotowe
+              zapytanie bezpośrednio do doradcy MoonGlass.
             </p>
 
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
