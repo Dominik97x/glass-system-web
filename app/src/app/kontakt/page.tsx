@@ -136,7 +136,7 @@ export default function KontaktPage() {
 
                 <div className="border-b border-[#062c25]/15 py-6">
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9a722e]">
-                    Siedziba
+                    Adres rejestrowy
                   </p>
 
                   <address className="mt-2 not-italic text-base leading-7 text-[#062c25]">
@@ -146,6 +146,11 @@ export default function KontaktPage() {
                     <br />
                     02-374 Warszawa
                   </address>
+
+                  <p className="mt-3 text-sm leading-6 text-[#202421]/55">
+                    Pod tym adresem nie prowadzimy stacjonarnego punktu obsługi klientów.
+                    Pomiary i montaże realizujemy bezpośrednio u klienta.
+                  </p>
                 </div>
 
                 <div className="border-b border-[#062c25]/15 py-6">
