@@ -49,6 +49,7 @@ const organizationJsonLd = {
   name: "MoonGlass",
   legalName: "Moon Glass Monika Bąk",
   url: "https://moonglass.pl",
+  logo: "https://moonglass.pl/images/brand/moonglass-logo.png",
   email: "biuro@moonglass.pl",
   telephone: "+48 533 850 226",
   address: {
@@ -62,6 +63,9 @@ const organizationJsonLd = {
     "@type": "Country",
     name: "Polska",
   },
+  sameAs: [
+    "https://www.facebook.com/profile.php?id=61592525343896",
+  ],
 };
 
 const websiteJsonLd = {
