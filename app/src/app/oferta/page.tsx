@@ -22,6 +22,8 @@ const offerItems = [
     description:
       "Ogrody zimowe projektowane na wymiar pozwalają stworzyć dodatkową, osłoniętą przestrzeń przy domu. Konstrukcję, przeszklenia i wyposażenie dopasowujemy do wymiarów tarasu, architektury budynku oraz sposobu użytkowania.",
     image: "/images/glass-system/oferta/oferta-ogrod-zimowy-triangle.png",
+    href: "/ogrody-zimowe",
+    cta: "Poznaj ogrody zimowe",
     points: [
       "Aluminiowa konstrukcja na wymiar",
       "Przesuwne ściany szklane",
@@ -36,6 +38,8 @@ const offerItems = [
     description:
       "Zadaszenia tarasowe na wymiar chronią przestrzeń przed deszczem i nadmiernym nasłonecznieniem. Projekt dopasowujemy do konkretnego budynku, wymiarów tarasu, wybranego pokrycia dachu i sposobu wykończenia.",
     image: "/images/glass-system/oferta-zadaszenie-tarasu.png",
+    href: "/zadaszenia-tarasow",
+    cta: "Poznaj zadaszenia tarasowe",
     points: [
       "Konstrukcja aluminiowa",
       "Pokrycie szklane lub poliwęglanowe",
@@ -223,10 +227,10 @@ export default function OfertaPage() {
                       </div>
 
                       <Link
-                        href="/kalkulator"
+                        href={item.href}
                         className="mt-8 inline-flex items-center gap-4 border-b border-[#c79a46]/70 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:text-[#dfbd78]"
                       >
-                        Skonfiguruj
+                        {item.cta}
                         <span className="text-[#c79a46]">→</span>
                       </Link>
                     </div>

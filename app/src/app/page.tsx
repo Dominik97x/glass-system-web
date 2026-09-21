@@ -32,7 +32,7 @@ const productCards = [
     description:
       "Zabudowa tarasu ze szkłem, zadaszeniem i dodatkami, która pozwala korzystać z przestrzeni niezależnie od pogody.",
     image: images.startWinterGarden,
-    href: "/kalkulator",
+    href: "/ogrody-zimowe",
   },
   {
     title: "Zadaszenie tarasu",
@@ -40,7 +40,7 @@ const productCards = [
     description:
       "Aluminiowa konstrukcja z dachem szklanym lub poliwęglanowym, projektowana pod wymiar i styl budynku.",
     image: images.startTerraceRoof,
-    href: "/kalkulator",
+    href: "/zadaszenia-tarasow",
   },
 ];
 
@@ -232,7 +232,7 @@ export default function Home() {
             </p>
 
             <div className="mt-7 inline-flex items-center gap-4 border-b border-[#c79a46]/70 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#f6f1e7] transition group-hover:text-[#dfbd78]">
-              Skonfiguruj
+              Poznaj rozwiązanie
               <span className="text-[#c79a46] transition duration-300 group-hover:translate-x-2">
                 →
               </span>
