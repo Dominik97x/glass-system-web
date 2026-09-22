@@ -4,6 +4,10 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import {
+  RealProjectGallery,
+  type RealProjectImage,
+} from "@/components/realizations/RealProjectGallery";
 
 export const metadata: Metadata = {
   title: "Inspiracje ogrodów zimowych i zadaszeń tarasów",
@@ -13,6 +17,44 @@ export const metadata: Metadata = {
     canonical: "/realizacje",
   },
 };
+
+const realProjectImages: RealProjectImage[] = [
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/01-front.jpeg",
+    alt: "Zabudowa tarasu MoonGlass – widok frontowy",
+    label: "Widok frontowy",
+  },
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/03-bok.jpeg",
+    alt: "Zabudowa tarasu MoonGlass – widok z boku",
+    label: "Widok z boku",
+  },
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/02-bok.jpeg",
+    alt: "Aluminiowa konstrukcja zabudowy tarasu MoonGlass",
+    label: "Konstrukcja zewnętrzna",
+  },
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/04-bok.jpeg",
+    alt: "Zabudowa tarasu MoonGlass dopasowana do budynku",
+    label: "Połączenie z budynkiem",
+  },
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/05-wnetrze.jpeg",
+    alt: "Wnętrze zabudowanego tarasu MoonGlass",
+    label: "Widok od środka",
+  },
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/06-wnetrze.jpeg",
+    alt: "Przeszklona przestrzeń tarasu MoonGlass od środka",
+    label: "Przestrzeń tarasu",
+  },
+  {
+    src: "/images/glass-system/realizacje/realizacja-01/07-detal.jpeg",
+    alt: "Detal konstrukcji zabudowy tarasu MoonGlass",
+    label: "Detal konstrukcji",
+  },
+];
 
 const inspirations = [
   {
@@ -61,7 +103,7 @@ export default function RealizacjePage() {
   return (
     <>
       <main>
-        {/* HERO */}
+        {/* HERO — bez zmian */}
         <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
             src="/images/glass-system/hero-moonglass-day-v2.png"
@@ -73,7 +115,6 @@ export default function RealizacjePage() {
           />
 
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.76)_0%,rgba(3,29,24,0.52)_35%,rgba(3,29,24,0.16)_70%,rgba(3,29,24,0.04)_100%)]" />
-
           <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/45 via-transparent to-[#031d18]/10" />
 
           <SiteHeader activePage="realizacje" />
@@ -121,38 +162,58 @@ export default function RealizacjePage() {
           </div>
         </section>
 
-        {/* WPROWADZENIE */}
-        <section className="bg-[#f6f1e7] px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
+        {/* PRAWDZIWA REALIZACJA — kompaktowo */}
+        <section
+          id="realizacja-01"
+          className="bg-[#f6f1e7] px-6 py-12 sm:px-8 sm:py-14 lg:px-12 lg:py-16"
+        >
           <div className="mx-auto max-w-7xl">
-            <div className="grid gap-8 lg:grid-cols-[0.62fr_0.38fr] lg:items-end">
-              <div>
-                <div className="flex items-center gap-4">
-                  <span className="h-px w-10 bg-[#c79a46]" />
-
-                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#9a722e]">
-                    Architektura i światło
-                  </p>
-                </div>
-
-                <h2 className="mt-5 max-w-3xl font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl lg:text-6xl">
-                  Ogród zimowy lub zadaszenie
-                  <span className="block text-[#9a722e]">
-                    dopasowane do Twojego domu.
-                  </span>
-                </h2>
+            <div className="mb-7 max-w-3xl">
+              <div className="flex items-center gap-4">
+                <span className="h-px w-10 bg-[#c79a46]" />
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#9a722e]">
+                  Prawdziwa realizacja
+                </p>
               </div>
 
-              <p className="max-w-lg text-sm leading-7 text-[#202421]/65 sm:text-base lg:justify-self-end">
-                Kolor konstrukcji, rodzaj dachu, przeszklenia i dodatki
-                wpływają zarówno na funkcjonalność, jak i charakter całej
-                przestrzeni. Każdy projekt może zostać dopasowany do wymiarów
-                tarasu oraz architektury budynku.
+              <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl lg:text-[56px]">
+                Zabudowa tarasu na wymiar
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#202421]/60 sm:text-base">
+                Jedna z wykonanych konstrukcji MoonGlass — pokazana z kilku
+                perspektyw.
+              </p>
+            </div>
+
+            <RealProjectGallery images={realProjectImages} />
+          </div>
+        </section>
+
+        {/* INSPIRACJE — skrócony odstęp */}
+        <section className="bg-[#f6f1e7] px-6 pb-10 pt-3 sm:px-8 sm:pb-12 sm:pt-4 lg:px-12 lg:pb-14 lg:pt-5">
+          <div className="mx-auto max-w-7xl border-t border-[#062c25]/12 pt-8">
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-4">
+                <span className="h-px w-10 bg-[#c79a46]" />
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#9a722e]">
+                  Inspiracje
+                </p>
+              </div>
+
+              <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl lg:text-[56px]">
+                Zobacz inne możliwości aranżacji
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#202421]/60 sm:text-base">
+                Wizualizacje poniżej pokazują różne warianty ogrodów zimowych,
+                zadaszeń, przeszkleń i wyposażenia.
               </p>
             </div>
           </div>
         </section>
 
-        {/* GALERIA */}
+        {/* GALERIA INSPIRACJI — bez zmian */}
         <section
           id="inspiracje"
           className="bg-[#031d18] px-6 py-20 text-[#f6f1e7] sm:px-8 sm:py-24 lg:px-12 lg:py-28"
