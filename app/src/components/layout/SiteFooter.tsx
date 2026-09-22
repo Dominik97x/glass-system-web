@@ -2,6 +2,8 @@ import Link from "next/link";
 
 const footerNavigation = [
   { label: "Start", href: "/" },
+  { label: "Ogrody zimowe", href: "/ogrody-zimowe" },
+  { label: "Zadaszenia tarasów", href: "/zadaszenia-tarasow" },
   { label: "Oferta", href: "/oferta" },
   { label: "Inspiracje", href: "/realizacje" },
   { label: "Wycena", href: "/kalkulator" },
