@@ -168,6 +168,14 @@ const variants: ProductVariantDefinition[] = [
     sectionKey: "lighting_point",
   },
   {
+    family: "led_cct",
+    familySort: 610,
+    field: "ledStripNet",
+    skuPart: "LED-CCT",
+    name: "Oświetlenie LED CCT",
+    sectionKey: "lighting_cct",
+  },
+  {
     family: "brushes",
     familySort: 800,
     field: "brushesNet",
