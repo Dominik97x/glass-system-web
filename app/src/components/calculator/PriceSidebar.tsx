@@ -55,7 +55,7 @@ function getZipLabel(quote: Quote): string {
 
 function getLightingLabel(quote: Quote): string {
   if (quote.configuration.hasLed) return "LED punktowe";
-  if (quote.configuration.hasCob) return "LED RGB CCT";
+  if (quote.configuration.hasCob) return "LED CCT";
   return "Brak";
 }
 
