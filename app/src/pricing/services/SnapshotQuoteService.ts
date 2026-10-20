@@ -212,20 +212,19 @@ export class SnapshotQuoteService {
         ]
       : configuration.hasCob
         ? [
-            this.getCatalogComponent(
-              getCrmCoreProduct(
-                "led_rgb_cct",
-                configuration.length,
-                configuration.width
-              ),
-              "lighting"
+            this.getComponent(
+              criteria,
+              `MG-LED-CCT-${suffix}`,
+              `Oświetlenie LED CCT ${dimension}`,
+              "lighting",
+              "ledStripNet"
             ),
           ]
         : [];
     this.addWebsiteGroup(websiteItems, financialLineItems, {
       id: "led",
       name: configuration.hasCob
-        ? "Oświetlenie LED RGB CCT"
+        ? "Oświetlenie LED CCT"
         : "Oświetlenie LED punktowe",
       category: "lighting",
       components: lightingComponents,
@@ -495,7 +494,7 @@ function assertPriceableConfiguration(
 ): void {
   if (configuration.hasLed && configuration.hasCob) {
     throw new Error(
-      "LED punktowe i LED RGB CCT nie mogą być wybrane jednocześnie."
+      "LED punktowe i LED CCT nie mogą być wybrane jednocześnie."
     );
   }
 

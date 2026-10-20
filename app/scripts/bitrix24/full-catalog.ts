@@ -155,7 +155,7 @@ export class Bitrix24FullCatalogManager {
         "Pozycje techniczne CRM-only są dokładane z crm-catalog-addons.generated.json i służą wyłącznie konstrukcjom niestandardowym; nie składają standardowego ogrodu zimowego.",
         "Ogród zimowy jest jednym kompletnym produktem OP/OS; zadaszenie jest osobnym kompletnym produktem ZP/ZS; montaż pozostaje osobną pozycją.",
         "Szkło dachowe dla długości 550/600 cm pozostaje wyłączone zgodnie z availability.roofGlass=false.",
-        "LED RGB CCT jest publikowane jako opcja CRM z aktualną ceną MoonGlass; LED CCT bez RGB jest na razie pominięte zgodnie z informacją o braku dostępności do października.",
+        "LED CCT i LED RGB CCT są publikowane jako osobne produkty. LED CCT korzysta ze wspólnego cennika strony i CRM, a LED RGB CCT pozostaje osobną opcją CRM.",
         "Importer nie usuwa produktów. Nadmiarowe zarządzane SKU są jedynie raportowane.",
       ],
     };
