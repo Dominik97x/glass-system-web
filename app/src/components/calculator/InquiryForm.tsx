@@ -5,7 +5,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { Quote } from "@/domain/Quote";
 import { CalculatorInquiryService } from "@/inquiries/services/CalculatorInquiryService";
-import { hasMarketingConsent } from "@/privacy/consent";
+import { readMarketingAttributionForInquiry } from "@/marketing/attribution";
 
 interface Props {
   quote: Quote;
@@ -316,26 +316,6 @@ function FormField({ label, required = false, children }: FormFieldProps) {
   );
 }
 
-function readCalculatorInquiryAttribution():
-  | NonNullable<CalculatorInquirySubmission["attribution"]>
-  | undefined {
-  if (!hasMarketingConsent()) {
-    return undefined;
-  }
-  const url = new URL(window.location.href);
-
-  return {
-    landingPage: truncate(window.location.href, 2048),
-    referrer: truncate(document.referrer, 2048),
-    utmSource: truncate(url.searchParams.get("utm_source") ?? "", 255),
-    utmMedium: truncate(url.searchParams.get("utm_medium") ?? "", 255),
-    utmCampaign: truncate(url.searchParams.get("utm_campaign") ?? "", 255),
-    utmContent: truncate(url.searchParams.get("utm_content") ?? "", 255),
-    utmTerm: truncate(url.searchParams.get("utm_term") ?? "", 255),
-    fbclid: truncate(url.searchParams.get("fbclid") ?? "", 500),
-  };
-}
-
-function truncate(value: string, maximumLength: number): string {
-  return value.slice(0, maximumLength);
+function readCalculatorInquiryAttribution(): CalculatorInquirySubmission["attribution"] {
+  return readMarketingAttributionForInquiry();
 }
