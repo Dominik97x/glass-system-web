@@ -55,9 +55,11 @@ export function ConsentManager() {
 
           <p className="mt-2 text-sm leading-6 text-[#f6f1e7]/70">
             MoonGlass korzysta z mechanizmów niezbędnych do
-            prawidłowego działania serwisu. Narzędzia
-            marketingowe pozostają wyłączone bez Twojej zgody.
-            Obecnie Meta Pixel nie jest jeszcze uruchomiony.
+            prawidłowego działania serwisu. Za Twoją zgodą
+            możemy również uruchamiać narzędzia marketingowe,
+            w tym Meta Pixel, aby mierzyć skuteczność reklam
+            i lepiej dopasowywać kampanie. Bez zgody marketingowej
+            narzędzia te pozostają wyłączone.
           </p>
 
           <Link

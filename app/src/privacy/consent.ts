@@ -1,4 +1,4 @@
-export const CONSENT_STORAGE_KEY = "moonglass-consent-v1-pre-meta";
+export const CONSENT_STORAGE_KEY = "moonglass-consent-v2-meta";
 
 export const CONSENT_OPEN_EVENT = "moonglass:consent-open";
 export const CONSENT_CHANGED_EVENT = "moonglass:consent-changed";
