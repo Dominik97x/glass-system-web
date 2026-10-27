@@ -5,6 +5,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { Quote } from "@/domain/Quote";
 import { CalculatorInquiryService } from "@/inquiries/services/CalculatorInquiryService";
+import { hasMarketingConsent } from "@/privacy/consent";
 
 interface Props {
   quote: Quote;
@@ -315,9 +316,12 @@ function FormField({ label, required = false, children }: FormFieldProps) {
   );
 }
 
-function readCalculatorInquiryAttribution(): NonNullable<
-  CalculatorInquirySubmission["attribution"]
-> {
+function readCalculatorInquiryAttribution():
+  | NonNullable<CalculatorInquirySubmission["attribution"]>
+  | undefined {
+  if (!hasMarketingConsent()) {
+    return undefined;
+  }
   const url = new URL(window.location.href);
 
   return {
