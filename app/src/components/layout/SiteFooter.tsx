@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConsentSettingsButton } from "@/components/privacy/ConsentSettingsButton";
 
 const footerNavigation = [
   { label: "Start", href: "/" },
@@ -116,6 +117,8 @@ export function SiteFooter() {
             >
               Polityka prywatności
             </Link>
+
+            <ConsentSettingsButton />
 
             <span>moonglass.pl</span>
           </div>
