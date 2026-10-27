@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { ConsentManager } from "@/components/privacy/ConsentManager";
 import { MarketingAttributionTracker } from "@/components/marketing/MarketingAttributionTracker";
+import { MetaPixel } from "@/components/marketing/MetaPixel";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -107,6 +108,7 @@ export default function RootLayout({
         />
         {children}
         <MarketingAttributionTracker />
+        <MetaPixel />
         <ConsentManager />
       </body>
     </html>
