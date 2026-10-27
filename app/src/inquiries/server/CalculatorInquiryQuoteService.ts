@@ -31,6 +31,11 @@ export class CalculatorInquiryQuoteService {
         customer: {
           ...submission.customer,
         },
+        attribution: submission.attribution
+          ? {
+              ...submission.attribution,
+            }
+          : undefined,
         quote: createQuoteSnapshot(quote),
       };
     } catch (error) {

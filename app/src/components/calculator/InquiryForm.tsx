@@ -60,6 +60,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
         message: form.message,
       },
       configuration: quote.configuration,
+      attribution: readCalculatorInquiryAttribution(),
     };
 
     try {
@@ -312,4 +313,25 @@ function FormField({ label, required = false, children }: FormFieldProps) {
       {children}
     </label>
   );
+}
+
+function readCalculatorInquiryAttribution(): NonNullable<
+  CalculatorInquirySubmission["attribution"]
+> {
+  const url = new URL(window.location.href);
+
+  return {
+    landingPage: truncate(window.location.href, 2048),
+    referrer: truncate(document.referrer, 2048),
+    utmSource: truncate(url.searchParams.get("utm_source") ?? "", 255),
+    utmMedium: truncate(url.searchParams.get("utm_medium") ?? "", 255),
+    utmCampaign: truncate(url.searchParams.get("utm_campaign") ?? "", 255),
+    utmContent: truncate(url.searchParams.get("utm_content") ?? "", 255),
+    utmTerm: truncate(url.searchParams.get("utm_term") ?? "", 255),
+    fbclid: truncate(url.searchParams.get("fbclid") ?? "", 500),
+  };
+}
+
+function truncate(value: string, maximumLength: number): string {
+  return value.slice(0, maximumLength);
 }

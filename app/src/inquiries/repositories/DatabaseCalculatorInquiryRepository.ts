@@ -1,3 +1,4 @@
+import type { CalculatorInquiryAttribution } from "@/domain/CalculatorInquiryAttribution";
 import type {
   Bitrix24SyncStatus,
   CalculatorInquiryStatus,
@@ -19,6 +20,7 @@ export interface CalculatorInquiryDatabaseRow {
   customer_message: string;
   quote_total_gross: string | number;
   quote_snapshot: unknown;
+  attribution: unknown | null;
   bitrix24_sync_status: Bitrix24SyncStatus;
   bitrix24_contact_id: string | number | null;
   bitrix24_deal_id: string | number | null;
@@ -53,6 +55,7 @@ export class DatabaseCalculatorInquiryRepository
             customer_message,
             quote_total_gross,
             quote_snapshot,
+            attribution,
             bitrix24_sync_status,
             notification_status
           )
@@ -68,8 +71,9 @@ export class DatabaseCalculatorInquiryRepository
             $9,
             $10,
             $11::jsonb,
-            $12,
-            $13
+            $12::jsonb,
+            $13,
+            $14
           )
           on conflict (id) do nothing
         `,
@@ -85,6 +89,7 @@ export class DatabaseCalculatorInquiryRepository
           lead.customer.message,
           lead.quote.totalGross,
           JSON.stringify(lead.quote),
+          lead.attribution ? JSON.stringify(lead.attribution) : null,
           getInitialBitrix24SyncStatus(),
           getInitialNotificationStatus(),
         ]
@@ -159,6 +164,7 @@ export function mapDatabaseRowToStoredCalculatorInquiryLead(
       phone: row.customer_phone,
       message: row.customer_message,
     },
+    attribution: parseAttribution(row.attribution),
     quote: parseQuoteSnapshot(row.quote_snapshot),
     bitrix24: {
       status: row.bitrix24_sync_status,
@@ -172,6 +178,20 @@ export function mapDatabaseRowToStoredCalculatorInquiryLead(
       nextRetryAt: toNullableIsoString(row.bitrix24_next_retry_at),
     },
   };
+}
+
+function parseAttribution(
+  value: unknown | null
+): CalculatorInquiryAttribution | undefined {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    return JSON.parse(value) as CalculatorInquiryAttribution;
+  }
+
+  return value as CalculatorInquiryAttribution;
 }
 
 function parseQuoteSnapshot(value: unknown): QuoteSnapshot {
