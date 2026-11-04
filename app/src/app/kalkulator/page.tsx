@@ -7,9 +7,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Kalkulator ogrodu zimowego i zadaszenia tarasu",
+  title: "Kalkulator zadaszenia tarasu i ogrodu zimowego",
   description:
-    "Skonfiguruj ogród zimowy lub zadaszenie tarasu MoonGlass, dobierz wymiary, dach i wyposażenie oraz sprawdź orientacyjną cenę brutto online.",
+    "Kalkulator zadaszenia tarasu i ogrodu zimowego MoonGlass. Dobierz wymiary, dach, przeszklenia i wyposażenie oraz sprawdź orientacyjną cenę brutto online.",
   alternates: {
     canonical: "/kalkulator",
   },
@@ -72,9 +72,9 @@ export default function KalkulatorPage() {
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Kalkulator ogrodu zimowego
+                Kalkulator zadaszenia tarasu
                 <span className="block text-[#dfbd78]">
-                  i zadaszenia tarasu.
+                  i ogrodu zimowego.
                 </span>
               </h1>
 
@@ -155,6 +155,51 @@ export default function KalkulatorPage() {
             </div>
 
             <Calculator />
+          </div>
+        </section>
+
+        <section className="bg-[#f6f1e7] px-6 py-16 sm:px-8 lg:px-12">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.52fr_0.48fr] lg:items-start">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a722e]">
+                Cena i wycena online
+              </p>
+              <h2 className="mt-4 max-w-3xl font-serif text-3xl font-medium leading-tight text-[#062c25] sm:text-4xl">
+                Ile kosztuje zadaszenie tarasu lub ogród zimowy?
+              </h2>
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-[#202421]/62 sm:text-base">
+                Na orientacyjną cenę wpływają przede wszystkim wymiary konstrukcji,
+                rodzaj dachu, zakres przeszkleń, kolor, wyposażenie dodatkowe oraz
+                warunki montażu. Kalkulator pozwala szybko sprawdzić wstępny budżet
+                przed przygotowaniem finalnej oferty.
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Link
+                href="/zadaszenia-tarasow"
+                className="border-t border-[#062c25]/18 pt-5 transition hover:border-[#9a722e]"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9a722e]">
+                  Zadaszenia tarasowe
+                </p>
+                <p className="mt-2 font-serif text-2xl text-[#062c25]">
+                  Poznaj warianty zadaszeń na wymiar
+                </p>
+              </Link>
+
+              <Link
+                href="/ogrody-zimowe"
+                className="border-t border-[#062c25]/18 pt-5 transition hover:border-[#9a722e]"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9a722e]">
+                  Ogrody zimowe
+                </p>
+                <p className="mt-2 font-serif text-2xl text-[#062c25]">
+                  Zobacz ogrody zimowe na wymiar
+                </p>
+              </Link>
+            </div>
           </div>
         </section>
 

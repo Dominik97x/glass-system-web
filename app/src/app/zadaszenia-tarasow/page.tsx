@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Zadaszenia tarasów na wymiar",
+  title: "Zadaszenia tarasowe na wymiar – Warszawa",
   description:
-    "Zadaszenia tarasów MoonGlass na wymiar. Aluminiowa konstrukcja, dach szklany lub poliwęglanowy, możliwość rozbudowy o przeszklenia, rolety ZIP, markizę i oświetlenie LED.",
+    "Zadaszenia tarasowe na wymiar w Warszawie i na terenie całej Polski. Aluminiowa konstrukcja, dach szklany lub poliwęglanowy, przeszklenia i wyposażenie dodatkowe.",
   alternates: {
     canonical: "/zadaszenia-tarasow",
   },
@@ -89,6 +89,11 @@ const faqItems = [
     answer:
       "Tak. Kalkulator MoonGlass pozwala wybrać podstawowe parametry zadaszenia i sprawdzić orientacyjną cenę brutto przed wysłaniem zapytania.",
   },
+  {
+    question: "Czy realizujecie zadaszenia tarasowe w Warszawie i okolicach?",
+    answer:
+      "Tak. Warszawa i okolice są jednym z głównych obszarów obsługi MoonGlass. Realizujemy również zadaszenia tarasowe w innych regionach Polski, a zakres pomiaru, transportu i montażu ustalamy indywidualnie.",
+  },
 ] as const;
 
 const breadcrumbJsonLd = {
@@ -110,7 +115,7 @@ const breadcrumbJsonLd = {
     {
       "@type": "ListItem",
       position: 3,
-      name: "Zadaszenia tarasów",
+      name: "Zadaszenia tarasowe",
       item: "https://moonglass.pl/zadaszenia-tarasow",
     },
   ],
@@ -119,18 +124,24 @@ const breadcrumbJsonLd = {
 const serviceJsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "Zadaszenia tarasów na wymiar",
+  name: "Zadaszenia tarasowe na wymiar",
   serviceType: "Projektowanie i wykonanie zadaszeń tarasowych na wymiar",
   provider: {
     "@id": "https://moonglass.pl/#organization",
   },
-  areaServed: {
-    "@type": "Country",
-    name: "Polska",
-  },
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Warszawa",
+    },
+    {
+      "@type": "Country",
+      name: "Polska",
+    },
+  ],
   url: "https://moonglass.pl/zadaszenia-tarasow",
   description:
-    "Zadaszenia tarasów MoonGlass na wymiar z aluminiową konstrukcją, dachem szklanym lub poliwęglanowym oraz możliwością rozbudowy o przeszklenia i wyposażenie dodatkowe.",
+    "Zadaszenia tarasowe MoonGlass na wymiar w Warszawie i na terenie całej Polski, z aluminiową konstrukcją, dachem szklanym lub poliwęglanowym oraz możliwością rozbudowy o przeszklenia.",
 };
 
 export default function ZadaszeniaTarasowPage() {
@@ -150,7 +161,7 @@ export default function ZadaszeniaTarasowPage() {
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.82)_0%,rgba(3,29,24,0.58)_38%,rgba(3,29,24,0.18)_72%,rgba(3,29,24,0.04)_100%)]" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/50 via-transparent to-[#031d18]/10" />
 
-          <SiteHeader activePage="oferta" />
+          <SiteHeader activePage="zadaszenia-tarasow" />
 
           <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
             <div className="max-w-4xl">
@@ -162,16 +173,16 @@ export default function ZadaszeniaTarasowPage() {
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Zadaszenia tarasów
+                Zadaszenia tarasowe na wymiar
                 <span className="block text-[#dfbd78]">
-                  na wymiar.
+                  Warszawa i cała Polska.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/72 sm:text-base sm:leading-8">
                 Aluminiowe zadaszenia tarasowe projektowane pod konkretny dom
-                i wymiary tarasu. Wybierz rodzaj dachu, kolor konstrukcji oraz
-                dodatkowe wyposażenie i przygotuj własną konfigurację.
+                i wymiary tarasu. Obsługujemy Warszawę i okolice, a realizacje
+                prowadzimy także w innych regionach Polski.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -191,7 +202,7 @@ export default function ZadaszeniaTarasowPage() {
               </div>
 
               <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-[#f6f1e7]/15 pt-6 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#f6f1e7]/58">
-                <span>Konstrukcja aluminiowa</span>
+                <span>Warszawa i okolice</span>
                 <span className="text-[#c79a46]">◆</span>
                 <span>Projekt na wymiar</span>
                 <span className="text-[#c79a46]">◆</span>
@@ -321,6 +332,32 @@ export default function ZadaszeniaTarasowPage() {
 
         <section className="bg-[#f6f1e7] px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
           <div className="mx-auto max-w-7xl">
+            <div className="mb-16 grid gap-8 border-b border-[#062c25]/15 pb-14 lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#9a722e]">
+                  Warszawa i okolice
+                </p>
+                <h2 className="mt-5 max-w-3xl font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl">
+                  Zadaszenia tarasowe w Warszawie
+                  <span className="block text-[#9a722e]">
+                    i realizacje w całej Polsce.
+                  </span>
+                </h2>
+              </div>
+
+              <div className="max-w-xl text-sm leading-7 text-[#202421]/65 sm:text-base lg:justify-self-end">
+                <p>
+                  Obsługujemy inwestycje w Warszawie i okolicznych miejscowościach,
+                  w tym także na zachód od Warszawy. Zadaszenia realizujemy również
+                  w innych regionach Polski.
+                </p>
+                <p className="mt-4">
+                  Zakres pomiaru, transportu i montażu ustalamy indywidualnie.
+                  Zobacz <Link href="/realizacje" className="font-semibold text-[#8a6428] underline decoration-[#c79a46]/50 underline-offset-4">realizacje MoonGlass</Link> lub <Link href="/kontakt" className="font-semibold text-[#8a6428] underline decoration-[#c79a46]/50 underline-offset-4">opisz nam swoją inwestycję</Link>.
+                </p>
+              </div>
+            </div>
+
             <div className="mb-12 grid gap-8 lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#9a722e]">
@@ -382,7 +419,7 @@ export default function ZadaszeniaTarasowPage() {
               </p>
 
               <h2 className="mt-5 font-serif text-4xl font-medium leading-[1.02] sm:text-5xl lg:text-6xl">
-                Zobacz zadaszenia tarasów
+                Zobacz zadaszenia tarasowe
                 <span className="block text-[#dfbd78]">
                   w różnych aranżacjach.
                 </span>
@@ -397,7 +434,7 @@ export default function ZadaszeniaTarasowPage() {
                 href="/realizacje"
                 className="mt-8 inline-flex items-center gap-3 border-b border-[#c79a46]/70 pb-2 text-[11px] font-bold uppercase tracking-[0.15em] transition hover:text-[#dfbd78]"
               >
-                Zobacz inspiracje
+                Zobacz realizacje i inspiracje
                 <span className="text-[#c79a46]">→</span>
               </Link>
             </div>

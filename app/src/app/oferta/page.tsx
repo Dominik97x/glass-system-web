@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Oferta ogrodów zimowych i zadaszeń tarasów",
+  title: "Ogrody zimowe i zadaszenia tarasowe – oferta",
   description:
-    "Poznaj ofertę MoonGlass: ogrody zimowe i zadaszenia tarasów na wymiar, dachy szklane i poliwęglanowe, przeszklenia, rolety ZIP, markizy i oświetlenie LED.",
+    "Poznaj ofertę MoonGlass: ogrody zimowe i zadaszenia tarasowe na wymiar w Warszawie i na terenie całej Polski. Dachy szklane i poliwęglanowe, przeszklenia i wyposażenie.",
   alternates: {
     canonical: "/oferta",
   },
@@ -116,8 +116,9 @@ export default function OfertaPage() {
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/70 sm:text-base sm:leading-8">
                 Projektujemy ogrody zimowe i zadaszenia tarasowe na wymiar.
-                Aluminiowe konstrukcje dopasowujemy do budynku, wymiarów tarasu,
-                rodzaju dachu, przeszkleń i wybranego wyposażenia.
+                Obsługujemy Warszawę i okolice, a realizacje prowadzimy również
+                w innych regionach Polski. Konstrukcję, dach, przeszklenia i
+                wyposażenie dopasowujemy do konkretnej inwestycji.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">

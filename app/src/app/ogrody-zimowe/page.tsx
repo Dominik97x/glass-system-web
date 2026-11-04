@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Ogrody zimowe na wymiar",
+  title: "Ogrody zimowe na wymiar – Warszawa",
   description:
-    "Ogrody zimowe MoonGlass na wymiar. Aluminiowa konstrukcja, dach szklany lub poliwęglanowy, przesuwne ściany szklane, rolety ZIP, markiza i oświetlenie LED.",
+    "Ogrody zimowe na wymiar w Warszawie i na terenie całej Polski. Aluminiowa konstrukcja, dach szklany lub poliwęglanowy, przesuwne ściany szklane i wyposażenie dodatkowe.",
   alternates: {
     canonical: "/ogrody-zimowe",
   },
@@ -89,6 +89,11 @@ const faqItems = [
     answer:
       "Tak. Kalkulator MoonGlass pozwala wybrać podstawowe parametry konstrukcji i zobaczyć orientacyjną wycenę brutto przed wysłaniem zapytania.",
   },
+  {
+    question: "Czy realizujecie ogrody zimowe w Warszawie i okolicach?",
+    answer:
+      "Tak. Warszawa i okolice są jednym z głównych obszarów obsługi MoonGlass. Realizujemy również inwestycje w innych regionach Polski, a zakres pomiaru, transportu i montażu ustalamy indywidualnie dla projektu.",
+  },
 ] as const;
 
 const breadcrumbJsonLd = {
@@ -124,13 +129,19 @@ const serviceJsonLd = {
   provider: {
     "@id": "https://moonglass.pl/#organization",
   },
-  areaServed: {
-    "@type": "Country",
-    name: "Polska",
-  },
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Warszawa",
+    },
+    {
+      "@type": "Country",
+      name: "Polska",
+    },
+  ],
   url: "https://moonglass.pl/ogrody-zimowe",
   description:
-    "Ogrody zimowe MoonGlass na wymiar z aluminiową konstrukcją, dachem szklanym lub poliwęglanowym, zabudową szklaną i wyposażeniem dodatkowym.",
+    "Ogrody zimowe MoonGlass na wymiar w Warszawie i na terenie całej Polski, z aluminiową konstrukcją, dachem szklanym lub poliwęglanowym, zabudową szklaną i wyposażeniem dodatkowym.",
 };
 
 export default function OgrodyZimowePage() {
@@ -150,7 +161,7 @@ export default function OgrodyZimowePage() {
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,29,24,0.82)_0%,rgba(3,29,24,0.58)_38%,rgba(3,29,24,0.18)_72%,rgba(3,29,24,0.04)_100%)]" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#031d18]/50 via-transparent to-[#031d18]/10" />
 
-          <SiteHeader activePage="oferta" />
+          <SiteHeader activePage="ogrody-zimowe" />
 
           <div className="relative z-10 mx-auto flex min-h-[760px] max-w-7xl items-center px-6 pb-20 pt-36 sm:px-8 lg:min-h-screen lg:px-12">
             <div className="max-w-4xl">
@@ -162,16 +173,16 @@ export default function OgrodyZimowePage() {
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Ogrody zimowe
+                Ogrody zimowe na wymiar
                 <span className="block text-[#dfbd78]">
-                  na wymiar.
+                  Warszawa i cała Polska.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/72 sm:text-base sm:leading-8">
                 Aluminiowe ogrody zimowe projektowane pod konkretny dom i taras.
-                Dobierz dach, przeszklenia oraz wyposażenie i stwórz osłoniętą
-                przestrzeń dopasowaną do Twoich potrzeb.
+                Obsługujemy Warszawę i okolice, a realizacje prowadzimy także w
+                innych regionach Polski. Dobierz dach, przeszklenia i wyposażenie.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -191,7 +202,7 @@ export default function OgrodyZimowePage() {
               </div>
 
               <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-[#f6f1e7]/15 pt-6 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#f6f1e7]/58">
-                <span>Konstrukcja aluminiowa</span>
+                <span>Warszawa i okolice</span>
                 <span className="text-[#c79a46]">◆</span>
                 <span>Projekt na wymiar</span>
                 <span className="text-[#c79a46]">◆</span>
@@ -322,6 +333,32 @@ export default function OgrodyZimowePage() {
 
         <section className="bg-[#f6f1e7] px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
           <div className="mx-auto max-w-7xl">
+            <div className="mb-16 grid gap-8 border-b border-[#062c25]/15 pb-14 lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#9a722e]">
+                  Warszawa i okolice
+                </p>
+                <h2 className="mt-5 max-w-3xl font-serif text-4xl font-medium leading-[1.02] text-[#062c25] sm:text-5xl">
+                  Ogrody zimowe w Warszawie
+                  <span className="block text-[#9a722e]">
+                    i realizacje w całej Polsce.
+                  </span>
+                </h2>
+              </div>
+
+              <div className="max-w-xl text-sm leading-7 text-[#202421]/65 sm:text-base lg:justify-self-end">
+                <p>
+                  Obsługujemy inwestycje w Warszawie i okolicznych miejscowościach,
+                  w tym także na zachód od Warszawy. Projekty realizujemy również
+                  w innych regionach Polski.
+                </p>
+                <p className="mt-4">
+                  Zakres pomiaru, transportu i montażu ustalamy indywidualnie.
+                  Zobacz <Link href="/realizacje" className="font-semibold text-[#8a6428] underline decoration-[#c79a46]/50 underline-offset-4">realizacje MoonGlass</Link> lub <Link href="/kontakt" className="font-semibold text-[#8a6428] underline decoration-[#c79a46]/50 underline-offset-4">opisz nam swoją inwestycję</Link>.
+                </p>
+              </div>
+            </div>
+
             <div className="mb-12 grid gap-8 lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#9a722e]">
@@ -398,7 +435,7 @@ export default function OgrodyZimowePage() {
                 href="/realizacje"
                 className="mt-8 inline-flex items-center gap-3 border-b border-[#c79a46]/70 pb-2 text-[11px] font-bold uppercase tracking-[0.15em] transition hover:text-[#dfbd78]"
               >
-                Zobacz inspiracje
+                Zobacz realizacje i inspiracje
                 <span className="text-[#c79a46]">→</span>
               </Link>
             </div>

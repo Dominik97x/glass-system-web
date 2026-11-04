@@ -119,14 +119,14 @@ export default function Home() {
               <h1 className="max-w-4xl font-serif text-5xl font-medium leading-[0.94] tracking-[-0.025em] text-[#f6f1e7] sm:text-6xl lg:text-7xl xl:text-8xl">
                 Ogrody zimowe i
                 <span className="block text-[#dfbd78]">
-                  zadaszenia tarasów na wymiar.
+                  zadaszenia tarasowe na wymiar.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-base leading-8 text-[#f6f1e7]/75 sm:text-lg">
-                Projektujemy ogrody zimowe, zadaszenia tarasów i zabudowy szklane
-                dopasowane do wymiarów, architektury domu i sposobu korzystania
-                z przestrzeni.
+                Projektujemy ogrody zimowe, zadaszenia tarasowe i zabudowy
+                szklane na wymiar. Obsługujemy Warszawę i okolice, a realizacje
+                prowadzimy również w innych regionach Polski.
               </p>
 
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
@@ -146,7 +146,7 @@ export default function Home() {
               </div>
 
               <div className="mt-14 flex flex-wrap gap-x-8 gap-y-4 border-t border-[#f6f1e7]/15 pt-6 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f6f1e7]/65 sm:text-[11px]">
-                <span>Aluminiowe konstrukcje</span>
+                <span>Warszawa i okolice</span>
                 <span className="text-[#c79a46]">◆</span>
                 <span>Realizacja na wymiar</span>
                 <span className="text-[#c79a46]">◆</span>

@@ -20,12 +20,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://moonglass.pl"),
 
   title: {
-    default: "Ogrody zimowe i zadaszenia tarasów na wymiar | MoonGlass",
+    default: "MoonGlass | Ogrody zimowe i zadaszenia tarasowe",
     template: "%s | MoonGlass",
   },
 
   description:
-    "Ogrody zimowe, zadaszenia tarasów i zabudowy szklane na wymiar. Skonfiguruj projekt online i sprawdź orientacyjną wycenę.",
+    "MoonGlass — ogrody zimowe, zadaszenia tarasowe i zabudowy szklane na wymiar. Warszawa i okolice oraz realizacje w całej Polsce. Sprawdź orientacyjną wycenę online.",
 
   openGraph: {
     type: "website",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/glass-system/hero-moonglass-day-v2.png",
-        alt: "MoonGlass — ogrody zimowe i zadaszenia tarasów",
+        alt: "MoonGlass — ogrody zimowe i zadaszenia tarasowe",
       },
     ],
   },
@@ -62,12 +62,15 @@ const organizationJsonLd = {
     addressLocality: "Warszawa",
     addressCountry: "PL",
   },
-  areaServed: {
-    "@type": "Country",
-    name: "Polska",
-  },
-  sameAs: [
-    "https://www.facebook.com/profile.php?id=61592525343896",
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Warszawa",
+    },
+    {
+      "@type": "Country",
+      name: "Polska",
+    },
   ],
 };
 

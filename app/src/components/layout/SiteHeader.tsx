@@ -4,13 +4,24 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type SiteHeaderProps = {
-  activePage?: "start" | "oferta" | "realizacje" | "kalkulator" | "kontakt";
+  activePage?:
+    | "start"
+    | "oferta"
+    | "ogrody-zimowe"
+    | "zadaszenia-tarasow"
+    | "realizacje"
+    | "kalkulator"
+    | "kontakt";
 };
 
 const navigation = [
-  { label: "Start", href: "/", key: "start" },
-  { label: "Oferta", href: "/oferta", key: "oferta" },
-  { label: "Inspiracje", href: "/realizacje", key: "realizacje" },
+  { label: "Ogrody zimowe", href: "/ogrody-zimowe", key: "ogrody-zimowe" },
+  {
+    label: "Zadaszenia tarasowe",
+    href: "/zadaszenia-tarasow",
+    key: "zadaszenia-tarasow",
+  },
+  { label: "Realizacje", href: "/realizacje", key: "realizacje" },
   { label: "Wycena", href: "/kalkulator", key: "kalkulator" },
   { label: "Kontakt", href: "/kontakt", key: "kontakt" },
 ] as const;
@@ -63,7 +74,7 @@ export function SiteHeader({ activePage }: SiteHeaderProps) {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex lg:justify-self-center">
+        <nav className="hidden items-center gap-6 lg:flex lg:justify-self-center">
           {navigation.map((item) => {
             const active = activePage === item.key;
 

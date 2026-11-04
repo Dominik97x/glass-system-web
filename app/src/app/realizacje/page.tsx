@@ -10,9 +10,9 @@ import {
 } from "@/components/realizations/RealProjectGallery";
 
 export const metadata: Metadata = {
-  title: "Inspiracje ogrodów zimowych i zadaszeń tarasów",
+  title: "Realizacje ogrodów zimowych i zadaszeń tarasowych",
   description:
-    "Zobacz inspiracje MoonGlass: ogrody zimowe, zadaszenia tarasów i zabudowy szklane w różnych aranżacjach. Poznaj możliwości konstrukcji wykonywanych na wymiar.",
+    "Zobacz realizacje MoonGlass oraz wybrane inspiracje: ogrody zimowe, zadaszenia tarasowe i zabudowy szklane na wymiar. Warszawa, okolice i realizacje w całej Polsce.",
   alternates: {
     canonical: "/realizacje",
   },
@@ -107,7 +107,7 @@ export default function RealizacjePage() {
         <section className="relative min-h-[760px] overflow-hidden bg-[#031d18] text-[#f6f1e7] lg:min-h-screen">
           <Image
             src="/images/glass-system/hero-moonglass-day-v2.png"
-            alt="Inspiracje ogrodów zimowych i zadaszeń tarasów MoonGlass"
+            alt="Realizacje ogrodów zimowych i zadaszeń tarasowych MoonGlass"
             fill
             priority
             sizes="100vw"
@@ -125,30 +125,30 @@ export default function RealizacjePage() {
                 <span className="h-px w-11 bg-[#c79a46]" />
 
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#dfbd78]">
-                  Inspiracje MoonGlass
+                  Realizacje MoonGlass
                 </p>
               </div>
 
               <h1 className="mt-6 max-w-4xl font-serif text-5xl font-medium leading-[0.96] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
-                Inspiracje ogrodów zimowych
+                Realizacje ogrodów zimowych
                 <span className="block text-[#dfbd78]">
-                  i zadaszeń tarasów.
+                  i zadaszeń tarasowych.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/70 sm:text-base sm:leading-8">
-                Zobacz przykładowe aranżacje ogrodów zimowych, zadaszeń tarasów
-                i zabudów szklanych. Różne warianty dachu, przeszkleń,
-                wyposażenia i sposobu wykorzystania przestrzeni mogą być
-                punktem wyjścia do Twojego projektu.
+                Zobacz prawdziwe realizacje MoonGlass oraz wybrane wizualizacje
+                ogrodów zimowych, zadaszeń tarasowych i zabudów szklanych.
+                Każdy projekt dopasowujemy do konkretnego budynku, wymiarów
+                i sposobu korzystania z przestrzeni.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="#inspiracje"
+                  href="#realizacja-01"
                   className="bg-[#c79a46] px-8 py-4 text-center text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#031d18] transition hover:bg-[#dfbd78]"
                 >
-                  Zobacz inspiracje
+                  Zobacz realizację
                 </Link>
 
                 <Link
