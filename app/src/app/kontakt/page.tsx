@@ -9,7 +9,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 export const metadata: Metadata = {
   title: "Kontakt i wycena ogrodu zimowego lub zadaszenia tarasu",
   description:
-    "Skontaktuj się z MoonGlass w sprawie ogrodu zimowego, zadaszenia tarasu lub indywidualnej wyceny. Realizujemy projekty na wymiar na terenie całej Polski.",
+    "Skontaktuj się z MoonGlass w sprawie ogrodu zimowego, zadaszenia tarasu lub indywidualnej wyceny. Warszawa i okolice oraz realizacje na terenie całej Polski.",
   alternates: {
     canonical: "/kontakt",
   },
@@ -55,8 +55,9 @@ export default function KontaktPage() {
 
               <p className="mt-7 max-w-2xl text-sm leading-7 text-[#f6f1e7]/70 sm:text-base sm:leading-8">
                 Planujesz ogród zimowy, zadaszenie tarasu lub zabudowę szklaną?
-                Napisz lub zadzwoń. Pomożemy dopasować rozwiązanie do wymiarów,
-                budynku i sposobu korzystania z przestrzeni.
+                Napisz lub zadzwoń. Obsługujemy Warszawę i okolice oraz realizacje
+                w innych regionach Polski. Pomożemy dopasować rozwiązanie do
+                wymiarów, budynku i sposobu korzystania z przestrzeni.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -183,7 +184,7 @@ export default function KontaktPage() {
                   href="/oferta"
                   className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#062c25] transition hover:text-[#9a722e]"
                 >
-                  Zobacz ogrody zimowe i zadaszenia tarasów
+                  Zobacz ogrody zimowe i zadaszenia tarasowe
                   <span className="text-[#c79a46]">→</span>
                 </Link>
               </div>

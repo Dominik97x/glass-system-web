@@ -75,6 +75,9 @@ const MAX_NAME_LENGTH = 120;
 const MAX_EMAIL_LENGTH = 254;
 const MAX_PHONE_LENGTH = 40;
 const MAX_MESSAGE_LENGTH = 2_000;
+const MAX_ATTRIBUTION_VALUE_LENGTH = 255;
+const MAX_ATTRIBUTION_URL_LENGTH = 2_048;
+const MAX_FBCLID_LENGTH = 500;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -157,6 +160,57 @@ function validateCustomer(
   };
 }
 
+function validateAttribution(
+  value: Record<string, unknown>
+):
+  | ValidationError
+  | { attribution?: CalculatorInquirySubmission["attribution"] } {
+  if (value.attribution === undefined) {
+    return { attribution: undefined };
+  }
+
+  if (!isRecord(value.attribution)) {
+    return {
+      success: false,
+      message: "Nieprawidłowe dane źródła zapytania.",
+    };
+  }
+
+  const attribution = value.attribution;
+
+  const fields = [
+    ["landingPage", MAX_ATTRIBUTION_URL_LENGTH],
+    ["referrer", MAX_ATTRIBUTION_URL_LENGTH],
+    ["utmSource", MAX_ATTRIBUTION_VALUE_LENGTH],
+    ["utmMedium", MAX_ATTRIBUTION_VALUE_LENGTH],
+    ["utmCampaign", MAX_ATTRIBUTION_VALUE_LENGTH],
+    ["utmContent", MAX_ATTRIBUTION_VALUE_LENGTH],
+    ["utmTerm", MAX_ATTRIBUTION_VALUE_LENGTH],
+    ["fbclid", MAX_FBCLID_LENGTH],
+  ] as const;
+
+  for (const [field, maximumLength] of fields) {
+    if (!isStringWithinLimit(attribution[field], maximumLength, true)) {
+      return {
+        success: false,
+        message: `Nieprawidłowa wartość atrybucji: ${field}.`,
+      };
+    }
+  }
+
+  return {
+    attribution: {
+      landingPage: String(attribution.landingPage).trim(),
+      referrer: String(attribution.referrer).trim(),
+      utmSource: String(attribution.utmSource).trim(),
+      utmMedium: String(attribution.utmMedium).trim(),
+      utmCampaign: String(attribution.utmCampaign).trim(),
+      utmContent: String(attribution.utmContent).trim(),
+      utmTerm: String(attribution.utmTerm).trim(),
+      fbclid: String(attribution.fbclid).trim(),
+    },
+  };
+}
 function validateConfiguration(
   value: Record<string, unknown>
 ): ValidationError | { configuration: ProductConfiguration } {
@@ -345,11 +399,17 @@ export function validateCalculatorInquirySubmission(
     return configurationValidation;
   }
 
+  const attributionValidation = validateAttribution(value);
+  if ("success" in attributionValidation) {
+    return attributionValidation;
+  }
+
   return {
     success: true,
     submission: {
       customer: customerValidation.customer,
       configuration: configurationValidation.configuration,
+      attribution: attributionValidation.attribution,
     },
   };
 }

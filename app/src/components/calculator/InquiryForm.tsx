@@ -5,6 +5,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type { Quote } from "@/domain/Quote";
 import { CalculatorInquiryService } from "@/inquiries/services/CalculatorInquiryService";
+import { readMarketingAttributionForInquiry } from "@/marketing/attribution";
 
 interface Props {
   quote: Quote;
@@ -60,6 +61,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
         message: form.message,
       },
       configuration: quote.configuration,
+      attribution: readCalculatorInquiryAttribution(),
     };
 
     try {
@@ -312,4 +314,8 @@ function FormField({ label, required = false, children }: FormFieldProps) {
       {children}
     </label>
   );
+}
+
+function readCalculatorInquiryAttribution(): CalculatorInquirySubmission["attribution"] {
+  return readMarketingAttributionForInquiry();
 }

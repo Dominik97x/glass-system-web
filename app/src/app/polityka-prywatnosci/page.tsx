@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
           </p>
 
           <p className="mt-3 text-sm text-white/45">
-            Ostatnia aktualizacja: 9 września 2026 r.
+            Ostatnia aktualizacja: 27 października 2026 r.
           </p>
         </div>
 
@@ -144,6 +144,7 @@ export default function PrivacyPolicyPage() {
             <List
               items={[
                 "systemów CRM, w tym Bitrix24,",
+                "Meta Platforms Ireland Limited – w przypadku korzystania z narzędzi marketingowych po uzyskaniu zgody użytkownika,",
                 "systemów służących do wysyłki wiadomości e-mail, w tym Resend,",
                 "hostingu, infrastruktury serwerowej i usług informatycznych,",
                 "poczty elektronicznej oraz usług teleinformatycznych,",
@@ -230,25 +231,58 @@ export default function PrivacyPolicyPage() {
             </p>
           </Section>
 
-          <Section title="11. Pliki cookies">
+          <Section title="11. Pliki cookies i narzędzia marketingowe">
             <p>
-              Serwis może wykorzystywać pliki cookies lub podobne mechanizmy
-              techniczne niezbędne do prawidłowego działania strony,
-              zapewnienia bezpieczeństwa oraz utrzymania funkcjonalności
+              Serwis wykorzystuje mechanizmy techniczne niezbędne do
+              prawidłowego działania strony, zapewnienia
+              bezpieczeństwa oraz utrzymania jej funkcjonalności.
+            </p>
+
+            <p className="mt-4">
+              Jeżeli użytkownik wyrazi zgodę marketingową,
+              MoonGlass może korzystać z narzędzi marketingowych,
+              w tym Meta Pixel dostarczanego przez Meta. Narzędzia te
+              mogą służyć do pomiaru skuteczności kampanii
+              reklamowych, analizy konwersji, tworzenia grup odbiorców
+              oraz optymalizacji reklam.
+            </p>
+
+            <p className="mt-4">
+              W związku z działaniem Meta Pixel mogą być
+              przetwarzane informacje techniczne dotyczące wizyty,
+              w szczególności adres IP, informacje o przeglądarce
+              i urządzeniu, adres odwiedzanej strony, strona odsyłająca,
+              identyfikatory związane z kampanią reklamową
+              oraz informacje o wykonanych zdarzeniach, takich jak
+              wyświetlenie strony lub wysłanie zapytania.
+            </p>
+
+            <p className="mt-4">
+              Narzędzia marketingowe nie są uruchamiane przed
+              uzyskaniem zgody marketingowej. Użytkownik może
+              w dowolnym momencie zmienić swój wybór za pomocą
+              opcji „Ustawienia prywatności” dostępnej w stopce
               serwisu.
             </p>
 
             <p className="mt-4">
-              W aktualnej wersji serwisu MoonGlass nie wykorzystujemy Google
-              Analytics, Meta Pixel ani innych narzędzi analitycznych lub
-              marketingowych służących do śledzenia zachowania użytkowników.
+              Podstawą przetwarzania danych w tym zakresie jest zgoda
+              użytkownika. Wycofanie zgody nie wpływa na zgodność
+              z prawem przetwarzania dokonanego przed jej wycofaniem.
             </p>
 
             <p className="mt-4">
-              W przypadku wdrożenia w przyszłości dodatkowych narzędzi
-              analitycznych lub marketingowych niniejsza polityka zostanie
-              odpowiednio zaktualizowana, a tam, gdzie będzie to wymagane,
-              użytkownik otrzyma możliwość zarządzania swoją zgodą.
+              Więcej informacji o zasadach przetwarzania danych przez Meta
+              znajduje się w{" "}
+              <a
+                href="https://www.facebook.com/privacy/policy/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400 underline underline-offset-2 transition hover:text-amber-300"
+              >
+                polityce prywatności Meta
+              </a>
+              .
             </p>
           </Section>
 

@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { ConsentSettingsButton } from "@/components/privacy/ConsentSettingsButton";
 
 const footerNavigation = [
   { label: "Start", href: "/" },
   { label: "Ogrody zimowe", href: "/ogrody-zimowe" },
-  { label: "Zadaszenia tarasów", href: "/zadaszenia-tarasow" },
+  { label: "Zadaszenia tarasowe", href: "/zadaszenia-tarasow" },
   { label: "Oferta", href: "/oferta" },
-  { label: "Inspiracje", href: "/realizacje" },
+  { label: "Realizacje", href: "/realizacje" },
   { label: "Wycena", href: "/kalkulator" },
   { label: "Kontakt", href: "/kontakt" },
 ] as const;
@@ -30,7 +31,8 @@ export function SiteFooter() {
 
             <p className="mt-7 max-w-md text-sm leading-7 text-[#f6f1e7]/55">
               Projektujemy i wykonujemy nowoczesne ogrody zimowe oraz zadaszenia
-              tarasowe dopasowane do architektury domu i potrzeb użytkowników.
+              tarasowe na wymiar. Obsługujemy Warszawę i okolice, a realizacje
+              prowadzimy również w innych regionach Polski.
             </p>
 
             <Link
@@ -97,7 +99,7 @@ export function SiteFooter() {
                 </p>
 
                 <p className="mt-1 text-sm leading-6 text-[#f6f1e7]/65">
-                  Realizacje na terenie całej Polski
+                  Warszawa i okolice · realizacje w całej Polsce
                 </p>
               </div>
             </div>
@@ -116,6 +118,8 @@ export function SiteFooter() {
             >
               Polityka prywatności
             </Link>
+
+            <ConsentSettingsButton />
 
             <span>moonglass.pl</span>
           </div>

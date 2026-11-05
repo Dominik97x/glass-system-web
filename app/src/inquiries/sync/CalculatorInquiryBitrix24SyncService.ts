@@ -375,6 +375,11 @@ export class CalculatorInquiryBitrix24SyncService {
       stageId: metadata.stageId,
       sourceId: metadata.sourceId,
       sourceDescription: "Kalkulator strony MoonGlass",
+      utmSource: inquiry.attribution?.utmSource || undefined,
+      utmMedium: inquiry.attribution?.utmMedium || undefined,
+      utmCampaign: inquiry.attribution?.utmCampaign || undefined,
+      utmContent: inquiry.attribution?.utmContent || undefined,
+      utmTerm: inquiry.attribution?.utmTerm || undefined,
       contactIds: [contactId],
       currencyId: inquiry.quote.currency,
       isManualOpportunity: false,
@@ -383,7 +388,10 @@ export class CalculatorInquiryBitrix24SyncService {
       [DEAL_FIELDS.webInquiryId]: inquiry.id,
       [DEAL_FIELDS.localLeadId]: inquiry.id,
       [DEAL_FIELDS.quoteVersion]: readQuoteVersion(),
-      [DEAL_FIELDS.sourceUrl]: this.config.publicCalculatorUrl || undefined,
+      [DEAL_FIELDS.sourceUrl]:
+        inquiry.attribution?.landingPage ||
+        this.config.publicCalculatorUrl ||
+        undefined,
       [DEAL_FIELDS.syncStatus]: getEnumValueId(
         metadata.dealFields,
         DEAL_FIELDS.syncStatus,
@@ -599,6 +607,28 @@ function createDealComments(
         )
         .join("\n");
 
+  const attributionSummary: string[] = [];
+
+  if (inquiry.attribution) {
+    if (inquiry.attribution.landingPage) {
+      attributionSummary.push(
+        `Landing page: ${inquiry.attribution.landingPage}`
+      );
+    }
+
+    if (inquiry.attribution.referrer) {
+      attributionSummary.push(
+        `Referrer: ${inquiry.attribution.referrer}`
+      );
+    }
+
+    if (inquiry.attribution.fbclid) {
+      attributionSummary.push(
+        `FBCLID: ${inquiry.attribution.fbclid}`
+      );
+    }
+  }
+
   const financialSummary = targetFinancials
     ? [
         `Razem netto: ${targetFinancials.totalNet.toFixed(2)} ${
@@ -624,6 +654,7 @@ function createDealComments(
     "Źródło: Kalkulator strony MoonGlass",
     `Numer zapytania: ${inquiry.id}`,
     `Data przyjęcia: ${inquiry.receivedAt}`,
+    ...attributionSummary,
     "",
     `Klient: ${inquiry.customer.name}`,
     `E-mail: ${inquiry.customer.email}`,

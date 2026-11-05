@@ -1,3 +1,4 @@
+import type { CalculatorInquiryAttribution } from "./CalculatorInquiryAttribution";
 import type { CalculatorInquiryCustomer } from "./CalculatorInquiryLead";
 import type { ProductConfiguration } from "./ProductConfiguration";
 
@@ -10,4 +11,5 @@ import type { ProductConfiguration } from "./ProductConfiguration";
 export interface CalculatorInquirySubmission {
   customer: CalculatorInquiryCustomer;
   configuration: ProductConfiguration;
+  attribution?: CalculatorInquiryAttribution;
 }
