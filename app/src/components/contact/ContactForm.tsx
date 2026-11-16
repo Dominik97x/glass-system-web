@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
+import { trackMetaLead } from "@/marketing/meta-events";
+
 type FormStatus =
   | { type: "idle"; message: "" }
   | { type: "sending"; message: "" }
@@ -57,6 +59,8 @@ export function ContactForm() {
 
         return;
       }
+
+      trackMetaLead("contact_form");
 
       form.reset();
 
