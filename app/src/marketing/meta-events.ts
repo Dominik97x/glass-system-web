@@ -13,9 +13,7 @@ export function trackMetaLead(source: MetaLeadSource): void {
     return;
   }
 
-  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim();
-
-  if (!pixelId || !window.fbq) {
+  if (!window.fbq) {
     return;
   }
 
