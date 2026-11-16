@@ -6,6 +6,7 @@ import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubm
 import type { Quote } from "@/domain/Quote";
 import { CalculatorInquiryService } from "@/inquiries/services/CalculatorInquiryService";
 import { readMarketingAttributionForInquiry } from "@/marketing/attribution";
+import { trackMetaLead } from "@/marketing/meta-events";
 
 interface Props {
   quote: Quote;
@@ -68,6 +69,7 @@ export function InquiryForm({ quote, onCancel }: Props) {
       const result = await inquiryService.submit(submission);
 
       if (result.success) {
+        trackMetaLead("calculator_inquiry");
         setCustomerEmailSent(result.customerEmailSent === true);
         setIsSubmitted(true);
         return;
