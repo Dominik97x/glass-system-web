@@ -1,3 +1,4 @@
+import { getLightingSelectionError } from "@/domain/LightingPolicy";
 import type { CalculatorInquirySubmission } from "@/domain/CalculatorInquirySubmission";
 import type {
   FrameColor,
@@ -289,6 +290,10 @@ function validateConfiguration(
     }
   }
 
+  if (configuration.hasRgbCct !== undefined && typeof configuration.hasRgbCct !== "boolean") {
+    return { success: false, message: "Nieprawidłowa wartość konfiguracji: hasRgbCct." };
+  }
+
   const validatedConfiguration: ProductConfiguration = {
     productType,
     frameColor,
@@ -302,6 +307,7 @@ function validateConfiguration(
     hasAwning: configuration.hasAwning as boolean,
     hasLed: configuration.hasLed as boolean,
     hasCob: configuration.hasCob as boolean,
+    hasRgbCct: configuration.hasRgbCct === true,
     hasHandles: configuration.hasHandles as boolean,
     hasBrushes: configuration.hasBrushes as boolean,
     hasLevelingProfile: configuration.hasLevelingProfile as boolean,
@@ -350,12 +356,8 @@ function validateConfiguration(
     };
   }
 
-  if (validatedConfiguration.hasLed && validatedConfiguration.hasCob) {
-    return {
-      success: false,
-      message: "LED punktowe i LED CCT nie mogą być wybrane jednocześnie.",
-    };
-  }
+  const lightingError = getLightingSelectionError(validatedConfiguration);
+  if (lightingError) return { success: false, message: lightingError };
 
   if (
     validatedConfiguration.length >= 550 &&

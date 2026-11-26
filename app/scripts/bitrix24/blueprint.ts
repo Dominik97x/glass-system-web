@@ -315,6 +315,7 @@ const userFields: UserFieldBlueprint[] = [
   field("deal", "MG_AWNING", "Markiza", "boolean", 380),
   field("deal", "MG_LED_POINT", "LED punktowe", "boolean", 390),
   field("deal", "MG_LED_CCT", "LED CCT", "boolean", 400),
+  field("deal", "MG_LED_RGB_CCT", "LED RGB CCT", "boolean", 405),
   field("deal", "MG_FOUNDATION", "Fundament / profil", "boolean", 410),
   field("deal", "MG_BRUSHES", "Szczotki", "boolean", 420),
   field("deal", "MG_HANDLES", "Uchwyty", "boolean", 430),

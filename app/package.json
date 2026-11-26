@@ -49,7 +49,16 @@
     "bitrix:vat:apply": "tsx scripts/bitrix24-vat-changer.ts apply",
     "bitrix:vat:verify": "tsx scripts/bitrix24-vat-changer.ts verify",
     "bitrix:vat:preview": "tsx scripts/bitrix24-vat-changer.ts preview",
-    "bitrix:vat:set": "tsx scripts/bitrix24-vat-changer.ts set"
+    "bitrix:vat:set": "tsx scripts/bitrix24-vat-changer.ts set",
+    "bitrix:prices:plan": "tsx scripts/bitrix24-price-plan-mapped.ts",
+    "bitrix:prices:plan:legacy": "tsx scripts/bitrix24-price-plan.ts",
+    "bitrix:prices:review": "tsx scripts/bitrix24-price-workflow.mjs review",
+    "bitrix:prices:backup": "tsx scripts/bitrix24-price-workflow.mjs backup",
+    "bitrix:prices:approve": "tsx scripts/bitrix24-price-workflow.mjs approve",
+    "bitrix:prices:apply": "tsx scripts/bitrix24-price-workflow.mjs apply",
+    "bitrix:prices:verify": "tsx scripts/bitrix24-price-workflow.mjs verify",
+    "bitrix:prices:rollback": "tsx scripts/bitrix24-price-workflow.mjs rollback",
+    "bitrix:prices:self-test": "node scripts/verify-price-workflow.mjs"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",

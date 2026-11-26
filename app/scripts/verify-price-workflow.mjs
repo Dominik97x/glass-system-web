@@ -1,0 +1,25 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {validatePlan,pick,requireReleased,checkInventory,checkSource,executeRows,journalState,checkPrice} from './price-workflow-core.mjs';
+const plan=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
+const changes=validatePlan(plan);
+const direct=plan.actions.filter(a=>['same','price_change'].includes(a.kind));
+const seen=[...direct,...plan.preservedExistingServiceProducts];
+const inventory={iblockId:plan.iblockId,basePriceTypeId:plan.basePriceTypeId,products:seen.map(a=>({id:a.productId,iblockId:plan.iblockId,code:a.code,xmlId:a.xmlId,name:a.portalName,detailText:a.detailText,active:a.active,iblockSectionId:a.sectionId,measure:a.measure})),prices:seen.flatMap(a=>a.prices.map(q=>({id:q.priceId,productId:a.productId,catalogGroupId:plan.basePriceTypeId,price:q.price,currency:q.currency})))};
+while(inventory.products.length<plan.portalProductCount)inventory.products.push({id:999000+inventory.products.length,iblockId:plan.iblockId});
+let count=0;function test(name,fn){fn();count++;console.log('PASS '+name);}
+const clone=structuredClone;
+test('real report and full inventory',()=>{assert.equal(changes.length,plan.counts.price_change);checkInventory(plan,inventory);});
+test('PREVIEW cannot be approved',()=>assert.throws(()=>requireReleased(plan),/PREVIEW/));
+test('released metadata accepted only for explicit status',()=>{const p=clone(plan);p.sources.forEach(s=>s.status='APPROVED_PRICE_ONLY');requireReleased(p);p.sources[0].status='';assert.throws(()=>requireReleased(p));});
+test('exact scope, rejects aliases and duplicate selections',()=>{assert.equal(pick(plan,changes[0].sku).length,1);assert.throws(()=>pick(plan,plan.actions.find(a=>a.kind==='mapped_same').sku));assert.throws(()=>pick(plan,changes[0].sku+','+changes[0].sku));});
+const source=plan.actions.map(a=>({sku:a.sku,name:a.name,family:a.family,currency:a.currency,priceGross:a.newPriceNet}));
+test('source hash and all source prices',()=>{checkSource(plan,plan.sources,plan.registrySha256,source);const p=clone(source);p[0].priceGross++;assert.throws(()=>checkSource(plan,plan.sources,plan.registrySha256,p));assert.throws(()=>checkSource(plan,plan.sources,'x',source));});
+for(const [name,mutate] of [['price drift',i=>i.prices[0].price=Number(i.prices[0].price)+1],['currency drift',i=>i.prices[0].currency='EUR'],['price identity drift',i=>i.prices[0].id=999999],['product identity drift',i=>i.products[0].id=999999],['name drift',i=>i.products[0].name+=' altered'],['duplicate SKU',i=>i.products[1].xmlId=i.products[0].xmlId],['missing product',i=>i.products.pop()],['service price drift',i=>{const q=i.prices.find(q=>q.productId===plan.preservedExistingServiceProducts[0].productId);q.price=Number(q.price)+1;}]])test(name,()=>{const i=clone(inventory);mutate(i);assert.throws(()=>checkInventory(plan,i));});
+const rows=changes.slice(0,3);const inv=clone(inventory);let writes=0;let journal=[];const adapter={check:async(a,expected)=>checkPrice(a,inv.prices.find(q=>q.id===a.priceId),plan.basePriceTypeId,expected),write:async(a,value)=>{writes++;inv.prices.find(q=>q.id===a.priceId).price=value;}};
+await executeRows(rows,adapter,e=>journal.push(e));test('pilot apply simulation and untouched inventory',()=>{assert.equal(writes,3);const st=journalState(journal,rows);assert.equal(st.changed.size,3);checkInventory(plan,inv,st.changed);});
+await executeRows([...rows].reverse(),adapter,e=>journal.push(e),'rollback');test('rollback simulation restores all original prices',()=>{assert.equal(writes,6);assert.equal(journalState(journal,rows).changed.size,0);checkInventory(plan,inv);});
+journal=[];writes=0;await assert.rejects(executeRows(rows,{...adapter,write:async()=>{writes++;throw Error('timeout');}},e=>journal.push(e)));test('timeout stops after first write attempt and records unknown outcome',()=>{assert.equal(writes,1);assert.equal(journalState(journal,rows).pending.sku,rows[0].sku);});
+journal=[];writes=0;inv.prices.find(q=>q.id===rows[0].priceId).price=rows[0].newPriceNet+1;await assert.rejects(executeRows(rows,adapter,e=>journal.push(e),'rollback'));test('rollback does not overwrite conflicting current price',()=>{assert.equal(writes,0);assert.equal(journal.length,0);});
+test('journal rejects unmatched completion',()=>assert.throws(()=>journalState([{direction:'apply',event:'verified',sku:rows[0].sku}],rows)));
+console.log(`${count} tests PASS; simulated catalog only; no network.`);

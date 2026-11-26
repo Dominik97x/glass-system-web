@@ -306,6 +306,16 @@ export class Bitrix24FullCatalogManager {
       );
     }
 
+    // MOONGLASS_FULL_CATALOG_APPLY_LOCK
+    // Full catalog writes are disabled during the price-only migration.
+    const fullCatalogApplyEnabled: boolean = false;
+
+    if (!fullCatalogApplyEnabled) {
+      throw new Error(
+        "FULL CATALOG APPLY BLOCKED. Use the dedicated approved price-only workflow."
+      );
+    }
+
     const plan = await this.plan(catalogCap);
     const pending = plan.actions.filter(
       (action) => action.kind === "create" || action.kind === "update"
@@ -470,6 +480,10 @@ export class Bitrix24FullCatalogManager {
     this.writeReport(VERIFY_REPORT_JSON, report);
     this.writeText(VERIFY_REPORT_MD, renderVerifyMarkdown(report));
     return report;
+  }
+
+  async readPriceInventory() {
+    return this.readPortalCatalog();
   }
 
   private async readPortalCatalog(): Promise<{

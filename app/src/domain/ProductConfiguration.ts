@@ -47,7 +47,9 @@ export interface ProductConfiguration {
   hasRightZip: boolean;
   hasAwning: boolean;
   hasLed: boolean;
-  hasCob: boolean;
+  hasCob: boolean; // LED CCT (legacy field)
+  /** Optional for previously saved inquiries; never inferred from hasCob. */
+  hasRgbCct?: boolean;
   hasHandles: boolean;
   hasBrushes: boolean;
   hasLevelingProfile: boolean;
@@ -66,6 +68,7 @@ export const DEFAULT_CONFIGURATION: ProductConfiguration = {
   hasAwning: false,
   hasLed: false,
   hasCob: false,
+  hasRgbCct: false,
   hasHandles: false,
   hasBrushes: false,
   hasLevelingProfile: false,

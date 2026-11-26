@@ -305,6 +305,7 @@ function createConfigurationLines(
     `Markiza: ${formatBoolean(configuration.hasAwning)}`,
     `LED: ${formatBoolean(configuration.hasLed)}`,
     `LED CCT: ${formatBoolean(configuration.hasCob)}`,
+    ...(configuration.hasRgbCct ? ["LED RGB CCT: Tak"] : []),
     `Uchwyty: ${formatBoolean(configuration.hasHandles)}`,
     `Szczotki: ${formatBoolean(configuration.hasBrushes)}`,
     `Profil wyrównujący: ${formatBoolean(configuration.hasLevelingProfile)}`,
@@ -346,6 +347,7 @@ function createSelectedExtras(
   if (configuration.hasAwning) extras.push("Markiza");
   if (configuration.hasLed) extras.push("LED");
   if (configuration.hasCob) extras.push("LED CCT");
+  if (configuration.hasRgbCct) extras.push("LED RGB CCT");
   if (configuration.hasHandles) extras.push("Uchwyty");
   if (configuration.hasBrushes) extras.push("Szczotki");
   if (configuration.hasLevelingProfile) extras.push("Profil wyrównujący");
@@ -387,6 +389,7 @@ function createHtmlConfigurationSection(
     ["Markiza", formatBoolean(configuration.hasAwning)],
     ["LED", formatBoolean(configuration.hasLed)],
     ["LED CCT", formatBoolean(configuration.hasCob)],
+    ...(configuration.hasRgbCct ? [["LED RGB CCT", "Tak"] as [string, string]] : []),
     ["Uchwyty", formatBoolean(configuration.hasHandles)],
     ["Szczotki", formatBoolean(configuration.hasBrushes)],
     ["Profil wyrównujący", formatBoolean(configuration.hasLevelingProfile)],

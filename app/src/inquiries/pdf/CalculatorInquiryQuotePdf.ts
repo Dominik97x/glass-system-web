@@ -711,6 +711,7 @@ function createSelectedExtras(
   if (configuration.hasAwning) extras.push("Markiza");
   if (configuration.hasLed) extras.push("LED");
   if (configuration.hasCob) extras.push("LED CCT");
+  if (configuration.hasRgbCct) extras.push("LED RGB CCT");
   if (configuration.hasHandles) extras.push("Uchwyty");
   if (configuration.hasBrushes) extras.push("Szczotki");
   if (configuration.hasLevelingProfile) extras.push("Profil wyrównujący");

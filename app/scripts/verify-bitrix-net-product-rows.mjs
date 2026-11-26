@@ -41,12 +41,12 @@ if (!row) {
   throw new Error("Brak wiersza terrace_roof 300×306 cm w snapshotcie.");
 }
 
-assertEqual(row.constructionNet, 7419, "300×306 constructionNet");
-assertEqual(row.constructionGross, 8013, "300×306 constructionGross strony");
+assertEqual(row.constructionNet, 8904, "300×306 constructionNet");
+assertEqual(row.constructionGross, 9616, "300×306 constructionGross strony");
 
 const vatRate = Number(snapshot.metadata.bitrixDefaultVatRate ?? 8);
 const exactGross = roundMoney(row.constructionNet * (1 + vatRate / 100));
-assertEqual(exactGross, 8012.52, "300×306 dokładne brutto Bitrix");
+assertEqual(exactGross, 9616.32, "300×306 dokładne brutto Bitrix");
 
 assertContains(
   builderSource,

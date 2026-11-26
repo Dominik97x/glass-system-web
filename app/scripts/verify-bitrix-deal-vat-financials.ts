@@ -42,37 +42,39 @@ verifyScenario({
   label: "osoba prywatna 300×306, VAT 8%",
   configuration: privateConfiguration,
   vatRate: 8,
-  expectedNet: 17_632,
-  expectedTax: 1_410.56,
-  expectedGross: 19_042.56,
-  expectedSchedule: [5_712.77, 9_521.28, 3_808.51],
+  expectedNet: 20_498,
+  expectedTax: 1_639.84,
+  expectedGross: 22_137.84,
+  expectedSchedule: [6_641.35, 11_068.92, 4_427.57],
 });
 
 verifyScenario({
   label: "osoba prywatna 300×306, VAT 23%",
   configuration: privateConfiguration,
   vatRate: 23,
-  expectedNet: 17_632,
-  expectedTax: 4_055.36,
-  expectedGross: 21_687.36,
-  expectedSchedule: [6_506.21, 10_843.68, 4_337.47],
+  expectedNet: 20_498,
+  expectedTax: 4_714.54,
+  expectedGross: 25_212.54,
+  expectedSchedule: [7_563.76, 12_606.27, 5_042.51],
 });
 
 verifyScenario({
   label: "firma 350×506, VAT 23%",
   configuration: companyConfiguration,
   vatRate: 23,
-  expectedNet: 55_927,
-  expectedTax: 12_863.21,
-  expectedGross: 68_790.21,
-  expectedSchedule: [20_637.06, 34_395.11, 13_758.04],
+  // Complete glass garden + separate installation + tint + 3 ZIPs +
+  // awning + CCT + foundation + brushes + handles (no separate carriers).
+  expectedNet: 60_898,
+  expectedTax: 14_006.54,
+  expectedGross: 74_904.54,
+  expectedSchedule: [22_471.36, 37_452.27, 14_980.91],
 });
 
 console.log(
   "D6.6.4.1 — kwota Deala i harmonogram 30/50/20 są zgodne z docelową stawką VAT."
 );
 console.log(
-  "VAT 23% dla 55 927,00 PLN netto: VAT 12 863,21 PLN; brutto 68 790,21 PLN; raty 20 637,06 / 34 395,11 / 13 758,04 PLN."
+  "VAT 23% dla 60 898,00 PLN netto: VAT 14 006,54 PLN; brutto 74 904,54 PLN; raty 22 471,36 / 37 452,27 / 14 980,91 PLN."
 );
 
 function verifyScenario(input: {

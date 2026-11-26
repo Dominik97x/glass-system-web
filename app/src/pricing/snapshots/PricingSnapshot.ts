@@ -139,7 +139,10 @@ export interface PricingSnapshotPriceMatrixRow {
   active: boolean;
   availability?: {
     roofGlass: boolean;
+    /** Legacy matrix flag for ledCobNet (unused for RGB CCT quotes). */
     ledRgb: boolean;
+    /** Commercial automatic-quote eligibility; not a stock guarantee. */
+    ledAutoQuote?: { point: boolean; cct: boolean; rgb_cct: boolean };
   };
   sourceAuditStatus?: string;
 }
