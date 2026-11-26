@@ -4,6 +4,7 @@ import {
   type ProductConfiguration,
   type ProductKind,
 } from "@/domain/ProductConfiguration";
+import { assertLightingPriceable } from "@/domain/LightingPolicy";
 import type { Quote, QuoteFinancials } from "@/domain/Quote";
 import type {
   QuoteFinancialLineItem,
@@ -220,10 +221,17 @@ export class SnapshotQuoteService {
               "ledStripNet"
             ),
           ]
-        : [];
+        : configuration.hasRgbCct
+          ? [this.getCatalogComponent(
+              getCrmCoreProduct("led_rgb_cct", configuration.length, configuration.width),
+              "lighting"
+            )]
+          : [];
     this.addWebsiteGroup(websiteItems, financialLineItems, {
       id: "led",
-      name: configuration.hasCob
+      name: configuration.hasRgbCct
+        ? "Oświetlenie LED RGB CCT"
+        : configuration.hasCob
         ? "Oświetlenie LED CCT"
         : "Oświetlenie LED punktowe",
       category: "lighting",
@@ -492,11 +500,7 @@ function createQuoteFinancials(
 function assertPriceableConfiguration(
   configuration: ProductConfiguration
 ): void {
-  if (configuration.hasLed && configuration.hasCob) {
-    throw new Error(
-      "LED punktowe i LED CCT nie mogą być wybrane jednocześnie."
-    );
-  }
+  assertLightingPriceable(configuration);
 
   const productType = getProductKind(configuration);
   if (productType === "terrace_roof" && configuration.walls !== "none") {

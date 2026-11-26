@@ -12,6 +12,40 @@ export class Bitrix24RestError extends Error {
   }
 }
 
+// One serial queue per portal, shared by all instances in this process.
+const MIN_GAP_MS = 1100;
+const LIMIT_COOLDOWN_MS = 10000;
+const READ_METHODS = new Set([
+  "catalog.catalog.list", "catalog.section.list", "catalog.product.list",
+  "catalog.priceType.list", "catalog.measure.list", "catalog.price.list",
+  "method.get",
+]);
+const queues = new Map<string, { tail: Promise<void>; nextAt: number }>();
+function enqueue<T>(host: string, request: () => Promise<T>): Promise<T> {
+  let state = queues.get(host);
+  if (!state) {
+    state = { tail: Promise.resolve(), nextAt: 0 };
+    queues.set(host, state);
+  }
+  const q = state;
+  const task = q.tail.then(async () => {
+    while (q.nextAt > performance.now()) {
+      await sleep(Math.ceil(q.nextAt - performance.now()));
+    }
+    let gap = MIN_GAP_MS;
+    try { return await request(); }
+    catch (error) {
+      if (error instanceof Bitrix24RestError && (
+        error.status === 429 || error.status === 503 ||
+        /QUERY_LIMIT_EXCEEDED|OVERLOAD_LIMIT|OPERATION_TIME_LIMIT/i.test(error.code)
+      )) gap = LIMIT_COOLDOWN_MS;
+      throw error;
+    } finally { q.nextAt = performance.now() + gap; }
+  });
+  q.tail = task.then(() => undefined, () => undefined);
+  return task;
+}
+
 export class ProvisionerBitrixClient {
   constructor(
     private readonly webhookUrl: string,
@@ -85,12 +119,15 @@ export class ProvisionerBitrixClient {
   ): Promise<BitrixResponse<T>> {
     let lastError: unknown;
 
-    for (let attempt = 1; attempt <= this.retryCount; attempt += 1) {
+    // Only reviewed read methods can retry; writes never retry.
+    const attempts = READ_METHODS.has(method)
+      ? Math.max(1, Math.min(3, Math.trunc(this.retryCount) || 1)) : 1;
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
       try {
-        return await this.callRaw<T>(method, params);
+        return await enqueue(this.portalHost, () => this.callRaw<T>(method, params));
       } catch (error) {
         lastError = error;
-        if (!shouldRetry(error) || attempt === this.retryCount) throw error;
+        if (!shouldRetry(error) || attempt === attempts) throw error;
         await sleep(Math.min(1000 * 2 ** (attempt - 1), 5000));
       }
     }
@@ -108,6 +145,7 @@ export class ProvisionerBitrixClient {
     try {
       const response = await fetch(`${this.webhookUrl}/${method}.json`, {
         method: "POST",
+        redirect: "error",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json; charset=utf-8",
@@ -157,6 +195,7 @@ export class ProvisionerBitrixClient {
 
 function shouldRetry(error: unknown): boolean {
   if (error instanceof Bitrix24RestError) {
+    if (/OPERATION_TIME_LIMIT/i.test(error.code)) return false;
     return (
       error.status === 408 ||
       error.status === 429 ||

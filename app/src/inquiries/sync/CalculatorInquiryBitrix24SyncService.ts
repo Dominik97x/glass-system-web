@@ -55,6 +55,7 @@ const DEAL_FIELDS = {
   awning: "UF_CRM_DEAL_MG_AWNING",
   ledPoint: "UF_CRM_DEAL_MG_LED_POINT",
   ledCct: "UF_CRM_DEAL_MG_LED_CCT",
+  ledRgbCct: "UF_CRM_DEAL_MG_LED_RGB_CCT",
   foundation: "UF_CRM_DEAL_MG_FOUNDATION",
   brushes: "UF_CRM_DEAL_MG_BRUSHES",
   handles: "UF_CRM_DEAL_MG_HANDLES",
@@ -430,6 +431,13 @@ export class CalculatorInquiryBitrix24SyncService {
       [DEAL_FIELDS.awning]: toBitrixBoolean(configuration.hasAwning),
       [DEAL_FIELDS.ledPoint]: toBitrixBoolean(configuration.hasLed),
       [DEAL_FIELDS.ledCct]: toBitrixBoolean(configuration.hasCob),
+      [DEAL_FIELDS.ledRgbCct]:
+        metadata.dealFields[DEAL_FIELDS.ledRgbCct]?.type === "boolean" &&
+        metadata.dealFields[DEAL_FIELDS.ledRgbCct]?.isReadOnly === false &&
+        metadata.dealFields[DEAL_FIELDS.ledRgbCct]?.isImmutable === false &&
+        metadata.dealFields[DEAL_FIELDS.ledRgbCct]?.isMultiple === false
+          ? toBitrixBoolean(configuration.hasRgbCct === true)
+          : undefined,
       [DEAL_FIELDS.foundation]: toBitrixBoolean(
         configuration.hasLevelingProfile
       ),

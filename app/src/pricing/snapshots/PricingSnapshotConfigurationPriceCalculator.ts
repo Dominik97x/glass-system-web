@@ -1,3 +1,4 @@
+import { assertLightingPriceable } from "@/domain/LightingPolicy";
 import {
   getProductKind,
   type ProductConfiguration,
@@ -42,6 +43,8 @@ export class PricingSnapshotConfigurationPriceCalculator {
 export function getPricingSnapshotPriceFieldsForConfiguration(
   configuration: ProductConfiguration
 ): PricingSnapshotPriceField[] {
+  assertLightingPriceable(configuration);
+  if (configuration.hasRgbCct) throw new Error("RGB CCT wymaga QuoteService i szczegółowego snapshotu finansowego.");
   const fields: PricingSnapshotPriceField[] = ["constructionGross"];
 
   const roofField = getRoofPriceField(configuration.roof);

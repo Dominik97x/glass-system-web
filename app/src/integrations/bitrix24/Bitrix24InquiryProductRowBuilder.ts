@@ -132,6 +132,9 @@ export class Bitrix24InquiryProductRowBuilder {
 
     for (const [index, row] of preparedRows.entries()) {
       const productId = await this.findCatalogProductId(row.sku);
+      if (row.sku.startsWith("MG-LED-RGB-CCT-") && productId === null) {
+        throw new Error(`Brak istniejącego produktu RGB CCT: ${row.sku}. Nie tworzę pozycji bez ID.`);
+      }
       result.push({
         ...(productId !== null ? { productId } : {}),
         productName: row.productName,
@@ -256,6 +259,9 @@ function buildPreparedRows(
   }
 
   const configuration = inquiry.quote.configuration;
+  if (configuration.hasRgbCct) {
+    throw new Error("RGB CCT wymaga zapisanego szczegółowego snapshotu finansowego; brak wyceny zastępczej.");
+  }
   const productType = getProductKind(configuration);
   const row = pricingRows.find(
     (candidate) =>

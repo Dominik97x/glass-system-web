@@ -1,0 +1,12 @@
+# MoonGlass canonical pricing preview generator v1
+
+This stage converts an explicit sales-price master (NET PLN, integer PLN) into all three application snapshots. It does not import supplier spreadsheets or calculate commercial markups. Those rules, exceptions (including 20 held foundation prices and missing LED supplier values), and mapping scope remain a separate input-stage task. Never treat the current sales master as raw supplier costs.
+
+Run from app/:
+
+    node scripts/verify-canonical-pricing-generator.mjs ../.local/pricing/commercial-preview-v2-20261125/moonglass-sales-master.preview-v2-2026-11-25.json
+    node scripts/generate-pricing-preview.mjs --input ../.local/pricing/commercial-preview-v2-20261125/moonglass-sales-master.preview-v2-2026-11-25.json --run commercial-v2-new-preview
+
+The self-test assumes the current November baseline. Update regression fixtures explicitly for a new release; do not derive expected results from the current calculation. The generator is intentionally limited to the current 70 dimensions, 640 core SKUs, 630 shared variants and 67 CRM-only SKUs. Changes in assortment, availability or currency need a separate schema review. Construction helper fields in Published Pricing use terrace poly plus installation; wall helper is winter poly plus installation minus terrace total; roof clear surcharge depends on product type. All gross helper fields use round(net * 1.08), not exact deal VAT. Preserve 0 for unsupported options. RGB CCT is supported by the website and CRM. Automatic quotes follow the shared lighting policy: point LED up to 600 cm depth, CCT up to 500 cm, RGB CCT up to 400 cm, for supported widths. Other variants require an individual quote.
+
+Output: ../.local/pricing/generated-previews/<run>/ (new directory only). Three JSON files and manifest.json binding input, templates and output byte SHA-256. Output is always PREVIEW. Timestamps, version, source and audit labels may change even when every price remains identical. Do not copy these over the active snapshots during this test. The registry and existing Price-only plan are bound to active file hashes; any later installation requires registry validation, a fresh plan, fresh backup, and commercial release approval. No Bitrix network calls, no release, no writes to app data. The local master is sales prices only; keep it outside Git as the working input. The active snapshots remain the operational test baseline.

@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
+import { clearUnavailableLighting, isLightingAvailable, selectLighting } from "@/domain/LightingPolicy";
 
 import { ROOF_LABELS } from "@/data/configuration-labels";
 import {
@@ -62,6 +65,9 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   const productType = getProductKind(configuration);
   const frameColor = getFrameColor(configuration);
   const hasWalls = configuration.walls !== "none";
+  const [lightingNotice, setLightingNotice] = useState("");
+  const cctAvailable = isLightingAvailable("cct", configuration.length, configuration.width);
+  const rgbAvailable = isLightingAvailable("rgb_cct", configuration.length, configuration.width);
   const roofGlassAvailable = configuration.length <= 500;
   const roofOptions = roofGlassAvailable
     ? ALL_ROOF_OPTIONS
@@ -74,7 +80,11 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
       next.roof = "polycarbonate_clear";
     }
 
-    onChange(next);
+    const safe = clearUnavailableLighting(next);
+    const removed = next.hasRgbCct && !safe.hasRgbCct ? "LED RGB CCT" : next.hasCob && !safe.hasCob ? "LED CCT" : "";
+    if (removed) setLightingNotice(`${removed} usunięto z automatycznej wyceny po zmianie wymiaru. Skontaktuj się z nami w sprawie wyceny indywidualnej.`);
+    else if (partial.length !== undefined || partial.width !== undefined) setLightingNotice("");
+    onChange(safe);
   }
 
   function updateProductType(nextProductType: ProductKind) {
@@ -111,19 +121,13 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
   }
 
   function updateSpotLed(checked: boolean) {
-    onChange({
-      ...configuration,
-      hasLed: checked,
-      hasCob: checked ? false : configuration.hasCob,
-    });
+    setLightingNotice("");
+    onChange(selectLighting(configuration, "point", checked));
   }
 
   function updateCctLed(checked: boolean) {
-    onChange({
-      ...configuration,
-      hasCob: checked,
-      hasLed: checked ? false : configuration.hasLed,
-    });
+    setLightingNotice("");
+    onChange(selectLighting(configuration, "cct", checked));
   }
 
   return (
@@ -289,7 +293,17 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
           <OptionToggle
             label="LED CCT"
             checked={configuration.hasCob}
+            disabled={!cctAvailable}
             onChange={updateCctLed}
+          />
+          <OptionToggle
+            label="LED RGB CCT"
+            checked={configuration.hasRgbCct === true}
+            disabled={!rgbAvailable}
+            onChange={(checked) => {
+              setLightingNotice("");
+              onChange(selectLighting(configuration, "rgb_cct", checked));
+            }}
           />
           <OptionToggle
             label="Uchwyty"
@@ -314,6 +328,13 @@ export function ConfigurationForm({ configuration, onChange }: Props) {
             }
           />
           </div>
+          {lightingNotice && <p role="status" className="mt-2 text-xs font-medium text-[#9a722e]">{lightingNotice}</p>}
+          {(!cctAvailable || !rgbAvailable) && (
+            <p className="mt-2 text-[11px] leading-4 text-[#7a7f7b]">
+              {!cctAvailable ? "LED CCT oraz RGB CCT" : "LED RGB CCT"} dla {configuration.length} × {configuration.width} cm: wycena indywidualna. Cena poniżej nie obejmuje niedostępnej opcji.
+              {" "}<a href="/kontakt" className="font-bold underline text-[#062c25]">Skontaktuj się z nami</a> i podaj wybrany wymiar oraz typ LED.
+            </p>
+          )}
         </div>
       </CompactPanel>
     </div>
@@ -463,7 +484,9 @@ function OptionToggle({
       type="button"
       disabled={disabled}
       onClick={() => onChange(!checked)}
+      aria-pressed={checked}
       className={[
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
         "flex min-h-10 items-center justify-between gap-2 border px-2.5 py-1.5 text-left transition",
         checked
           ? "border-[#c79a46] bg-[#f4ead5]"

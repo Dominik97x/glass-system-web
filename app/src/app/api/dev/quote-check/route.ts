@@ -14,6 +14,7 @@ interface TestCase {
   id: string;
   name: string;
   expectedTotalGross: number;
+  expectedIndividualQuote?: boolean;
   configuration: ProductConfiguration;
 }
 
@@ -113,7 +114,7 @@ const testCases: TestCase[] = [
   },
   {
     id: "T8",
-    name: "450 x 606 cm — LED RGB CCT",
+    name: "450 x 606 cm — LED CCT",
     expectedTotalGross: 24759,
     configuration: {
       ...DEFAULT_CONFIGURATION,
@@ -125,7 +126,7 @@ const testCases: TestCase[] = [
   },
   {
     id: "T9",
-    name: "500 x 606 cm — LED RGB CCT i markiza",
+    name: "500 x 606 cm — LED CCT i markiza",
     expectedTotalGross: 36662,
     configuration: {
       ...DEFAULT_CONFIGURATION,
@@ -138,8 +139,9 @@ const testCases: TestCase[] = [
   },
   {
     id: "T10",
-    name: "600 x 806 cm — maksimum bez szkła dachowego — LED RGB CCT",
+    name: "600 x 806 cm — LED CCT — wycena indywidualna",
     expectedTotalGross: 109705,
+    expectedIndividualQuote: true,
     configuration: {
       ...DEFAULT_CONFIGURATION,
       productType: "winter_garden",
@@ -183,6 +185,14 @@ export function GET() {
   }
 
   const cases = testCases.map((testCase) => {
+    if (testCase.expectedIndividualQuote) {
+      try {
+        quoteService.createQuote(testCase.configuration);
+        return { id: testCase.id, name: testCase.name, passed: false, expectedIndividualQuote: true };
+      } catch (error) {
+        return { id: testCase.id, name: testCase.name, passed: error instanceof Error && error.message.includes("wymaga wyceny indywidualnej"), expectedIndividualQuote: true };
+      }
+    }
     const quote = quoteService.createQuote(testCase.configuration);
     const passed = quote.totalGross === testCase.expectedTotalGross;
 

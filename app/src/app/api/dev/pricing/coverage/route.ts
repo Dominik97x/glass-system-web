@@ -128,6 +128,28 @@ const scenarios: PricingCoverageScenario[] = [
     }),
   },
   {
+    id: "terrace_roof_cct",
+    label: "Zadaszenie tarasu - LED CCT",
+    expectedCategories: ["construction", "installation", "lighting"],
+    createConfiguration: (width, length) => ({
+      ...DEFAULT_CONFIGURATION,
+      productType: "terrace_roof",
+      width,
+      length,
+      walls: "none",
+      roof: "polycarbonate_clear",
+      hasFrontZip: false,
+      hasLeftZip: false,
+      hasRightZip: false,
+      hasAwning: false,
+      hasLed: false,
+      hasCob: true,
+      hasHandles: false,
+      hasBrushes: false,
+      hasLevelingProfile: false,
+    }),
+  },
+  {
     id: "terrace_roof_rgb_cct",
     label: "Zadaszenie tarasu - LED RGB CCT",
     expectedCategories: ["construction", "installation", "lighting"],
@@ -143,7 +165,8 @@ const scenarios: PricingCoverageScenario[] = [
       hasRightZip: false,
       hasAwning: false,
       hasLed: false,
-      hasCob: true,
+      hasCob: false,
+      hasRgbCct: true,
       hasHandles: false,
       hasBrushes: false,
       hasLevelingProfile: false,
@@ -329,6 +352,10 @@ function isExpectedIndividualQuote(
   configuration: ProductConfiguration,
   error: unknown
 ): boolean {
+  if (error instanceof Error && error.message.includes("wymaga wyceny indywidualnej")) {
+    if (scenario.id === "terrace_roof_rgb_cct" && configuration.length > 400) return true;
+    if (scenario.id === "terrace_roof_cct" && configuration.length > 500) return true;
+  }
   return (
     scenario.id === "winter_garden_tinted_glass" &&
     configuration.length >= 550 &&

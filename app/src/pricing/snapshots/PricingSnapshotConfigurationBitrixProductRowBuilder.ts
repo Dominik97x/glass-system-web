@@ -1,3 +1,4 @@
+import { assertLightingPriceable } from "@/domain/LightingPolicy";
 import {
   getProductKind,
   type ProductConfiguration,
@@ -33,6 +34,8 @@ export class PricingSnapshotConfigurationBitrixProductRowBuilder {
   build(
     configuration: ProductConfiguration
   ): PricingSnapshotConfigurationBitrixProductRowsResult {
+    assertLightingPriceable(configuration);
+    if (configuration.hasRgbCct) throw new Error("RGB CCT wymaga QuoteService i szczegółowego snapshotu finansowego.");
     const criteria: PricingSnapshotPriceMatrixCriteria = {
       productType: getProductKind(configuration),
       widthCm: configuration.width,

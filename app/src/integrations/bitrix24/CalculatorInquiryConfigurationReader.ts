@@ -51,6 +51,7 @@ function isProductConfiguration(value: unknown): value is ProductConfiguration {
     typeof value.hasAwning === "boolean" &&
     typeof value.hasLed === "boolean" &&
     typeof value.hasCob === "boolean" &&
+    (value.hasRgbCct === undefined || typeof value.hasRgbCct === "boolean") &&
     typeof value.hasHandles === "boolean" &&
     typeof value.hasBrushes === "boolean" &&
     typeof value.hasLevelingProfile === "boolean"
